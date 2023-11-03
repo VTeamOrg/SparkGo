@@ -1,0 +1,42 @@
+name: Backend CI/CD
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: ubuntu-20.04
+
+        env:
+            NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16.20.2
+
+            - name: Set up MongoDB
+              run: |
+                  docker pull mongo:5.0
+                  docker run --name mongodb -d -p 27017:27017 mongo:5.0
+
+            # Start MongoDB service
+            - name: Start MongoDB
+              run: sudo service mongod start
+
+            - name: Install backend dependencies
+              working-directory: backend-mongodb
+              run: npm install
+
+            - name: Load environment variables from .env
+              run: source backend-mongodb/.env
+
+            - name: Run backend tests
+              working-directory: backend-mongodb
+              run: npm test
