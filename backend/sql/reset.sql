@@ -25,6 +25,3 @@ use sparkgo;
 
 -- uses
 source ddl.sql
-
-
-

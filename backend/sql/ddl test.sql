@@ -39,8 +39,9 @@ CREATE TABLE Renting_station (
     FOREIGN KEY (r_station_located_in) REFERENCES City(Id)
 );
 
-CREATE TABLE User (
+CREATE TABLE member  (
     embg VARCHAR(255) PRIMARY KEY,
+    roles int,
     firstname VARCHAR(255),
     lastname VARCHAR(255),
     date_born DATE,
@@ -65,7 +66,7 @@ CREATE TABLE Rent (
     r_station_rented_from INT,
     r_station_returned_to INT,
     scooter_rented_scooter INT,
-    FOREIGN KEY (user_renting) REFERENCES User(embg),
+    FOREIGN KEY (user_renting) REFERENCES member(embg),
     FOREIGN KEY (r_station_rented_from) REFERENCES Renting_station(Id),
     FOREIGN KEY (r_station_returned_to) REFERENCES Renting_station(Id),
     FOREIGN KEY (scooter_rented_scooter) REFERENCES Scooter(Id)

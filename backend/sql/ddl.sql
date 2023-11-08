@@ -39,8 +39,9 @@ create table renting_station (
     foreign key (r_station_located_in) references city(id)
 );
 
-create table user (
+create table member (
     embg varchar(255) primary key,
+    roles int,
     firstname varchar(255),
     lastname varchar(255),
     date_born date,
@@ -65,7 +66,7 @@ create table rent (
     r_station_rented_from int,
     r_station_returned_to int,
     scooter_rented_scooter int,
-    foreign key (user_renting) references user(embg),
+    foreign key (user_renting) references member(embg),
     foreign key (r_station_rented_from) references renting_station(id),
     foreign key (r_station_returned_to) references renting_station(id),
     foreign key (scooter_rented_scooter) references scooter(id)
