@@ -21,22 +21,10 @@ jobs:
               with:
                   node-version: 16.20.2
 
-            - name: Set up MongoDB
-              run: |
-                  docker pull mongo:5.0
-                  docker run --name mongodb -d -p 27017:27017 mongo:5.0
-
-            # Start MongoDB service
-            - name: Start MongoDB
-              run: sudo service mongod start
-
             - name: Install backend dependencies
-              working-directory: backend-mongodb
+              working-directory: backend
               run: npm install
 
-            - name: Load environment variables from .env
-              run: source backend-mongodb/.env
-
             - name: Run backend tests
-              working-directory: backend-mongodb
+              working-directory: backend
               run: npm test

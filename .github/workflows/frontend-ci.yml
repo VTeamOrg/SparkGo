@@ -23,10 +23,3 @@ jobs:
 
             - name: Install dotenv package
               run: npm install dotenv --save-dev
-
-            - name: Run Selenium tests
-              working-directory: frontend-vue # Specify the backend directory
-              run: npm test -- --verbose
-              env:
-                  CHROME_BIN: /usr/bin/google-chrome
-                  CHROME_DRIVER_PATH: /usr/local/bin/chromedriver

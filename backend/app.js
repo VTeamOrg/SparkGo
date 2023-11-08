@@ -5,13 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
-const fetchTrainPositions = require("./models/trains.js");
-const setupSocketServer = require("./models/socket.js");
-const delayed = require("./routes/delayed.js");
 const tickets = require("./routes/tickets.js");
-const stations = require("./routes/stations.js");
-const codes = require("./routes/codes.js");
-const delayedF = require("./routes/delayed_filter.js");
 
 const app = express();
 const httpServer = require("http").createServer(app);
@@ -59,11 +53,9 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use("/delayed", delayed);
+
 app.use("/tickets", tickets);
-app.use("/codes", codes);
-app.use("/stations", stations);
-app.use("/delayedFilter", delayedF);
+
 
 httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
