@@ -1,0 +1,11 @@
+id,member_id,method_name,reference_info,is_selected
+1,1,VISA,1234-5678-9012-3456,Y
+2,1,KLARNA,klarna@example.com,N
+3,2,VISA,2345-6789-0123-4567,Y
+4,3,MasterCard,mastercard@example.com,Y
+5,4,American Express,amex@example.com,Y
+6,4,PayPal,paypal@example.com,N
+7,5,VISA,3456-7890-1234-5678,Y
+8,6,Apple Pay,applepay@example.com,Y
+9,6,Google Pay,googlepay@example.com,N
+10,7,VISA,4567-8901-2345-6789,Y

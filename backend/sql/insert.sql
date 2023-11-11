@@ -59,5 +59,11 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
+LOAD DATA LOCAL INFILE 'csv/payment_method.csv'
+INTO TABLE payment_method
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
 /* mariadb --table < insert.sql */

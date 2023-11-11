@@ -36,8 +36,17 @@ CREATE TABLE member (
     role VARCHAR(255),
     email VARCHAR(255),
     name VARCHAR(255),
-    personal_number VARCHAR(255)
-    /* wallet??? */
+    personal_number VARCHAR(255),
+    address VARCHAR(255)
+);
+
+CREATE TABLE payment_method (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT,
+    method_name VARCHAR(255),
+    reference_info VARCHAR(255),
+    is_selected ENUM('Y', 'N') DEFAULT 'N',
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 CREATE TABLE vehicle (
