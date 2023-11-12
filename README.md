@@ -33,3 +33,13 @@ runs tests against the api endpoints created
 in/backend
 
 node app.js
+
+# Current endpoints
+
+/users and users/id
+
+/stations and stations/id
+
+/cities and cities/id
+
+/vehicles and vehicles/id
