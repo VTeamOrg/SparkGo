@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 
-function Login() {
-  // (dummy function for now)
+function Login({ setUserLoggedIn }) {
+
+  /* logged in state from app.js to handle conditional navbar and work area */
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const handleGoogleClick = () => {
     console.log('Google button clicked');
   };
   const handleLoginClick = () => {
+    /* perform authentication here */
+    setIsLoggedIn(true);
+
+    /* Update userLoggedIn state in App.js */
+    setUserLoggedIn(true);
     console.log('Login button clicked');
   };
 
