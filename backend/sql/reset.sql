@@ -11,6 +11,9 @@ use test;
 
 -- runs tables script
 source ddl test.sql
+source insert test.sql
+
+
 
 -- drops
 drop database if exists sparkgo;
@@ -25,3 +28,4 @@ use sparkgo;
 
 -- uses
 source ddl.sql
+source insert.sql

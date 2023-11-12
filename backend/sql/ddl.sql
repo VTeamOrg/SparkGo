@@ -4,7 +4,7 @@ use sparkgo;
 drop trigger if exists log_scooter_insert;
 drop trigger if exists log_scooter_update;
 drop table if exists rent;
-drop table if exists scooter;
+drop table if exists vehicle;
 drop table if exists number;
 drop table if exists user;
 drop table if exists renting_station;

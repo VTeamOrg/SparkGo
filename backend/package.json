@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --exit test/db-test-reset.js --exit test/app.js && mocha --exit test/mongodb.js",
+        "test": "mocha --exit test/app.js",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },
@@ -19,6 +19,8 @@
         "express": "^4.14.0",
         "mongoose": "^7.6.3",
         "morgan": "^1.10.0",
+        "mysql": "^2.18.1",
+        "mysql2": "^3.6.3",
         "node-html-parser": "^6.1.9",
         "sinon": "^16.0.0",
         "socket.io": "^4.6.1",

@@ -1,19 +1,45 @@
-const sqlite3 = require("sqlite3").verbose();
-const { open } = require("sqlite");
+const mysql = require("mysql");
+const config = require("../config/test.json");
 
-const database = {
-    openDb: async function openDb() {
-        let dbFilename = `./db/sparkgo.sqlite`;
+// Create a pool to handle multiple connections
+const pool = mysql.createPool(config);
 
-        if (process.env.NODE_ENV === "test") {
-            dbFilename = "./db/test.sqlite";
-        }
-
-        return await open({
-            filename: dbFilename,
-            driver: sqlite3.Database,
+// Function to open a database connection
+const openDb = () => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(connection);
+            }
         });
-    },
+    });
 };
 
-module.exports = database;
+// Function to close a database connection
+const closeDb = (connection) => {
+    return new Promise((resolve, reject) => {
+        connection.release();
+        resolve();
+    });
+};
+
+// Function to execute a SQL query
+const query = (connection, sql, params) => {
+    return new Promise((resolve, reject) => {
+        connection.query(sql, params, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+module.exports = {
+    openDb,
+    closeDb,
+    query,
+};

@@ -5,7 +5,7 @@ process.env.NODE_ENV = "test";
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const HTMLparser = require("node-html-parser");
-const app = require("../../backend-mongodb/app.js"); // Import the 'app' variable from your main application file
+const app = require("../../backend/app.js"); // Import the 'app' variable from your main application file
 const expect = chai.expect;
 
 chai.should();
@@ -44,30 +44,30 @@ describe("Server Connection Behavior", () => {
             });
     });
 
-    // Test Case 3: Test a GET request to an endpoint from the "delayed" route
-    it("should handle a GET request and return a 200 status code for an endpoint from the 'delayed' route", (done) => {
+    // Test Case 3: Test a GET request to an endpoint from the "users" route
+    it("should handle a GET request and return a 200 status code for an endpoint from the 'users' route", (done) => {
         chai.request(app)
-            .get("/delayed")
+            .get("/users")
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();
             });
     });
 
-    // Test Case 4: Test an endpoint from the "codes" route
-    it("should return a 200 status code when accessing an endpoint from the 'codes' route", (done) => {
+    // Test Case 4: Test an endpoint from the "vehicles" route
+    it("should return a 200 status code when accessing an endpoint from the 'vehicles' route", (done) => {
         chai.request(app)
-            .get("/codes")
+            .get("/vehicles")
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();
             });
     });
 
-    // Test Case 5: Test an endpoint from the "tickets" route
-    it("should return a 200 status code when accessing an endpoint from the 'tickets' route", (done) => {
+    // Test Case 5: Test an endpoint from the "cities" route
+    it("should return a 200 status code when accessing an endpoint from the 'cities' route", (done) => {
         chai.request(app)
-            .get("/tickets")
+            .get("/cities")
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();
@@ -78,16 +78,6 @@ describe("Server Connection Behavior", () => {
     it("should return a 200 status code when accessing an endpoint from the 'stations' route", (done) => {
         chai.request(app)
             .get("/stations")
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-
-    // Test Case 7: Test an endpoint from the "delayedFilter" route
-    it("should return a 200 status code when accessing an endpoint from the 'delayedFilter' route", (done) => {
-        chai.request(app)
-            .get("/delayedFilter")
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();

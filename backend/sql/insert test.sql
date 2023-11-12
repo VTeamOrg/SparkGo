@@ -1,7 +1,7 @@
 SET GLOBAL local_infile = 1;
 SHOW VARIABLES LIKE 'local_infile';
 
-use sparkgo;
+use test;
 
 LOAD DATA LOCAL INFILE 'csv/city.csv'
 INTO TABLE city
@@ -67,15 +67,3 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
 /* mariadb --table < insert.sql */
-
-
--- Display contents of each table
-SELECT * FROM city;
-SELECT * FROM frequencies;
-SELECT * FROM vehicle;
-SELECT * FROM member;
-SELECT * FROM renting_station;
-SELECT * FROM plan;
-SELECT * FROM active_plan;
-SELECT * FROM receipt;
-SELECT * FROM payment_method;

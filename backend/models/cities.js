@@ -1,18 +1,18 @@
 const database = require("../db/database.js");
 
-const users = {
-    getAllUsers: async function getAllUsers(req, res) {
+const cities = {
+    getAllCities: async function getAllCities(req, res) {
         try {
             const db = await database.openDb();
-            const allUsers = await database.query(
+            const allCities = await database.query(
                 db,
-                "SELECT * FROM member ORDER BY id DESC"
+                "SELECT * FROM city ORDER BY id DESC"
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: allUsers,
+                data: allCities,
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -20,20 +20,20 @@ const users = {
         }
     },
 
-    getUserById: async function getUserById(req, res) {
+    getCityById: async function getCityById(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.userId;
-            const user = await database.query(
+            const cityId = req.params.cityId;
+            const city = await database.query(
                 db,
-                "SELECT * FROM member WHERE id = ?",
-                userId
+                "SELECT * FROM city WHERE id = ?",
+                cityId
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: user[0],
+                data: city[0],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -44,4 +44,4 @@ const users = {
     // Rest of the CRUD operations with a similar structure...
 };
 
-module.exports = users;
+module.exports = cities;

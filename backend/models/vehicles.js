@@ -1,18 +1,18 @@
 const database = require("../db/database.js");
 
-const users = {
-    getAllUsers: async function getAllUsers(req, res) {
+const vehicles = {
+    getAllVehicles: async function getAllVehicles(req, res) {
         try {
             const db = await database.openDb();
-            const allUsers = await database.query(
+            const allVehicles = await database.query(
                 db,
-                "SELECT * FROM member ORDER BY id DESC"
+                "SELECT * FROM vehicle ORDER BY id DESC"
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: allUsers,
+                data: allVehicles,
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -20,20 +20,20 @@ const users = {
         }
     },
 
-    getUserById: async function getUserById(req, res) {
+    getVehicleById: async function getVehicleById(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.userId;
-            const user = await database.query(
+            const vehicleId = req.params.vehicleId;
+            const vehicle = await database.query(
                 db,
-                "SELECT * FROM member WHERE id = ?",
-                userId
+                "SELECT * FROM vehicle WHERE id = ?",
+                vehicleId
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: user[0],
+                data: vehicle[0],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -44,4 +44,4 @@ const users = {
     // Rest of the CRUD operations with a similar structure...
 };
 
-module.exports = users;
+module.exports = vehicles;

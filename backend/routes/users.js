@@ -1,25 +1,20 @@
 const express = require("express");
 const router = express.Router();
 
-let ticketsModule;
+let usersModule;
 
+usersModule = require("../models/users.js");
 
-ticketsModule = require("../models/tickets.js");
+router.get("/", (req, res) => usersModule.getAllUsers(req, res));
 
-router.get("/", (req, res) => ticketsModule.getTickets(req, res));
+router.get("/:Id", (req, res) => usersModule.getUserById(req, res));
 
-router.get("/:activityId", (req, res) =>
-    ticketsModule.getTicketsByActivityId(req, res)
-);
+router.post("/", (req, res) => usersModule.createUser(req, res));
 
-router.post("/", (req, res) => ticketsModule.createTicket(req, res));
+// PUT route to update a user by ID
+router.put("/:userId", (req, res) => usersModule.updateUser(req, res));
 
-// PUT route to update a ticket by ID
-router.put("/:activityId", (req, res) => ticketsModule.updateTicket(req, res));
-
-// DELETE route to delete a ticket by ID
-router.delete("/:activityId", (req, res) =>
-    ticketsModule.deleteTicket(req, res)
-);
+// DELETE route to delete a user by ID
+router.delete("/:userId", (req, res) => usersModule.deleteUser(req, res));
 
 module.exports = router;

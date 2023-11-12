@@ -1,39 +1,47 @@
-const database = require('../db/database.js');
+const database = require("../db/database.js");
 
-const tickets = {
-    getTickets: async function getTickets(req, res){
-        var db = await database.openDb();
+const stations = {
+    getAllStations: async function getAllStations(req, res) {
+        try {
+            const db = await database.openDb();
+            const allCities = await database.query(
+                db,
+                "SELECT * FROM city ORDER BY id DESC"
+            );
 
-        var allTickets = await db.all(`SELECT *, ROWID as id FROM tickets ORDER BY ROWID DESC`);
+            await database.closeDb(db);
 
-        await db.close();
-
-        return res.json({
-            data: allTickets
-        });
+            return res.json({
+                data: allCities,
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
     },
 
-    createTicket: async function createTicket(req, res){
-        var db = await database.openDb();
+    getStationsById: async function getStationsById(req, res) {
+        try {
+            const db = await database.openDb();
+            const cityId = req.params.cityId;
+            const city = await database.query(
+                db,
+                "SELECT * FROM city WHERE id = ?",
+                cityId
+            );
 
-        const result = await db.run(
-            'INSERT INTO tickets (code, trainnumber, traindate) VALUES (?, ?, ?)',
-            req.body.code,
-            req.body.trainnumber,
-            req.body.traindate,
-        );
+            await database.closeDb(db);
 
-        await db.close();
+            return res.json({
+                data: city[0],
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
 
-        return res.json({
-            data: {
-                id: result.lastID,
-                code: req.body.code,
-                trainnumber: req.body.trainnumber,
-                traindate: req.body.traindate,
-            }
-        });
-    }
+    // Rest of the CRUD operations with a similar structure...
 };
 
-module.exports = tickets;
+module.exports = stations;

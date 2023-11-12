@@ -1,99 +1,144 @@
-USE test;
+use test;
 
--- Initial drops
-DROP TRIGGER IF EXISTS log_scooter_insert;
-DROP TRIGGER IF EXISTS log_scooter_update;
-DROP TABLE IF EXISTS Rent;
-DROP TABLE IF EXISTS Scooter;
-DROP TABLE IF EXISTS Number;
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS Renting_station;
-DROP TABLE IF EXISTS Company;
-DROP TABLE IF EXISTS City;
+-- initial drops
+drop trigger if exists log_scooter_insert;
+drop trigger if exists log_scooter_update;
+drop table if exists rent;
+drop table if exists vehicle;
+drop table if exists number;
+drop table if exists user;
+drop table if exists renting_station;
+drop table if exists company;
+drop table if exists city;
 
--- Create schema for e-scooter database
-CREATE TABLE Company (
-    Id INT PRIMARY KEY,
+-- create schema for e-scooter database
+create table city (
+    id int primary key,
+    name varchar(255)
+);
+
+CREATE TABLE frequencies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE renting_station (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city_id INT,
     name VARCHAR(255),
-    number VARCHAR(255),
-    employees INT
+    coords_lat DECIMAL(10, 6), 
+    coords_long DECIMAL(10, 6), 
+    FOREIGN KEY (city_id) REFERENCES city(id)
 );
 
-CREATE TABLE City (
-    Id INT PRIMARY KEY,
-    name VARCHAR(255)
-);
-
-CREATE TABLE Number (
-    embg VARCHAR(255) PRIMARY KEY,
-    phone_number VARCHAR(255) UNIQUE
-);
-
-CREATE TABLE Renting_station (
-    Id INT PRIMARY KEY,
+CREATE TABLE member (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role VARCHAR(255),
+    email VARCHAR(255),
     name VARCHAR(255),
-    number_e_scooter INT,
-    company_have_r_station INT,
-    r_station_located_in INT,
-    FOREIGN KEY (company_have_r_station) REFERENCES Company(Id),
-    FOREIGN KEY (r_station_located_in) REFERENCES City(Id)
+    personal_number VARCHAR(255),
+    address VARCHAR(255)
 );
 
-CREATE TABLE member  (
-    embg VARCHAR(255) PRIMARY KEY,
-    roles int,
-    firstname VARCHAR(255),
-    lastname VARCHAR(255),
-    date_born DATE,
-    phone_number VARCHAR(255),
-    FOREIGN KEY (phone_number) REFERENCES Number(phone_number)
+CREATE TABLE payment_method (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT,
+    method_name VARCHAR(255),
+    reference_info VARCHAR(255),
+    is_selected ENUM('Y', 'N') DEFAULT 'N',
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
-CREATE TABLE Scooter (
-    Id INT PRIMARY KEY,
-    country VARCHAR(255),
+CREATE TABLE vehicle (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city_id INT,
+    type VARCHAR(255),
+    rented_by INT,
+    FOREIGN KEY (city_id) REFERENCES city(id),
+    FOREIGN KEY (rented_by) REFERENCES member(id)
+);
+
+CREATE TABLE plan (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    description TEXT,
     price DECIMAL(10, 2),
-    status VARCHAR(255),
-    scooter_is_on_station INT,
-    FOREIGN KEY (scooter_is_on_station) REFERENCES Renting_station(Id)
+    price_frequency_id INT,
+    included_unlocks INT,
+    included_unlocks_frequency_id INT,
+    included_minutes INT,
+    included_minutes_frequency_id INT,
+    FOREIGN KEY (price_frequency_id) REFERENCES frequencies(id),
+    FOREIGN KEY (included_unlocks_frequency_id) REFERENCES frequencies(id),
+    FOREIGN KEY (included_minutes_frequency_id) REFERENCES frequencies(id)
 );
 
-CREATE TABLE Rent (
-    Id INT PRIMARY KEY,
-    rented_at DATETIME,
-    returned_at DATETIME,
-    user_renting VARCHAR(255),
-    r_station_rented_from INT,
-    r_station_returned_to INT,
-    scooter_rented_scooter INT,
-    FOREIGN KEY (user_renting) REFERENCES member(embg),
-    FOREIGN KEY (r_station_rented_from) REFERENCES Renting_station(Id),
-    FOREIGN KEY (r_station_returned_to) REFERENCES Renting_station(Id),
-    FOREIGN KEY (scooter_rented_scooter) REFERENCES Scooter(Id)
+CREATE TABLE active_plan (
+    plan_id INT,
+    member_id INT,
+    activation_date DATE,
+    available_minutes INT,
+    available_unlocks INT,
+    is_paused ENUM('Y', 'N'),
+    PRIMARY KEY (plan_id, member_id, activation_date),
+    FOREIGN KEY (plan_id) REFERENCES plan(id),
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
--- Create triggers for the scooter table
-DROP TRIGGER IF EXISTS log_scooter_insert;
-DROP TRIGGER IF EXISTS log_scooter_update;
+CREATE TABLE receipt (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT,
+    payment_details VARCHAR(255),
+    payment_type VARCHAR(255),
+    receipt_details VARCHAR(255)
+);
 
-DELIMITER //
 
-CREATE TRIGGER log_scooter_insert
-AFTER INSERT ON Scooter
-FOR EACH ROW
-BEGIN
-    INSERT INTO system_log (event)
-    VALUES (CONCAT('new scooter added with scooter id ', NEW.Id, '.'));
-END//
+/*create table scooter (
+    id int primary key,
+    country varchar(255),
+    price decimal(10, 2),
+    status varchar(255),
+    scooter_is_on_station int,
+    foreign key (scooter_is_on_station) references renting_station(id)
+);*/
 
-CREATE TRIGGER log_scooter_update
-AFTER UPDATE ON Scooter
-FOR EACH ROW
-BEGIN
-    INSERT INTO system_log (event)
-    VALUES (CONCAT('scooter details for scooter id ', NEW.Id, ' updated.'));
-END//
+/*create table rent (
+    id int primary key,
+    rented_at datetime,
+    returned_at datetime,
+    user_renting varchar(255),
+    r_station_rented_from int,
+    r_station_returned_to int,
+    scooter_rented_scooter int,
+    foreign key (user_renting) references member(embg),
+    foreign key (r_station_rented_from) references renting_station(id),
+    foreign key (r_station_returned_to) references renting_station(id),
+    foreign key (scooter_rented_scooter) references scooter(id)
+); */
 
-DELIMITER ;
+-- create triggers for the scooter table
+/*drop trigger if exists log_scooter_insert;
+drop trigger if exists log_scooter_update;
 
-SHOW TABLES;
+delimiter //
+
+create trigger log_scooter_insert
+after insert on scooter
+for each row
+begin
+    insert into system_log (event)
+    values (concat('new scooter added with scooter id ', new.id, '.'));
+end//
+
+create trigger log_scooter_update
+after update on scooter
+for each row
+begin
+    insert into system_log (event)
+    values (concat('scooter details for scooter id ', new.id, ' updated.'));
+end//
+
+delimiter ; */
+
+show tables;
