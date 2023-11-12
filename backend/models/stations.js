@@ -4,15 +4,15 @@ const stations = {
     getAllStations: async function getAllStations(req, res) {
         try {
             const db = await database.openDb();
-            const allCities = await database.query(
+            const allStations = await database.query(
                 db,
-                "SELECT * FROM city ORDER BY id DESC"
+                "SELECT * FROM renting_station ORDER BY id DESC"
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: allCities,
+                data: allStations,
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -23,17 +23,17 @@ const stations = {
     getStationsById: async function getStationsById(req, res) {
         try {
             const db = await database.openDb();
-            const cityId = req.params.cityId;
-            const city = await database.query(
+            const stationId = req.params.stationId;
+            const station = await database.query(
                 db,
-                "SELECT * FROM city WHERE id = ?",
-                cityId
+                "SELECT * FROM renting_station WHERE id = ?",
+                stationId
             );
 
             await database.closeDb(db);
 
             return res.json({
-                data: city[0],
+                data: station[0],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);

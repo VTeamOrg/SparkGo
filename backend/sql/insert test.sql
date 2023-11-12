@@ -67,3 +67,14 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
 /* mariadb --table < insert.sql */
+
+-- Display contents of each table
+SELECT * FROM city;
+SELECT * FROM frequencies;
+SELECT * FROM vehicle;
+SELECT * FROM member;
+SELECT * FROM renting_station;
+SELECT * FROM plan;
+SELECT * FROM active_plan;
+SELECT * FROM receipt;
+SELECT * FROM payment_method;
