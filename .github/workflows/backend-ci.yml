@@ -27,6 +27,9 @@ jobs:
               working-directory: backend
               run: npm install
 
+            - name: Load environment variables from .env
+              run: source backend/.env
+
             - name: Run backend tests
               working-directory: backend
               run: npm test
