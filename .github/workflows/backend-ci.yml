@@ -28,8 +28,8 @@ jobs:
               run: npm install
 
             - name: Load environment variables from .env
-              run: source backend/.env
+              run: npm install dotenv
 
             - name: Run backend tests
               working-directory: backend
-              run: npm test
+              run: node -r dotenv/config ./test/app.js
