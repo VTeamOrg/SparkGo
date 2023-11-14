@@ -14,6 +14,17 @@ jobs:
         env:
             NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
 
+        services:
+            mariadb:
+                image: mariadb:latest
+                ports:
+                    - 3306:3306
+                env:
+                    MYSQL_ROOT_PASSWORD: password # Set your desired root password
+                    MYSQL_DATABASE: test # Set your desired database name
+                    MYSQL_USER: dbadm # Set your desired username
+                    MYSQL_PASSWORD: P@ssw0rd # Set your desired password
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v2

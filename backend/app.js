@@ -25,6 +25,10 @@ const io = require("socket.io")(httpServer, {
         origin: [
             "http://localhost:9000",
             "http://localhost:1337",
+            "http://localhost:1337/users",
+            "http://localhost:1337/stations",
+            "http://localhost:1337/cities",
+            "http://localhost:1337/vehicles",
             "http://127.0.0.1:3306",
         ],
         methods: ["GET", "POST"],
