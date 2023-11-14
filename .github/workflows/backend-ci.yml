@@ -13,11 +13,6 @@ jobs:
 
         env:
             NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
-            DB_HOST: localhost
-            DB_PORT: 3306
-            DB_USER: dbadm
-            DB_PASSWORD: P@ssw0rd
-            DB_DATABASE: test
 
         steps:
             - name: Checkout code
