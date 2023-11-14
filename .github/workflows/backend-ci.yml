@@ -29,9 +29,15 @@ jobs:
                   docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=test -e MYSQL_USER=dbadm -e MYSQL_PASSWORD=P@ssw0rd mariadb:latest
 
             - name: Run SQL scripts to populate databases
-              working-directory: sql
               run: |
-                  docker exec mariadb sh -c 'mysql -h localhost -u dbadm -pP@ssw0rd test <reset.sql'
+                  sleep 15
+
+                  docker cp sql/reset.sql mariadb:/ddl test.sql
+                  docker cp sql/reset.sql mariadb:/insert test.sql
+                  docker cp sql/reset.sql mariadb:/reset.sql
+
+
+                  docker exec mariadb sh -c 'mysql -h localhost -u dbadm -pP@ssw0rd test < /reset.sql'
 
             - name: Install backend dependencies
               working-directory: backend
