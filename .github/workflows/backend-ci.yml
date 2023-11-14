@@ -11,25 +11,8 @@ jobs:
     build:
         runs-on: ubuntu-20.04
 
-        services:
-            mariadb:
-                image: mariadb:latest
-                env:
-                    MYSQL_ROOT_PASSWORD: root_password
-                    MYSQL_DATABASE: test
-                    MYSQL_USER: dbadm
-                    MYSQL_PASSWORD: P@ssw0rd
-                ports:
-                    - 3306:3306
-                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
         env:
             NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
-            DB_HOST: localhost
-            DB_PORT: 3306
-            DB_USER: dbadm
-            DB_PASSWORD: P@ssw0rd
-            DB_DATABASE: test
 
         steps:
             - name: Checkout code
@@ -39,6 +22,15 @@ jobs:
               uses: actions/setup-node@v2
               with:
                   node-version: 16.20.2
+
+            - name: Set up MariaDB
+              run: |
+                  docker pull mariadb:latest
+                  docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=test -e MYSQL_USER=dbadm -e MYSQL_PASSWORD=P@ssw0rd mariadb:latest
+
+            # Start Mariadb service
+            - name: Start MariabDB
+              run: sudo service mariadb start
 
             - name: Install backend dependencies
               working-directory: backend
