@@ -17,7 +17,7 @@ jobs:
                 ports:
                     - 3306:3306
                 env:
-                    MYSQL_ROOT_PASSWORD: password
+                    MYSQL_ROOT_PASSWORD: root_password
                     MYSQL_DATABASE: test
                     MYSQL_USER: dbadm
                     MYSQL_PASSWORD: P@ssw0rd
@@ -31,7 +31,8 @@ jobs:
               with:
                   node-version: 16.20.2
 
-            - name: Install dependencies
+            - name: Install backend dependencies
+              working-directory: backend
               run: npm install
 
             - name: Run MySQL script
@@ -41,9 +42,8 @@ jobs:
                   MYSQL_USER: dbadm
                   MYSQL_PASSWORD: P@ssw0rd
                   MYSQL_DATABASE: test
-              working-directory: sql
               run: |
-                  mariadb -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
+                  # Run your MySQL script here
 
             - name: Run tests
               env:
