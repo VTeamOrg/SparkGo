@@ -14,6 +14,18 @@ jobs:
         env:
             NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
 
+        services:
+            mysql:
+                image: mysql:latest
+                env:
+                    MYSQL_ROOT_PASSWORD: root_password
+                    MYSQL_DATABASE: test_db
+                    MYSQL_USER: db_user
+                    MYSQL_PASSWORD: db_password
+                ports:
+                    - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
@@ -27,12 +39,15 @@ jobs:
               working-directory: backend
               run: npm install
 
+            - name: Wait for MySQL to start
+              run: |
+                  echo "Waiting for MySQL to start"
+                  dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
+
+            - name: Run database migration
+              working-directory: backend
+              run: npm run migrate # Assuming you have a script to handle migrations
+
             - name: Run backend tests
               working-directory: backend
-              env:
-                  DB_HOST: localhost
-                  DB_PORT: 3306
-                  DB_USER: ${{ secrets.DB_USER }}
-                  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-                  DB_DATABASE: test
               run: npm test
