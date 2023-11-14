@@ -42,8 +42,9 @@ jobs:
                   MYSQL_USER: dbadm
                   MYSQL_PASSWORD: P@ssw0rd
                   MYSQL_DATABASE: test
+              working-directory: sql
               run: |
-                  # Run your MySQL script here
+                  mariadb -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
 
             - name: Run tests
               env:
