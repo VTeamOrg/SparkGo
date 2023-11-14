@@ -28,10 +28,6 @@ jobs:
                   docker pull mariadb:latest
                   docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=test -e MYSQL_USER=dbadm -e MYSQL_PASSWORD=P@ssw0rd mariadb:latest
 
-            # Start Mariadb service
-            - name: Start MariabDB
-              run: sudo service mariadb start
-
             - name: Install backend dependencies
               working-directory: backend
               run: npm install
