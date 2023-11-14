@@ -22,7 +22,11 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
 
 const io = require("socket.io")(httpServer, {
     cors: {
-        origin: "http://localhost:9000",
+        origin: [
+            "http://localhost:9000",
+            "http://localhost:1337",
+            "http://127.0.0.1:3306",
+        ],
         methods: ["GET", "POST"],
     },
 });
@@ -45,4 +49,3 @@ httpServer.listen(port, () => {
 });
 
 module.exports = app; // Export the app variable
-

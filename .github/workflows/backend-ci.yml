@@ -29,4 +29,4 @@ jobs:
 
             - name: Run backend tests
               working-directory: backend
-              run: npx mocha --exit --require dotenv/config ./test/app.js
+              run: npm test
