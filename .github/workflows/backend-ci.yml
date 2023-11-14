@@ -13,6 +13,7 @@ jobs:
 
         env:
             NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
+            DB_PORT: 3000 # Set the database port environment variable
 
         steps:
             - name: Checkout code
