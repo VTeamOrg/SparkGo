@@ -3,24 +3,33 @@ name: Backend CI/CD
 on:
     push:
         branches:
-            - main
+            - master
             - dev
             - feature-backend-testing
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-20.04
 
         services:
-            mysql:
-                image: mysql:latest
-                ports:
-                    - 3306:3306
+            mariadb:
+                image: mariadb:latest
                 env:
                     MYSQL_ROOT_PASSWORD: root_password
                     MYSQL_DATABASE: test
                     MYSQL_USER: dbadm
                     MYSQL_PASSWORD: P@ssw0rd
+                ports:
+                    - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        env:
+            NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
+            DB_HOST: localhost
+            DB_PORT: 3306
+            DB_USER: dbadm
+            DB_PASSWORD: P@ssw0rd
+            DB_DATABASE: test
 
         steps:
             - name: Checkout code
@@ -35,21 +44,6 @@ jobs:
               working-directory: backend
               run: npm install
 
-            - name: Run MySQL script
-              env:
-                  MYSQL_HOST: localhost
-                  MYSQL_PORT: 3306
-                  MYSQL_USER: dbadm
-                  MYSQL_PASSWORD: P@ssw0rd
-                  MYSQL_DATABASE: test
-              working-directory: sql
-              run: |
-                  mariadb -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
-
-            - name: Run tests
-              env:
-                  DB_HOST: localhost
-                  DB_USER: dbadm
-                  DB_PASSWORD: P@ssw0rd
-                  DB_DATABASE: test
+            - name: Run backend tests
+              working-directory: backend
               run: npm test
