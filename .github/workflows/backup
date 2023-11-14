@@ -1,0 +1,44 @@
+name: Backend CI/CD
+
+on:
+    push:
+        branches:
+            - main
+            - dev
+            - feature-backend-testing
+
+jobs:
+    build:
+        runs-on: ubuntu-20.04
+
+        env:
+            NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
+            MYSQL_HOST: "localhost"
+            MYSQL_PORT: 3306
+            MYSQL_USER: dbadm
+            MYSQL_PASSWORD: P@ssw0rd
+            MYSQL_DATABASE: test
+            MYSQL_MULTIPLE_STATEMENTS: true
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16.20.2
+
+            - name: Install backend dependencies
+              working-directory: backend
+              run: npm install
+
+            # Run SQL script to reset the 'test' database
+            - name: Reset test database
+              working-directory: sql
+              run: |
+                  mariadb -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
+
+            - name: Run backend tests
+              working-directory: backend
+              run: npm test
