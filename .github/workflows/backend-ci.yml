@@ -28,20 +28,14 @@ jobs:
                   docker pull mariadb:latest
                   docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=test -e MYSQL_USER=dbadm -e MYSQL_PASSWORD=P@ssw0rd mariadb:latest
 
+            - name: Run SQL scripts to populate databases
+              working-directory: sql
+              run: |
+                  docker exec mariadb sh -c 'mysql -h localhost -u dbadm -pP@ssw0rd test <reset.sql'
+
             - name: Install backend dependencies
               working-directory: backend
               run: npm install
-
-            - name: Reset test database
-              env:
-                  MYSQL_HOST: localhost
-                  MYSQL_PORT: 3306
-                  MYSQL_USER: dbadm
-                  MYSQL_PASSWORD: P@ssw0rd
-                  MYSQL_DATABASE: test
-              working-directory: sql
-              run: |
-                  mariadb -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
 
             - name: Run backend tests
               working-directory: backend
