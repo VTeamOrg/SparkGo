@@ -32,12 +32,14 @@ jobs:
               run: |
                   sleep 15
 
-                  docker cp sql/reset.sql mariadb:/ddl test.sql
-                  docker cp sql/reset.sql mariadb:/insert test.sql
+                  docker cp sql/ddl test.sql.sql mariadb:/ddl test.sql
+                  docker cp sql/insert test.sql mariadb:/insert test.sql
+                  docker cp sql/ddl.sql.sql mariadb:/ddl.sql
+                  docker cp sql/insert.sql mariadb:/insert.sql
                   docker cp sql/reset.sql mariadb:/reset.sql
 
 
-                  docker exec mariadb sh -c 'mysql -h localhost -u dbadm -pP@ssw0rd test < /reset.sql'
+                  docker exec mariadb sh -c 'mysql -h localhost -u dbadm -pP@ssw0rd test < reset.sql'
 
             - name: Install backend dependencies
               working-directory: backend
