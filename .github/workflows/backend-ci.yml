@@ -35,4 +35,4 @@ jobs:
                   DB_USER: ${{ secrets.DB_USER }}
                   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
                   DB_DATABASE: test
-              run: npm testt
+              run: npm test
