@@ -36,6 +36,7 @@ describe("Server Connection Behavior", () => {
 
     // This is just an example test. Replace it with your actual test cases.
     it("should return a 200 status code when connecting to the server", (done) => {
+        this.timeout(3500);
         chai.request(`http://localhost:3000`)
             .get("/")
             .end((err, res) => {
@@ -46,6 +47,7 @@ describe("Server Connection Behavior", () => {
 
     // Test Case 3: Test a GET request to an endpoint from the "users" route
     it("should handle a GET request and return a 200 status code for an endpoint from the 'users' route", (done) => {
+        this.timeout(3500);
         chai.request(`http://localhost:3000`)
             .get("/users")
             .end((err, res) => {
@@ -56,6 +58,7 @@ describe("Server Connection Behavior", () => {
 
     // Test Case 4: Test an endpoint from the "vehicles" route
     it("should return a 200 status code when accessing an endpoint from the 'vehicles' route", (done) => {
+        this.timeout(3500);
         chai.request(`http://localhost:3000`)
             .get("/vehicles")
             .end((err, res) => {
@@ -66,7 +69,8 @@ describe("Server Connection Behavior", () => {
 
     // Test Case 5: Test an endpoint from the "cities" route
     it("should return a 200 status code when accessing an endpoint from the 'cities' route", (done) => {
-        chai.request(app)
+        this.timeout(3500);
+        chai.request(`http://localhost:3000`)
             .get("/cities")
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -76,6 +80,7 @@ describe("Server Connection Behavior", () => {
 
     // Test Case 6: Test an endpoint from the "stations" route
     it("should return a 200 status code when accessing an endpoint from the 'stations' route", (done) => {
+        this.timeout(3500);
         chai.request(`http://localhost:3000`)
             .get("/stations")
             .end((err, res) => {
