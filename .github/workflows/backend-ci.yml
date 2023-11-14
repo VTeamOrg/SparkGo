@@ -27,9 +27,6 @@ jobs:
               working-directory: backend
               run: npm install
 
-            - name: Load environment variables from .env
-              run: npm install dotenv
-
             - name: Run backend tests
               working-directory: backend
-              run: node -r dotenv/config ./test/app.js
+              run: npx mocha --exit --require dotenv/config ./test/app.js
