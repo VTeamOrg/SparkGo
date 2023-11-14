@@ -32,6 +32,17 @@ jobs:
               working-directory: backend
               run: npm install
 
+            - name: Reset test database
+              env:
+                  MYSQL_HOST: localhost
+                  MYSQL_PORT: 3306
+                  MYSQL_USER: dbadm
+                  MYSQL_PASSWORD: P@ssw0rd
+                  MYSQL_DATABASE: test
+              working-directory: sql
+              run: |
+                  mysql -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < reset.sql
+
             - name: Run backend tests
               working-directory: backend
               run: npm test
