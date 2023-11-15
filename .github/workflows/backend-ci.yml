@@ -1,0 +1,31 @@
+name: Backend CI/CD
+
+on:
+    push:
+        branches:
+            - main
+            - dev
+
+jobs:
+    build:
+        runs-on: ubuntu-20.04
+
+        env:
+            NODE_OPTIONS: "--max-old-space-size=4096" # Increase Node.js memory limit
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16.20.2
+
+            - name: Install backend dependencies
+              working-directory: backend
+              run: npm install
+
+            - name: Run backend tests
+              working-directory: backend
+              run: npm test
