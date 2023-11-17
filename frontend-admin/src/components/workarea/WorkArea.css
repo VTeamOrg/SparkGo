@@ -1,0 +1,64 @@
+/* MyAccount */
+
+.work-area {
+    background-color: #f0f0f0;
+  }
+  
+  form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .form-group:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  /* RideHistory */
+
+.misc-history {
+    background-color: #f0f0f0;
+  }
+  
+  .misc-history li {
+    background-color: #fff; 
+    border: 1px solid #ddd;
+  }
+  
+  .misc-history li:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+  
+  .misc-history li h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .misc-history li p {
+    margin: 5px 0;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0; 
+    padding: 0; 
+  }
