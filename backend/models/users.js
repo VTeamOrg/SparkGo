@@ -40,8 +40,51 @@ const users = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },
+    updateUser: async function updateUser(req, res) {
+        try {
+            const db = await database.openDb();
+            const userId = req.params.userId;
+            const {
+                /* fields to update */
+            } = req.body;
 
-    // Rest of the CRUD operations with a similar structure...
+            // Perform an update query based on fields sent in the request
+            const updatedUser = await database.query(
+                db,
+                "UPDATE member SET /* fields to update */ WHERE id = ?",
+                [, /* updated field values */ userId]
+            );
+
+            await database.closeDb(db);
+
+            return res.json({
+                message: "User updated successfully",
+                data: updatedUser,
+            });
+        } catch (error) {
+            console.error("Error updating user:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    deleteUser: async function deleteUser(req, res) {
+        try {
+            const db = await database.openDb();
+            const userId = req.params.userId;
+
+            // Delete user query
+            await database.query(db, "DELETE FROM member WHERE id = ?", userId);
+
+            await database.closeDb(db);
+
+            return res.json({
+                message: "User deleted successfully",
+            });
+        } catch (error) {
+            console.error("Error deleting user:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
 };
 
 module.exports = users;

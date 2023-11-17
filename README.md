@@ -18,7 +18,11 @@ in /sql
 
 run
 
-sudo mariadb --table < reset.sql
+sudo mariadb --table < resetAll.sql
+
+eller endast test databasen
+
+sudo mariadb --table < reset test.sql
 
 # Run test
 

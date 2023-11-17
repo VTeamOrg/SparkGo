@@ -11,7 +11,7 @@ use test;
 
 -- runs tables script
 source ddl test.sql
-source insert test.sql
+source inser test.sql
 
 
 
