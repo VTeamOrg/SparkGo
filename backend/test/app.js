@@ -2,40 +2,29 @@
 
 process.env.NODE_ENV = "test";
 
+const sinon = require("sinon");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-const HTMLparser = require("node-html-parser");
-const app = require("../../backend/app.js"); // Import the 'app' variable from your main application file
+const app = require("../../backend/app.js");
 const expect = chai.expect;
 
 chai.should();
 chai.use(chaiHttp);
 
 describe("Server Connection Behavior", () => {
-    let server; // Declare a variable to hold the server instance
-    const testPort = 3000; // Choose a port for your test environment (e.g., 3000)
-    let allTestsPassed = true; // Variable to track test status
+    let sandbox;
 
-    // Before running the tests, start the server on the selected port
-    before((done) => {
-        server = app.listen(testPort, () => {
-            console.log(`Test server is running on port ${testPort}`);
-            done();
-        });
+    before(() => {
+        sandbox = sinon.createSandbox();
     });
 
-    // After running the tests, close the server to release the port
     after(() => {
-        server.close();
-        if (allTestsPassed) {
-            // This code will run if all tests passed
-            console.log("All tests passed! Performing post-pass actions...");
-            // Add your post-pass actions here
-        }
+        sandbox.restore();
     });
 
-    // This is just an example test. Replace it with your actual test cases.
     it("should return a 200 status code when connecting to the server", (done) => {
+        // Mock the database call or any other relevant setup
+
         chai.request(app)
             .get("/")
             .end((err, res) => {
