@@ -5,7 +5,6 @@
     "main": "app.js",
     "scripts": {
         "test": "mocha --exit test/app.js --exit test/user.js --exit test/city.js --exit test/station.js  && npm run reset-db",
-        "reset-db": "cd ../sql && sudo mariadb --table < reset_test.sql",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },
