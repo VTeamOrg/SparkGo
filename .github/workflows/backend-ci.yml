@@ -5,6 +5,7 @@ on:
         branches:
             - feature-backend-testing
             - dev
+            - master
 
 jobs:
     build:
