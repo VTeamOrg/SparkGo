@@ -30,7 +30,13 @@ in /backend
 
 npm test
 
-runs tests against the api endpoints created
+Tests against the api endpoints created
+
+Tests against get,post,put,del created
+
+# Testing fixes
+
+Test againt the backend is using different models (/testmodels) not relying on res messages as the productions does to easier test in gitub action using mockups of the database, not having to reset database data everytime
 
 # Run server
 
