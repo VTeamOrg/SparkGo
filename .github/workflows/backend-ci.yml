@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - feature-backend-testing
+            - dev
 
 jobs:
     build:
