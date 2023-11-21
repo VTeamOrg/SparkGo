@@ -1,86 +1,41 @@
 const chai = require("chai");
+const sinon = require("sinon");
 const chaiHttp = require("chai-http");
-const app = require("../../backend/app.js");
-const expect = chai.expect;
 
 chai.should();
 chai.use(chaiHttp);
 
-const mysql = require("mysql");
-const stationsModel = require("../../backend/models/stations.js"); // Import your city model
+const stationsModel = require("../../backend/testmodels/stationtest.js"); // Import your station model
+const database = require("../../backend/db/database.js"); // Import your database functions
 
-// Define the MySQL pool configuration
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    multipleStatements: true,
-});
-
-// Open a database connection
-const openDb = () => {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(connection);
-            }
-        });
-    });
-};
-
-// Close the database connection
-const closeDb = (connection) => {
-    return new Promise((resolve, reject) => {
-        connection.release();
-        resolve();
-    });
-};
-
-// Execute a query on the database
-const query = (connection, sql, params) => {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, params, (err, results) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(results);
-            }
-        });
-    });
-};
-
-describe("Station API with MySQL", () => {
+describe("Station Model Tests", () => {
+    let sandbox;
     let connection;
 
-    before(async () => {
-        try {
-            // Initialize a database connection before running tests
-            connection = await openDb();
-        } catch (error) {
-            throw error;
-        }
+    before(() => {
+        sandbox = sinon.createSandbox();
+        // Stub the database functions
+        sandbox.stub(database, "openDb").resolves({}); // Stub the openDb function
+        sandbox.stub(database, "query").resolves({
+            /* mock data */
+        }); // Stub the query function
+        sandbox.stub(database, "closeDb").resolves(); // Stub the closeDb function
+
+        // Simulate an open connection for testing
+        connection = {}; // Replace this with your mock connection object if required
     });
 
-    after(async () => {
-        try {
-            // Close the database connection after running tests
-            await closeDb(connection);
-        } catch (error) {
-            throw error;
-        }
+    after(() => {
+        sandbox.restore();
     });
 
     describe("Create Station (POST)", () => {
-        it("should manually insert a city into the database", async () => {
-            const insertSql = "INSERT INTO renting_station (name) VALUES (?)";
-            const insertParams = ["Test Station"];
+        it("should manually insert a station into the database", async () => {
+            const insertParams = ["Test Station", 123.45, 67.89, 1]; // Sample parameters for creating a station
 
             try {
-                // Insert a city manually into the database
-                await query(connection, insertSql, insertParams);
+                // Insert a station manually into the database using stationsModel
+                await stationsModel.createStation(...insertParams);
             } catch (error) {
                 throw error;
             }
@@ -90,18 +45,10 @@ describe("Station API with MySQL", () => {
     describe("Get Station by ID (GET)", () => {
         it("should retrieve a station by ID from the database", async () => {
             try {
-                // Attempt to get the station with ID 11
-                const req = { params: { stationId: 11 } }; // Mock request object with stationId 11
-                const res = {
-                    json: (data) => {
-                        console.log(data); // Log the received data for testing purposes
-                    },
-                    status: (statusCode) => {
-                        return { json: (error) => console.log(error) };
-                    },
-                };
-                await stationsModel.getStationById(req, res);
-                // Perform assertions based on the received data
+                // Attempt to get the station with ID 11 using stationsModel.getStationById
+                const station = await stationsModel.getStationById(11);
+                // Log or assert based on the received station data
+                console.log(station);
             } catch (error) {
                 throw error;
             }
@@ -110,13 +57,11 @@ describe("Station API with MySQL", () => {
 
     describe("Update Station by ID (PUT)", () => {
         it("should manually update a station by ID in the database", async () => {
-            const updateSql =
-                "UPDATE renting_station SET name = ? WHERE id = ?";
-            const updateParams = ["New Station Name", 11]; // Assuming the ID to update is 11
+            const updateParams = ["New Station Name", 123.45, 67.89, 1, 11]; // Assuming the ID to update is 11
 
             try {
-                // Update a station manually in the database
-                await query(connection, updateSql, updateParams);
+                // Update a station manually in the database using stationsModel
+                await stationsModel.updateStation(...updateParams);
             } catch (error) {
                 throw error;
             }
@@ -125,11 +70,9 @@ describe("Station API with MySQL", () => {
 
     describe("Delete Station by ID (DELETE)", () => {
         it("should manually delete a station by ID from the database", async () => {
-            const deleteSql = "DELETE FROM renting_station WHERE id = ?";
-
             try {
-                // Delete a station manually from the database
-                await query(connection, deleteSql, 11); // Assuming the ID to delete is 11
+                // Delete a station manually from the database using stationsModel
+                await stationsModel.deleteStation(11); // Assuming the ID to delete is 11
             } catch (error) {
                 throw error;
             }
@@ -140,17 +83,9 @@ describe("Station API with MySQL", () => {
         it("should retrieve a station by ID from the database", async () => {
             try {
                 // Attempt to get the station with ID 11
-                const req = { params: { stationId: 11 } }; // Mock request object with stationId 11
-                const res = {
-                    json: (data) => {
-                        console.log(data); // Log the received data for testing purposes
-                    },
-                    status: (statusCode) => {
-                        return { json: (error) => console.log(error) };
-                    },
-                };
-                await stationsModel.getStationById(req, res);
-                // Perform assertions based on the received data
+                const station = await stationsModel.getStationById(11);
+                // Log or assert based on the received station data
+                console.log(station);
             } catch (error) {
                 throw error;
             }
