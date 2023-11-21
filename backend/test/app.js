@@ -7,6 +7,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const app = require("../../backend/app.js");
 const expect = chai.expect;
+const database = require("../../backend/db/database.js"); // Import your database functions
 
 chai.should();
 chai.use(chaiHttp);
@@ -16,6 +17,12 @@ describe("Server Connection Behavior", () => {
 
     before(() => {
         sandbox = sinon.createSandbox();
+        // Stub the database functions
+        sandbox.stub(database, "openDb").resolves({}); // Stub the openDb function
+        sandbox.stub(database, "query").resolves({
+            /* mock data */
+        }); // Stub the query function
+        sandbox.stub(database, "closeDb").resolves(); // Stub the closeDb function
     });
 
     after(() => {
@@ -23,8 +30,6 @@ describe("Server Connection Behavior", () => {
     });
 
     it("should return a 200 status code when connecting to the server", (done) => {
-        // Mock the database call or any other relevant setup
-
         chai.request(app)
             .get("/")
             .end((err, res) => {
