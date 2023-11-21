@@ -1,56 +1,36 @@
 const chai = require("chai");
+const sinon = require("sinon");
 const chaiHttp = require("chai-http");
-const app = require("../../backend/app.js");
 const expect = chai.expect;
+
+// Replace the actual MySQL pool and functions with stubs/mocks
+const pool = {
+    getConnection: sinon.stub(),
+};
+const openDb = sinon.stub();
+const closeDb = sinon.stub();
+const query = sinon.stub();
+
+// Stub the connection methods
+pool.getConnection.callsFake((callback) => {
+    callback(null, { release: sinon.stub() }); // Mocking the connection object with a release method
+});
+
+// Assign the stubs to the methods you're replacing
+const database = {
+    openDb,
+    closeDb,
+    query,
+};
+
+// Now replace the original database functions in your city model with the stubs
+const citiesModel = require("../../backend/models/cities.js");
+citiesModel.__Rewire__("openDb", openDb);
+citiesModel.__Rewire__("closeDb", closeDb);
+citiesModel.__Rewire__("query", query);
 
 chai.should();
 chai.use(chaiHttp);
-
-const mysql = require("mysql");
-const citiesModel = require("../../backend/models/cities.js"); // Import your city model
-
-// Define the MySQL pool configuration
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    multipleStatements: true,
-});
-
-// Open a database connection
-const openDb = () => {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(connection);
-            }
-        });
-    });
-};
-
-// Close the database connection
-const closeDb = (connection) => {
-    return new Promise((resolve, reject) => {
-        connection.release();
-        resolve();
-    });
-};
-
-// Execute a query on the database
-const query = (connection, sql, params) => {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, params, (err, results) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(results);
-            }
-        });
-    });
-};
 
 describe("City API with MySQL", () => {
     let connection;
