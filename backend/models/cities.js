@@ -1,7 +1,7 @@
 const database = require("../db/database.js");
 
 const cities = {
-    getAllCities: async function (req, res) {
+    getAllCities: async function () {
         try {
             const db = await database.openDb();
             const allCities = await database.query(
@@ -11,19 +11,16 @@ const cities = {
 
             await database.closeDb(db);
 
-            return res.json({
-                data: allCities,
-            });
+            return allCities;
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw new Error("Internal Server Error");
         }
     },
 
-    getCityById: async function (req, res) {
+    getCityById: async function (cityId) {
         try {
             const db = await database.openDb();
-            const cityId = req.params.cityId;
             const city = await database.query(
                 db,
                 "SELECT * FROM city WHERE id = ?",
@@ -32,77 +29,60 @@ const cities = {
 
             await database.closeDb(db);
 
-            return res.json({
-                data: city[0],
-            });
+            return city[0];
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw new Error("Internal Server Error");
         }
     },
 
-    createCity: async function (req, res) {
+    createCity: async function (name) {
         try {
             const db = await database.openDb();
-            const { name, population } = req.body; // Assuming name and population are required fields for creating a city
-
             const newCity = await database.query(
                 db,
-                "INSERT INTO city (name, population) VALUES (?, ?)",
-                [name, population]
+                "INSERT INTO city (name) VALUES (?)",
+                [name]
             );
 
             await database.closeDb(db);
 
-            return res.status(201).json({
-                message: "City created successfully",
-                data: newCity,
-            });
+            return newCity;
         } catch (error) {
             console.error("Error creating city:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw new Error("Internal Server Error");
         }
     },
 
-    updateCity: async function (req, res) {
+    updateCity: async function (name, cityId) {
         try {
             const db = await database.openDb();
-            const cityId = req.params.cityId;
-            const { name, population } = req.body; // Fields to update
-
             const updatedCity = await database.query(
                 db,
-                "UPDATE city SET name = ?, population = ? WHERE id = ?",
-                [name, population, cityId]
+                "UPDATE city SET name = ? WHERE id = ?",
+                [name, cityId]
             );
 
             await database.closeDb(db);
 
-            return res.json({
-                message: "City updated successfully",
-                data: updatedCity,
-            });
+            return updatedCity;
         } catch (error) {
             console.error("Error updating city:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw new Error("Internal Server Error");
         }
     },
 
-    deleteCity: async function (req, res) {
+    deleteCity: async function (cityId) {
         try {
             const db = await database.openDb();
-            const cityId = req.params.cityId;
-
             await database.query(db, "DELETE FROM city WHERE id = ?", cityId);
 
             await database.closeDb(db);
 
-            return res.json({
-                message: "City deleted successfully",
-            });
+            return { message: "City deleted successfully" };
         } catch (error) {
             console.error("Error deleting city:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw new Error("Internal Server Error");
         }
     },
 };

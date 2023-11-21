@@ -2,55 +2,31 @@ const chai = require("chai");
 const sinon = require("sinon");
 const chaiHttp = require("chai-http");
 const expect = chai.expect;
-
-// Replace the actual MySQL pool and functions with stubs/mocks
-const pool = {
-    getConnection: sinon.stub(),
-};
-const openDb = sinon.stub();
-const closeDb = sinon.stub();
-const query = sinon.stub();
-
-// Stub the connection methods
-pool.getConnection.callsFake((callback) => {
-    callback(null, { release: sinon.stub() }); // Mocking the connection object with a release method
-});
-
-// Assign the stubs to the methods you're replacing
-const database = {
-    openDb,
-    closeDb,
-    query,
-};
-
-// Now replace the original database functions in your city model with the stubs
 const citiesModel = require("../../backend/models/cities.js");
-citiesModel.__Rewire__("openDb", openDb);
-citiesModel.__Rewire__("closeDb", closeDb);
-citiesModel.__Rewire__("query", query);
+const database = require("../../backend/db/database.js"); // Import your database functions
 
 chai.should();
 chai.use(chaiHttp);
 
-describe("City API with MySQL", () => {
+describe("Server Connection Behavior", () => {
+    let sandbox;
     let connection;
 
-    before(async () => {
-        try {
-            // Initialize a database connection before running tests
-            connection = await openDb();
-        } catch (error) {
-            throw error;
-        }
+    before(() => {
+        sandbox = sinon.createSandbox();
+        // Stub the database functions
+        sandbox.stub(database, "openDb").resolves({}); // Stub the openDb function
+        sandbox.stub(database, "query").resolves({
+            /* mock data */
+        }); // Stub the query function
+        sandbox.stub(database, "closeDb").resolves(); // Stub the closeDb function
+
+        // Simulate an open connection for testing
+        connection = {}; // Replace this with your mock connection object if required
     });
 
-    after(async () => {
-        try {
-            // Close the database connection after running tests
-            await closeDb(connection);
-        } catch (error) {
-            throw error;
-        }
+    after(() => {
+        sandbox.restore();
     });
 
     describe("Create City (POST)", () => {
@@ -59,8 +35,12 @@ describe("City API with MySQL", () => {
             const insertParams = ["Test City"];
 
             try {
-                // Insert a city manually into the database
-                await query(connection, insertSql, insertParams);
+                // Insert a city manually into the database using citiesModel query
+                await citiesModel.createCity(
+                    connection,
+                    insertSql,
+                    insertParams
+                );
             } catch (error) {
                 throw error;
             }
@@ -70,7 +50,7 @@ describe("City API with MySQL", () => {
     describe("Get City by ID (GET)", () => {
         it("should retrieve a city by ID from the database", async () => {
             try {
-                // Attempt to get the city with ID 11
+                // Attempt to get the city with ID 11 using citiesModel.getCityById
                 const req = { params: { cityId: 11 } }; // Mock request object with cityId 11
                 const res = {
                     json: (data) => {
@@ -94,8 +74,12 @@ describe("City API with MySQL", () => {
             const updateParams = ["New City Name", 11]; // Assuming the ID to update is 11
 
             try {
-                // Update a city manually in the database
-                await query(connection, updateSql, updateParams);
+                // Update a city manually in the database using citiesModel query
+                await citiesModel.updateCity(
+                    connection,
+                    updateSql,
+                    updateParams
+                );
             } catch (error) {
                 throw error;
             }
@@ -107,29 +91,8 @@ describe("City API with MySQL", () => {
             const deleteSql = "DELETE FROM city WHERE id = ?";
 
             try {
-                // Delete a city manually from the database
-                await query(connection, deleteSql, 11); // Assuming the ID to delete is 11
-            } catch (error) {
-                throw error;
-            }
-        });
-    });
-
-    describe("Get City by ID (GET)", () => {
-        it("should retrieve a city by ID from the database", async () => {
-            try {
-                // Attempt to get the city with ID 11
-                const req = { params: { cityId: 11 } }; // Mock request object with cityId 11
-                const res = {
-                    json: (data) => {
-                        console.log(data); // Log the received data for testing purposes
-                    },
-                    status: (statusCode) => {
-                        return { json: (error) => console.log(error) };
-                    },
-                };
-                await citiesModel.getCityById(req, res);
-                // Perform assertions based on the received data
+                // Delete a city manually from the database using citiesModel query
+                await citiesModel.deleteCity(connection, deleteSql, [11]); // Assuming the ID to delete is 11
             } catch (error) {
                 throw error;
             }
