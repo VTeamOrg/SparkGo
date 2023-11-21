@@ -12,6 +12,27 @@ chai.should();
 chai.use(chaiHttp);
 
 describe("Server Connection Behavior", () => {
+    let server; // Declare a variable to hold the server instance
+    const testPort = 3000; // Choose a port for your test environment (e.g., 3000)
+    let allTestsPassed = true; // Variable to track test status
+
+    // Before running the tests, start the server on the selected port
+    before((done) => {
+        server = app.listen(testPort, () => {
+            console.log(`Test server is running on port ${testPort}`);
+            done();
+        });
+    });
+
+    // After running the tests, close the server to release the port
+    after(() => {
+        server.close();
+        if (allTestsPassed) {
+            // This code will run if all tests passed
+            console.log("All tests passed! Performing post-pass actions...");
+            // Add your post-pass actions here
+        }
+    });
 
     // This is just an example test. Replace it with your actual test cases.
     it("should return a 200 status code when connecting to the server", (done) => {

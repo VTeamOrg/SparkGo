@@ -35,7 +35,7 @@ const io = require("socket.io")(httpServer, {
     },
 });
 
-const port = 1337;
+const port = process.env.NODE_ENV === "test" ? 1337 : 3000; // Use port 1337 for testing
 
 app.get("/", (req, res) => {
     res.json({
