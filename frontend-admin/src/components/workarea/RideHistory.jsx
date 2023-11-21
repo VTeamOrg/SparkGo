@@ -51,6 +51,7 @@ function RideHistory() {
     setRideHistory(fetchedRideHistory);
   }, []);
 
+  /* JSX to render data */
   return (
     <div className="misc-history">
       <h2>Ride History</h2>

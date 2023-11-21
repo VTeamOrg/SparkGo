@@ -1,4 +1,4 @@
-use sparkgo;
+--use sparkgo;
 
 -- initial drops
 drop trigger if exists log_scooter_insert;

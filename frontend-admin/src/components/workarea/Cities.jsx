@@ -75,7 +75,7 @@ function Cities() {
     setCities(updatedCities);
   };
 
-/* RETURN */
+  /* JSX to render data */
   return (
     <div className="cities">
       <h2>Connected Cities</h2>

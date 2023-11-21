@@ -48,6 +48,7 @@ function Receipts() {
     setReceipts(fetchedReceipts);
   }, []);
 
+  /* JSX to render data */
   return (
     <div className="misc-history">
       <h2>Receipts</h2>

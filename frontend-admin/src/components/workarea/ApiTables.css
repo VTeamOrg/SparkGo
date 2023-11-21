@@ -1,0 +1,44 @@
+/* CSS to style the station data */
+.stations {
+    /* font-family: Arial, sans-serif; */
+    margin: 20px;
+  }
+  
+  .stations h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .stations ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .stations li {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stations h3 {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .stations p {
+    margin: 5px 0;
+  }
+  
+  /* Optional: Add hover effect for better user experience */
+  .stations li:hover {
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Right-align text in table cells */
+  .stations .station-table td {
+    text-align: left;
+  }
+  

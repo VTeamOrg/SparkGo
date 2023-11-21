@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MyAccount from './workarea/MyAccount'; 
 import RideHistory from './workarea/RideHistory'; 
 import Receipts from './workarea/Receipts'; 
 import Cities from './workarea/Cities'; 
+import Stations from './workarea/Stations'; 
 
 function WorkArea({ activeSection }) {
+
+  /* Emit an event when a new section is selected */
+  useEffect(() => {
+    const event = new CustomEvent('sectionSelected', { detail: activeSection });
+    window.dispatchEvent(event);
+  }, [activeSection]);
+
     const renderContent = () => {
       switch (activeSection) {
         case 'myAccount':
@@ -16,7 +24,7 @@ function WorkArea({ activeSection }) {
         case 'cities':
           return <Cities />;  
         case 'stations':
-          return <div>Stations Content</div>;
+          return <Stations />;  
         case 'vehicles':
           return <div>Vehicles Content</div>;
         case 'customers':
