@@ -41,7 +41,74 @@ const vehicles = {
         }
     },
 
-    // Rest of the CRUD operations with a similar structure...
+    createVehicle: async function (req, res) {
+        try {
+            const db = await database.openDb();
+            const { city_id, type_id, rented_by } = req.body; // Assuming these are required fields for creating a vehicle
+
+            const newVehicle = await database.query(
+                db,
+                "INSERT INTO vehicle (city_id, type_id, rented_by) VALUES (?, ?, ?)",
+                [city_id, type_id, rented_by]
+            );
+
+            await database.closeDb(db);
+
+            return res.status(201).json({
+                message: "Vehicle created successfully",
+                data: newVehicle,
+            });
+        } catch (error) {
+            console.error("Error creating vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    updateVehicle: async function (req, res) {
+        try {
+            const db = await database.openDb();
+            const vehicleId = req.params.vehicleId;
+            const { city_id, type_id, rented_by } = req.body; // Fields to update
+
+            const updatedVehicle = await database.query(
+                db,
+                "UPDATE vehicle SET city_id = ?, type_id = ?, rented_by = ? WHERE id = ?",
+                [city_id, type_id, rented_by, vehicleId]
+            );
+
+            await database.closeDb(db);
+
+            return res.json({
+                message: "Vehicle updated successfully",
+                data: updatedVehicle,
+            });
+        } catch (error) {
+            console.error("Error updating vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    deleteVehicle: async function (req, res) {
+        try {
+            const db = await database.openDb();
+            const vehicleId = req.params.vehicleId;
+
+            await database.query(
+                db,
+                "DELETE FROM vehicle WHERE id = ?",
+                vehicleId
+            );
+
+            await database.closeDb(db);
+
+            return res.json({
+                message: "Vehicle deleted successfully",
+            });
+        } catch (error) {
+            console.error("Error deleting vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
 };
 
 module.exports = vehicles;

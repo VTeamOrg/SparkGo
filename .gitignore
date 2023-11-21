@@ -4,3 +4,4 @@ node_modules/
 *.wt
 backend/db/diagnostic.data/
 backend/db/journal/
+.env

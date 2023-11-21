@@ -13,7 +13,7 @@ drop table if exists city;
 
 -- create schema for e-scooter database
 create table city (
-    id int primary key,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name varchar(255)
 );
 
