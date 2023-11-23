@@ -47,7 +47,7 @@ const users = {
     getUserById: async function getUserById(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.userId;
+            const userId = req.params.id;
             const user = await database.query(
                 db,
                 "SELECT * FROM member WHERE id = ?",
@@ -67,7 +67,7 @@ const users = {
     updateUser: async function updateUser(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.userId;
+            const userId = req.params.id;
             const {
                 role,
                 email,
@@ -134,7 +134,7 @@ const users = {
     deleteUser: async function deleteUser(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.userId;
+            const userId = req.params.id;
 
             // Delete user query
             await database.query(db, "DELETE FROM member WHERE id = ?", userId);
