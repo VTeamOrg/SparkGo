@@ -1,7 +1,7 @@
 SET GLOBAL local_infile = 1;
 SHOW VARIABLES LIKE 'local_infile';
 
-use sparkgo;
+--use sparkgo;
 
 LOAD DATA LOCAL INFILE 'csv/city.csv'
 INTO TABLE city
