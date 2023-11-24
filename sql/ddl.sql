@@ -14,7 +14,7 @@ drop table if exists city;
 -- create schema for e-scooter database
 create table city (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name varchar(255)
+    name varchar(255) NOT NULL
 );
 
 CREATE TABLE frequencies (
@@ -24,8 +24,8 @@ CREATE TABLE frequencies (
 
 CREATE TABLE renting_station (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    city_id INT,
-    name VARCHAR(255),
+    city_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     coords_lat DECIMAL(10, 6), 
     coords_long DECIMAL(10, 6), 
     FOREIGN KEY (city_id) REFERENCES city(id)
@@ -33,26 +33,26 @@ CREATE TABLE renting_station (
 
 CREATE TABLE member (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    role VARCHAR(255),
-    email VARCHAR(255),
-    name VARCHAR(255),
+    role VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     personal_number VARCHAR(255),
     address VARCHAR(255)
 );
 
 CREATE TABLE payment_method (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id INT,
-    method_name VARCHAR(255),
-    reference_info VARCHAR(255),
+    member_id INT NOT NULL,
+    method_name VARCHAR(255) NOT NULL,
+    reference_info VARCHAR(255) NOT NULL,
     is_selected ENUM('Y', 'N') DEFAULT 'N',
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 CREATE TABLE vehicle (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    city_id INT,
-    type VARCHAR(255),
+    city_id INT NOT NULL,
+    type VARCHAR(255) NOT NULL,
     rented_by INT,
     FOREIGN KEY (city_id) REFERENCES city(id),
     FOREIGN KEY (rented_by) REFERENCES member(id)
@@ -60,26 +60,26 @@ CREATE TABLE vehicle (
 
 CREATE TABLE plan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
-    description TEXT,
-    price DECIMAL(10, 2),
-    price_frequency_id INT,
-    included_unlocks INT,
-    included_unlocks_frequency_id INT,
-    included_minutes INT,
-    included_minutes_frequency_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10, 2) DEFAULT 0,
+    price_frequency_id INT DEFAULT 0,
+    included_unlocks INT DEFAULT 0,
+    included_unlocks_frequency_id INT DEFAULT 0,
+    included_minutes INT DEFAULT 0,
+    included_minutes_frequency_id INT DEFAULT 0,
     FOREIGN KEY (price_frequency_id) REFERENCES frequencies(id),
     FOREIGN KEY (included_unlocks_frequency_id) REFERENCES frequencies(id),
     FOREIGN KEY (included_minutes_frequency_id) REFERENCES frequencies(id)
 );
 
 CREATE TABLE active_plan (
-    plan_id INT,
-    member_id INT,
-    activation_date DATE,
-    available_minutes INT,
-    available_unlocks INT,
-    is_paused ENUM('Y', 'N'),
+    plan_id INT NOT NULL,
+    member_id INT NOT NULL,
+    activation_date DATE NOT NULL,
+    available_minutes INT DEFAULT 0,
+    available_unlocks INT DEFAULT 0,
+    is_paused ENUM('Y', 'N') DEFAULT 'N',
     PRIMARY KEY (plan_id, member_id, activation_date),
     FOREIGN KEY (plan_id) REFERENCES plan(id),
     FOREIGN KEY (member_id) REFERENCES member(id)
@@ -87,7 +87,7 @@ CREATE TABLE active_plan (
 
 CREATE TABLE receipt (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id INT,
+    member_id INT NOT NULL,
     payment_details VARCHAR(255),
     payment_type VARCHAR(255),
     receipt_details VARCHAR(255)
