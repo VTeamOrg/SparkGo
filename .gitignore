@@ -1,0 +1,7 @@
+node_modules/
+*.sqlite
+.vscode/
+*.wt
+backend/db/diagnostic.data/
+backend/db/journal/
+.env

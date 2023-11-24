@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --exit test/app.js",
+        "test": "mocha --exit test/app.js --exit test/user.js --exit test/city.js --exit test/station.js",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },
