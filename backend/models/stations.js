@@ -6,7 +6,7 @@ const stations = {
             const db = await database.openDb();
             const allStations = await database.query(
                 db,
-                "SELECT * FROM renting_station ORDER BY id DESC"
+                "SELECT * FROM v_renting_station ORDER BY id DESC"
             );
 
             await database.closeDb(db);
@@ -26,7 +26,7 @@ const stations = {
             const stationId = req.params.stationId;
             const station = await database.query(
                 db,
-                "SELECT * FROM renting_station WHERE id = ?",
+                "SELECT * FROM v_renting_station WHERE id = ?",
                 stationId
             );
 
