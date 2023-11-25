@@ -48,45 +48,61 @@ function MapView() {
 
     function handleCitiesDataLoaded(data) {
       if (data && data.detail && Array.isArray(data.detail)) {
-        // Extract city names from the details array
+
         const cityNames = data.detail.map((city) => city.name);
     
-        // Access the existing map instance
         const map = mapRef.current;
-
-        map.setView([60.1282, 15.5829], 6);
     
-        // Perform geocoding for each city
-        const geocodedCities = [];
+        /* Set the map's view to show most of Sweden */
+        map.setView([60.1282, 15.5829], 6); 
     
-        function geocodeCity(cityName) {
-          geocoder.geocode(cityName, (results) => {
+        /* Get all existing markers on the map */
+        const existingMarkers = [];
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker) {
+            existingMarkers.push(layer);
+          }
+        });
     
-            if (results && results.length > 0) {
-              const result = results[0];
-              const coordinates = [result.center.lat, result.center.lng];
+        /* Perform geocoding for each city and add new markers if not already present */
+        cityNames.forEach((cityName) => {
     
-              // Create a marker and add it to the map as a new layer
-              const marker = L.marker(coordinates).addTo(map);
-              marker.bindPopup(cityName);
+          /* Check if there's an existing marker for this city */
+          const existingMarker = existingMarkers.find(
+            (marker) => marker.getPopup().getContent() === cityName
+          );
     
-              // Store the coordinates in the geocodedCities array
-              geocodedCities.push({
-                name: cityName,
-                coordinates: coordinates,
-              });
-            } else {
-              console.log(`No results found for ${cityName}`);
-            }
-          });
-        }
+          if (existingMarker) {
+            existingMarkers.splice(existingMarkers.indexOf(existingMarker), 1); 
+          } else {
+            geocoder.geocode(cityName, (results) => {
     
-        // Call geocodeCity for each city
-        cityNames.forEach((cityName) => geocodeCity(cityName));
+              if (results && results.length > 0) {
+                const result = results[0];
+                const coordinates = [result.center.lat, result.center.lng];
+    
+                /* Create a new marker and add it to the map as a new layer */
+                const marker = L.marker(coordinates).addTo(map);
+                marker.bindPopup(cityName);
+              } else {
+                console.log(`No results found for ${cityName}`);
+              }
+            });
+          }
+        });
+    
+        /* Remove markers for cities that are no longer in the data set */
+        existingMarkers.forEach((marker) => map.removeLayer(marker));
       } else {
         console.log('Invalid cities data format:', data);
       }
     }
+    
+    
+    
+    
+    
+    
     
   
     

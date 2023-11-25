@@ -67,7 +67,7 @@ function Cities() {
           // Emit an event with the updated city data
           const event = new CustomEvent('citiesDataLoaded', { detail: result.data });
           window.dispatchEvent(event);
-          console.log(result.data);
+
 
         } else {
           console.error('Received data.data is not an array:', result.data);
