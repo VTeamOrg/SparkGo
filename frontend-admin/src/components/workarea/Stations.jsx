@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ApiTables.css';
+import { API_URL } from '../../../config';
 
 /**
  * Stations component to display station information.
@@ -8,12 +9,8 @@ function Stations() {
   /* State to store station data */
   const [stations, setStations] = useState([]);
 
-  /* State to store station coordinates */
-//  const [coordinates, setCoordinates] = useState([]);
-
-  /* should this by dynamic?? */
   /* API URL to fetch station data */
-  const apiUrl = 'http://localhost:1337/stations';
+  const apiUrl = `${API_URL}/stations`;
   
   /* Effect to fetch station data when the component mounts */
   useEffect(() => {
@@ -28,7 +25,7 @@ function Stations() {
         }
         const data = await response.json();
         setStations(data.data);
-        // Format the data into markers
+        /* Format the data into markers */
         const formattedMarkers = data.data.map((station) => ({
           lat: station.coords_lat,
           lng: station.coords_long,
@@ -36,7 +33,7 @@ function Stations() {
           id: station.id,
         }));
 
-        // Emit an event with the formatted markers data
+        /* Emit an event with the formatted markers data */
         const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
         window.dispatchEvent(event);
         console.log(formattedMarkers);

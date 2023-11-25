@@ -39,7 +39,7 @@
   button:hover {
     background-color: #2C9AFF;
     color: #fff;
-    width: 100%;
+/*    width: 100%; */
   }
   
   .logout-button {

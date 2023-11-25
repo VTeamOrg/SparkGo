@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Cities.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../../../config';
 
 /**
  * Cities component for managing a list of connected cities.
@@ -31,58 +32,62 @@ function Cities() {
   /**
  * URL to API used on this page
  */
-  const apiUrl = 'http://localhost:1337/cities';
+  const apiUrl = `${API_URL}/cities`;
 
 
   const [editingCityId, setEditingCityId] = useState(null);
   const [editedCityName, setEditedCityName] = useState('');
+
+  /**
+ * Fetch cities from the API
+ */    
+  const fetchCities = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      if (response.ok) {
+        const result = await response.json();
+
+        if (Array.isArray(result.data)) {
+          /**
+           * Sort cities alphabetically by name 
+           */ 
+          result.data.sort((a, b) => a.name.localeCompare(b.name));
+          setCities(result.data);
+
+          /**
+           * Filter cities based on the search
+           */
+          const filtered = result.data.filter((city) =>
+            typeof city.name === 'string' &&
+            city.name.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          setFilteredCities(filtered);
+
+          // Emit an event with the updated city data
+          const event = new CustomEvent('citiesDataLoaded', { detail: result.data });
+          window.dispatchEvent(event);
+          console.log(result.data);
+
+        } else {
+          console.error('Received data.data is not an array:', result.data);
+        }
+      } else {
+        console.error('Failed to fetch cities.');
+      }
+    } catch (error) {
+      console.error('Error fetching cities:', error);
+    }
+  };
+
   /**
  * Effect to load the list of cities from a database and filter 
  * based on search term.
- * Effect is triggered when `cities` or `searchTerm` change.
+ * Effect is triggered when `searchTerm` change.
  */
   useEffect(() => {
-    /**
-    * Fetch cities from the API
-    */    
-    const fetchCities = async () => {
-      try {
-        const response = await fetch(apiUrl);
-        if (response.ok) {
-          const result = await response.json();
-    
-          if (Array.isArray(result.data)) {
-            /**
-             * Sort cities alphabetically by name 
-             */ 
-            result.data.sort((a, b) => a.name.localeCompare(b.name));
-            setCities(result.data);
-
-            /**
-            * Filter cities based on the search
-            */
-            const filtered = result.data.filter((city) =>
-              typeof city.name === 'string' &&
-              city.name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-  
-            setFilteredCities(filtered);
-          } else {
-            console.error('Received data.data is not an array:', result.data);
-          }
-        } else {
-          console.error('Failed to fetch cities.');
-        }
-      } catch (error) {
-        console.error('Error fetching cities:', error);
-      }
-    };
-
     fetchCities();
-  }, [cities, searchTerm]);
-
-
-
+  }, [searchTerm]);
   
   /**
    * Handles adding a new city.
@@ -120,6 +125,7 @@ function Cities() {
         setCities([...cities, createdCity]);
 
         setNewCity('');
+        fetchCities();
       } else {
         console.error('Failed to create city.');
       }
@@ -144,6 +150,7 @@ function Cities() {
       if (response.ok) {
         const updatedCities = cities.filter((c) => c.id !== city.id);
         setCities(updatedCities);
+        fetchCities();
       } else {
         console.error('Failed to delete city.');
       }
@@ -214,6 +221,7 @@ function Cities() {
    */
   const handleCancelEdit = () => {
     setEditingCityId(null);
+    fetchCities();
   };
 
   
@@ -226,19 +234,22 @@ function Cities() {
 
       <div className="add-search">
 
-      {/* Add city field & button */}
-      <form onSubmit={(e) => {
-          e.preventDefault();
-          handleAddCity();
-        }}>
-          <input
-            type="text"
-            placeholder="Enter a new city"
-            value={newCity}
-            onChange={(e) => setNewCity(e.target.value)}
-          />
-          <button type="submit">Add City</button>
-        </form>
+{/* Add city field & button */}
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    handleAddCity();
+  }}
+  className="add-city-form" // Add a class for styling
+>
+  <input
+    type="text"
+    placeholder="Enter a new city"
+    value={newCity}
+    onChange={(e) => setNewCity(e.target.value)}
+  />
+  <button type="submit" className="add-city-button">Add City</button>
+</form>
 
       {/* Search bar */}
       <div className="search-bar">

@@ -1,12 +1,11 @@
-import React from 'react'
-//import ReactDOM from 'react-dom/client.js'
+import React from 'react';
 import ReactDOM from 'react-dom';
+import App from './App.jsx';
+import './index.css';
 
-import App from './App.jsx'
-import './index.css'
 
+console.log('main.js: Start rendering App component');
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <App />
-  </React.StrictMode>,
-)
+);
+console.log('main.js: Finish rendering App component');
