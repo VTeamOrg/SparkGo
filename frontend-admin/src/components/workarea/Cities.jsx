@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Cities.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
-import { API_URL } from '../../../config';
+import { fetchCitiesData } from './FetchService';
 
 /**
  * Cities component for managing a list of connected cities.
@@ -29,55 +29,31 @@ function Cities() {
  */
   const [filteredCities, setFilteredCities] = useState([]);
 
-  /**
- * URL to API used on this page
- */
-  const apiUrl = `${API_URL}/cities`;
-
 
   const [editingCityId, setEditingCityId] = useState(null);
   const [editedCityName, setEditedCityName] = useState('');
 
+//  fetchCities(setCities, setFilteredCities, searchTerm);
   /**
  * Fetch cities from the API
  */    
-  const fetchCities = async () => {
-    try {
-      const response = await fetch(apiUrl);
-      if (response.ok) {
-        const result = await response.json();
+  const fetchDataAndUpdateState = (data) => {
+    // Sort cities alphabetically by name
+    data.sort((a, b) => a.name.localeCompare(b.name));
 
-        if (Array.isArray(result.data)) {
-          /**
-           * Sort cities alphabetically by name 
-           */ 
-          result.data.sort((a, b) => a.name.localeCompare(b.name));
-          setCities(result.data);
+    // Emit an event with the updated city data
+    const event = new CustomEvent('citiesDataLoaded', { detail: data });
+    window.dispatchEvent(event);
+    console.log(event);
 
-          /**
-           * Filter cities based on the search
-           */
-          const filtered = result.data.filter((city) =>
-            typeof city.name === 'string' &&
-            city.name.toLowerCase().includes(searchTerm.toLowerCase())
-          );
+    // Update component's state
+    setCities(data);
 
-          setFilteredCities(filtered);
-
-          // Emit an event with the updated city data
-          const event = new CustomEvent('citiesDataLoaded', { detail: result.data });
-          window.dispatchEvent(event);
-
-
-        } else {
-          console.error('Received data.data is not an array:', result.data);
-        }
-      } else {
-        console.error('Failed to fetch cities.');
-      }
-    } catch (error) {
-      console.error('Error fetching cities:', error);
-    }
+    // Filter cities based on the search
+    const filtered = data.filter((city) =>
+      typeof city.name === 'string' && city.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCities(filtered);
   };
 
   /**
@@ -86,7 +62,7 @@ function Cities() {
  * Effect is triggered when `searchTerm` change.
  */
   useEffect(() => {
-    fetchCities();
+    fetchCitiesData(fetchDataAndUpdateState);
   }, [searchTerm]);
   
   /**
@@ -125,7 +101,7 @@ function Cities() {
         setCities([...cities, createdCity]);
 
         setNewCity('');
-        fetchCities();
+        fetchCitiesData(fetchDataAndUpdateState);
       } else {
         console.error('Failed to create city.');
       }
@@ -150,7 +126,7 @@ function Cities() {
       if (response.ok) {
         const updatedCities = cities.filter((c) => c.id !== city.id);
         setCities(updatedCities);
-        fetchCities();
+        fetchCitiesData(fetchDataAndUpdateState);
       } else {
         console.error('Failed to delete city.');
       }
@@ -221,7 +197,7 @@ function Cities() {
    */
   const handleCancelEdit = () => {
     setEditingCityId(null);
-    fetchCities();
+    fetchCitiesData(fetchDataAndUpdateState);
   };
 
   

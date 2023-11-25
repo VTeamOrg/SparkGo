@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ApiTables.css';
-import { API_URL } from '../../../config';
+import { fetchStationsData } from './FetchService';
+import { fetchCitiesData } from './FetchService';
 
 /**
  * Stations component to display station information.
@@ -8,42 +9,28 @@ import { API_URL } from '../../../config';
 function Stations() {
   /* State to store station data */
   const [stations, setStations] = useState([]);
-
-  /* API URL to fetch station data */
-  const apiUrl = `${API_URL}/stations`;
   
   /* Effect to fetch station data when the component mounts */
   useEffect(() => {
-    /**
-     * Fetches station data from the API.
-     */
-    const fetchStations = async () => {
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          throw new Error('Failed to fetch station data');
-        }
-        const data = await response.json();
-        setStations(data.data);
-        /* Format the data into markers */
-        const formattedMarkers = data.data.map((station) => ({
-          lat: station.coords_lat,
-          lng: station.coords_long,
-          infoText: station.name,
-          id: station.id,
-        }));
+    // Fetch station data and handle it locally
+    fetchStationsData((data) => {
+      // Update the component's state with station data
+      setStations(data);
 
-        /* Emit an event with the formatted markers data */
-        const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
-        window.dispatchEvent(event);
-        console.log(formattedMarkers);
-      } catch (error) {
-        console.error('Error fetching station data:', error);
-      }
-    };
-  
-    /* Call fetchStations when the component mounts */
-    fetchStations();
+      // Format the data into markers (assuming you have this logic)
+      const formattedMarkers = data.map((station) => ({
+        lat: station.coords_lat,
+        lng: station.coords_long,
+        infoText: station.name,
+        id: station.id,
+      }));
+
+      // Emit an event with the formatted markers data
+      const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
+      window.dispatchEvent(event);
+
+      console.log(formattedMarkers);
+    });
   }, []);
 
   /* JSX to render station data */
