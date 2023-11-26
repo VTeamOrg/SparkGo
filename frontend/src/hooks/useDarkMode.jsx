@@ -8,7 +8,7 @@ const useDarkMode = () => {
 
     const toggleDarkMode = () => {
         app_dark.value = !app_dark.value;
-        setCookie("app_dark", !app_dark);
+        setCookie("app_dark", app_dark.value);
     };
 
     return [app_dark.value, toggleDarkMode];

@@ -7,11 +7,10 @@ const GStore = ()=> {
     effect(()=> {
         // init dark mode
         const [cookies] = useCookies();
-        app_dark.value = cookies;
+        app_dark.value = cookies.app_dark ?? false;
     });
 
     return;
 }
 
 export default GStore;
-
