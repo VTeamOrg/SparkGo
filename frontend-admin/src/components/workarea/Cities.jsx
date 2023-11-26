@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Cities.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
-import { fetchCitiesData } from './FetchService';
+import { fetchCitiesData, createCity, deleteCity, updateCity } from './FetchService';
 
 /**
  * Cities component for managing a list of connected cities.
@@ -10,53 +10,65 @@ import { fetchCitiesData } from './FetchService';
  */
 function Cities() {
 /**
- * State to store the list of cities
+ * State to store the list of cities.
+ * @type {Array}
  */
-  const [cities, setCities] = useState([]);
-  
+const [cities, setCities] = useState([]);
+
 /**
- * State to manage the city input field
+ * State to manage the city input field.
+ * @type {string}
  */
-  const [newCity, setNewCity] = useState('');
-  
-  /**
- * State to manage the search input field
+const [newCity, setNewCity] = useState('');
+
+/**
+ * State to manage the search input field.
+ * @type {string}
  */
-  const [searchTerm, setSearchTerm] = useState('');
+const [searchTerm, setSearchTerm] = useState('');
 
-    /**
- * State to manage the filtered cities
+/**
+ * State to manage the filtered cities.
+ * @type {Array}
  */
-  const [filteredCities, setFilteredCities] = useState([]);
+const [filteredCities, setFilteredCities] = useState([]);
 
+/**
+ * State to keep track of the ID of the city being edited.
+ * @type {?number}
+ */
+const [editingCityId, setEditingCityId] = useState(null);
 
-  const [editingCityId, setEditingCityId] = useState(null);
-  const [editedCityName, setEditedCityName] = useState('');
+/**
+ * State to store the edited city name.
+ * @type {string}
+ */
+const [editedCityName, setEditedCityName] = useState('');
 
-//  fetchCities(setCities, setFilteredCities, searchTerm);
-  /**
- * Fetch cities from the API
- */    
+/**
+ * Fetch cities from the API and update component state.
+ *
+ * @param {Array} data - The data received from the API containing city information.
+ */
   const fetchDataAndUpdateState = (data) => {
-    // Sort cities alphabetically by name
+    /* Sort cities alphabetically */
     data.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Emit an event with the updated city data
+    /* Emit an event with the updated city data */
     const event = new CustomEvent('citiesDataLoaded', { detail: data });
     window.dispatchEvent(event);
-    console.log(event);
 
-    // Update component's state
+    /* Update component's state */
     setCities(data);
 
-    // Filter cities based on the search
+    /* Filter cities based on the search */
     const filtered = data.filter((city) =>
       typeof city.name === 'string' && city.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCities(filtered);
   };
 
-  /**
+/**
  * Effect to load the list of cities from a database and filter 
  * based on search term.
  * Effect is triggered when `searchTerm` change.
@@ -84,33 +96,17 @@ function Cities() {
     }
 
     try {
-      /* Make a call to createCity route with the city name in the body */
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newCity }),
-      });
-
-      if (response.ok) {
-
-        const createdCity = await response.json();
-
-        /* Update the city list */
-        setCities([...cities, createdCity]);
-
-        setNewCity('');
-        fetchCitiesData(fetchDataAndUpdateState);
-      } else {
-        console.error('Failed to create city.');
-      }
+      const createdCity = await createCity(newCity);
+  
+      /* Update the city list */
+      setCities([...cities, createdCity]);
+  
+      setNewCity('');
+      fetchCitiesData(fetchDataAndUpdateState);
     } catch (error) {
-      console.error('Error creating city:', error);
+      console.error(error.message);
     }
   };
-
-
 
   /**
    * Handles the deletion of a city.
@@ -119,11 +115,9 @@ function Cities() {
    */
   const handleDeleteCity = async (city) => {
     try {
-      const response = await fetch(`${apiUrl}/${city.id}`, {
-        method: 'DELETE',
-      });
+      const success = await deleteCity(city.id);
 
-      if (response.ok) {
+      if (success) {
         const updatedCities = cities.filter((c) => c.id !== city.id);
         setCities(updatedCities);
         fetchCitiesData(fetchDataAndUpdateState);
@@ -131,12 +125,9 @@ function Cities() {
         console.error('Failed to delete city.');
       }
     } catch (error) {
-      console.error('Error deleting city:', error);
+      console.error(error.message);
     }
   };
-
-
-
 
   /**
    * Handles initiating the edit mode for a city's name.
@@ -165,19 +156,11 @@ function Cities() {
   const handleSaveEdit = async (e, cityId) => {
     e.preventDefault();
     const updatedCity = cities.find((city) => city.id === cityId);
-    
+
     try {
-      /* Make a call to updateCityById route with the updated city name in the body */
-      const response = await fetch(`${apiUrl}/${cityId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: editedCityName }), 
-      });
+      const success = await updateCity(cityId, editedCityName);
 
-      if (response.ok) {
-
+      if (success) {
         const updatedCities = cities.map((city) =>
           city.id === cityId ? { ...city, editing: false, name: editedCityName } : city
         );
@@ -188,7 +171,7 @@ function Cities() {
         console.error('Failed to update city.');
       }
     } catch (error) {
-      console.error('Error updating city:', error);
+      console.error(error.message);
     }
   };
 
@@ -200,7 +183,7 @@ function Cities() {
     fetchCitiesData(fetchDataAndUpdateState);
   };
 
-  
+
 
 
   /* JSX to render data */
@@ -210,22 +193,22 @@ function Cities() {
 
       <div className="add-search">
 
-{/* Add city field & button */}
-<form
-  onSubmit={(e) => {
-    e.preventDefault();
-    handleAddCity();
-  }}
-  className="add-city-form" // Add a class for styling
->
-  <input
-    type="text"
-    placeholder="Enter a new city"
-    value={newCity}
-    onChange={(e) => setNewCity(e.target.value)}
-  />
-  <button type="submit" className="add-city-button">Add City</button>
-</form>
+      {/* Add city field & button */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAddCity();
+        }}
+        className="add-city-form"
+      >
+        <input
+          type="text"
+          placeholder="Enter a new city"
+          value={newCity}
+          onChange={(e) => setNewCity(e.target.value)}
+        />
+        <button type="submit" className="add-city-button">Add City</button>
+      </form>
 
       {/* Search bar */}
       <div className="search-bar">
