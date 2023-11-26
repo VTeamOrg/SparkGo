@@ -1,0 +1,70 @@
+/* Cities.css */
+
+.city-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.city-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.city-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button,
+.delete-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 10px;
+}
+
+.edit-button i,
+.delete-button i {
+  color: #2C9AFF;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+.search-icon {
+  font-size: 16px;
+  padding-left: 10px;
+}
+
+/* Cities.css */
+
+/* Style the form */
+.add-city-form {
+  display: flex;
+  align-items: center;
+}
+
+.add-city-form input[type="text"] {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.add-city-button {
+  background-color: #2C9AFF;
+  color: white;
+  border: none;
+  padding: 8px 16px; 
+  cursor: pointer;
+  width: 100px;
+  font-size: 16px;
+}
+
+.add-city-button:hover {
+  box-shadow: 0px 0px 5px 2px rgba(44, 154, 255, 0.5); 
+}

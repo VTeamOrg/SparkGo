@@ -30,6 +30,7 @@ const io = require("socket.io")(httpServer, {
             "http://localhost:1337/cities",
             "http://localhost:1337/vehicles",
             "http://127.0.0.1:3306",
+            "http://localhost:5137"
         ],
         methods: ["GET", "POST"],
     },
