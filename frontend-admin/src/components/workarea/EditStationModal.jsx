@@ -4,15 +4,7 @@ import './Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchCitiesData } from './FetchService';
 
-/**
- * AddStationModal component for adding a new station.
- * @param {Object} props - Component props.
- * @param {boolean} props.isOpen - Flag indicating whether the modal is open.
- * @param {function} props.onRequestClose - Function to close the modal.
- * @param {function} props.onSave - Function to save the new station.
- * @returns {JSX.Element} AddStationModal component.
- */
-const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
+const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
   const [stationName, setStationName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
@@ -26,64 +18,58 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
   useEffect(() => {
     fetchCitiesData((data) => {
       setCities(data);
-      console.log(data);
     });
   }, []);
 
-    /**
-   * Event handler for map click.
-   * @param {Object} e - Leaflet click event.
-   */
+  useEffect(() => {
+    /* Populate form fields with station data when modal opens */
+    if (isOpen && station) {
+      setStationName(station.name);
+      setLatitude(station.coords_lat);
+      setLongitude(station.coords_long);
+      setSelectedCity(station.city_id);
+      setSelectedCoordinates([station.coords_lat, station.coords_long]);
+    }
+  }, [isOpen, station]);
+
   const handleMapClick = (e) => {
     const { lat, lng } = e.latlng;
-    setLatitude(lat.toFixed(4));
-    setLongitude(lng.toFixed(4));
+    setLatitude(lat.toFixed(6));
+    setLongitude(lng.toFixed(6));
     setSelectedCoordinates([lat, lng]);
   };
 
-    /**
-   * Event handler for form submission.
-   * @param {Object} e - Form submit event.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    /* Validate the input fields */
     if (!stationName || !latitude || !longitude || !selectedCity) {
       alert('Please fill in all fields.');
       return;
     }
 
-    /* Create a new station object with the input values */
-    const newStation = {
+    const editedStation = {
+      id: station.id,
       name: stationName,
       coords_lat: parseFloat(latitude),
       coords_long: parseFloat(longitude),
       city_id: selectedCity,
     };
 
-    /* Call the onSave function with the new station data */
-    onSave(newStation);
+    onSave(editedStation);
 
-    /* Clear the input fields */
     setStationName('');
     setLatitude('');
     setLongitude('');
     setSelectedCoordinates(null);
     setSelectedCity('');
 
-    /* Close the modal */
     onRequestClose();
   };
 
-  /**
-   * Custom input field to capture double-click action.
-   * @returns {null} Null component.
-   */
   const DoubleClickInput = () => {
     useMapEvents({
       dblclick: (e) => {
-        e.originalEvent.preventDefault(); 
+        e.originalEvent.preventDefault();
         const { lat, lng } = e.latlng;
         setLatitude(lat.toFixed(6));
         setLongitude(lng.toFixed(6));
@@ -94,32 +80,30 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
     return null;
   };
 
-    /* JSX to render modal */
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Add Station Modal"
+      contentLabel="Edit Station Modal"
+      className="edit-station-modal"
     >
-      <h2>Add Station</h2>
+      <h2>Edit Station</h2>
       <form onSubmit={handleSubmit}>
-
-      <div>
-        <label htmlFor="city">Select a City:</label>
-        <select
+        <div>
+          <label htmlFor="city">Select a City:</label>
+          <select
             id="city"
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
-        >
+          >
             <option value="">Select a city</option>
             {cities.map((city) => (
-            <option key={city.id} value={city.id}>
+              <option key={city.id} value={city.id}>
                 {city.name}
-            </option>
+              </option>
             ))}
-        </select>
+          </select>
         </div>
-
         <div>
           <label htmlFor="stationName">Station Name:</label>
           <input
@@ -150,13 +134,13 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
         <div>
           <label>Coordinates:</label>
           <MapContainer
-            center={[56.1612, 15.5866]} 
+            center={selectedCoordinates || [56.1612, 15.5866]}
             zoom={13}
-            zoomSnap={0} 
-            zoomDelta={0.25} 
+            zoomSnap={0}
+            zoomDelta={0.25}
             style={{ height: '200px', width: '100%' }}
             onClick={handleMapClick}
-            doubleClickZoom={false} 
+            doubleClickZoom={false}
             ref={mapRef}
           >
             <TileLayer
@@ -175,4 +159,4 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
   );
 };
 
-export default AddStationModal;
+export default EditStationModal;

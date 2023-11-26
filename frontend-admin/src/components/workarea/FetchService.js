@@ -92,7 +92,7 @@ export const fetchStationsData = async (callback) => {
       throw new Error('Failed to fetch station data');
     }
     const data = await response.json();
-    console.log(data);
+
     if (typeof callback === 'function') {
       callback(data.data);
     }
@@ -101,3 +101,64 @@ export const fetchStationsData = async (callback) => {
   }
 };
 
+/* CREATE station */
+export const createStation = async (newStation) => {
+  try {
+    const response = await fetch(stationsUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newStation),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error('Failed to create station.');
+    }
+  } catch (error) {
+    throw new Error(`Error creating station: ${error.message}`);
+  }
+};
+
+/* UPDATE station */
+export const updateStation = async (stationId, updatedStation) => {
+  console.log("id", stationId);
+
+  try {
+    const response = await fetch(`${stationsUrl}/${stationId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedStation),
+    });
+console.log("tried update");
+    if (response.ok) {
+      console.log("OK");
+      return await response.json();
+    } else {
+      throw new Error('Failed to update station.');
+    }
+  } catch (error) {
+    throw new Error(`Error updating station: ${error.message}`);
+  }
+};
+
+/* DELETE station */
+export const deleteStation = async (stationId) => {
+  try {
+    const response = await fetch(`${stationsUrl}/${stationId}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error('Failed to delete station.');
+    }
+  } catch (error) {
+    throw new Error(`Error deleting station: ${error.message}`);
+  }
+};
