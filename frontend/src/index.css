@@ -15,7 +15,72 @@ body,
     font-family: 'Inter', sans-serif;
 }
 
+.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-logo {
+    display: none !important;
+}
+
 .leaflet-container {
     height: 100%;
     width: 100%;
+}
+
+
+.slide-bottom {
+    /* Define initial position */
+    top: -10rem;
+    /* Move it up by its own height */
+    opacity: 0;
+    /* Optionally start with opacity 0 */
+
+    /* Animation properties */
+    animation-name: slideInFromBottom;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+/* Keyframes for the animation */
+@keyframes slideInFromBottom {
+    from {
+        top: -10rem;
+        /* Start position */
+        opacity: 0;
+        /* Optionally start with opacity 0 */
+    }
+
+    to {
+        top: 4rem;
+        /* End position */
+        opacity: 1;
+        /* Optionally end with opacity 1 */
+    }
+}
+
+.slide-top {
+    /* Define initial position */
+    top: 4rem;
+    /* Move it up by the amount you want it to slide from */
+
+    /* Animation properties */
+    animation-name: slideInFromTop;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+/* Keyframes for the animation */
+@keyframes slideInFromTop {
+    from {
+        top: 4rem;
+        /* Start position */
+        opacity: 1;
+        /* Optionally start with opacity 0 */
+    }
+
+    to {
+        top: -10rem;
+        /* End position */
+        opacity: 0;
+        /* Optionally end with opacity 1 */
+    }
 }
