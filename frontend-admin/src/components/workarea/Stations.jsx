@@ -86,8 +86,8 @@ function Stations() {
     try {
       await deleteStation(stationId);
 
-      /* Remove the deleted station from the state */
-      setStations((prevStations) => prevStations.filter((station) => station.id !== stationId));
+      /* Refetch the station data to get the updated list */
+      fetchDataUpdateState();      
     } catch (error) {
       console.error('Error deleting station:', error.message);
     }
