@@ -19,6 +19,7 @@ use test;
 --source ddl test.sql
 --source insert test.sql
 source ddl.sql
+source ddl_view.sql
 source insert.sql
 
 
@@ -35,4 +36,5 @@ use sparkgo;
 
 -- uses
 source ddl.sql
+source ddl_view.sql
 source insert.sql
