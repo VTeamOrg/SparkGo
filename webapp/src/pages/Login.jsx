@@ -8,7 +8,7 @@ const Login = () => {
         <section
             className={`bg-bg_color w-full h-full`}
             style={{
-                backgroundImage: `url(${curr_theme === "dark" ? LoginBg : LoginBgLight})`,
+                backgroundImage: `url(${curr_theme.value === "dark" ? LoginBg : LoginBgLight})`,
                 backgroundSize: 'cover',
             }}
         >
