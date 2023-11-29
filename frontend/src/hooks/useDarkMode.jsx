@@ -1,17 +1,16 @@
-import { effect } from '@preact/signals-react';
-import { useState, useEffect } from 'react';
-import { useCookies } from 'react-cookie';
-import { app_dark } from '../GStore';
+import { curr_theme } from '../GStore';
 
 const useDarkMode = () => {
-    const [cookies, setCookie] = useCookies(['app_dark']);
-
     const toggleDarkMode = () => {
-        app_dark.value = !app_dark.value;
-        setCookie("app_dark", app_dark.value);
+        const next_theme = curr_theme.value === "light" ? "dark" : "light";
+        curr_theme.value = next_theme;
+        
+        document.documentElement.setAttribute("data-theme", next_theme);
+        
+        localStorage.setItem("theme", next_theme);
     };
 
-    return [app_dark.value, toggleDarkMode];
+    return [curr_theme, toggleDarkMode];
 };
 
 export default useDarkMode;

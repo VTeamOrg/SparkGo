@@ -3,6 +3,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        --color-accent-1: 44, 154, 255;
+        --color-accent-2: 34, 34, 34;
+        --color-bg_color: 237, 244, 255;
+        --color-text_color: 34, 34, 34;
+    }
+
+    :root[data-theme="light"] {
+        --color-accent-1: 44, 154, 255;
+        --color-accent-2: 34, 34, 34;
+        --color-bg_color: 237, 244, 255;
+        --color-text_color: 34, 34, 34;
+    }
+
+    :root[data-theme="dark"] {
+        --color-accent-1: 44, 154, 255;
+        --color-accent-2: 34, 34, 34;
+        --color-bg_color: 16, 16, 16;
+        --color-text_color: 255, 255, 255;
+    }
+
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --color-accent-1: 44, 154, 255;
+            --color-accent-2: 34, 34, 34;
+            --color-bg_color: 16, 16, 16;
+            --color-text_color: 255, 255, 255;
+        }
+    }
+}
+
 html,
 body,
 #root {
@@ -15,22 +48,15 @@ body,
     font-family: 'Inter', sans-serif;
 }
 
-.mapboxgl-ctrl-attrib, .mapboxgl-ctrl-logo {
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-logo {
     display: none !important;
-}
-
-.leaflet-container {
-    height: 100%;
-    width: 100%;
 }
 
 
 .slide-bottom {
-    /* Define initial position */
     top: -10rem;
-    /* Move it up by its own height */
     opacity: 0;
-    /* Optionally start with opacity 0 */
 
     /* Animation properties */
     animation-name: slideInFromBottom;
@@ -43,23 +69,17 @@ body,
 @keyframes slideInFromBottom {
     from {
         top: -10rem;
-        /* Start position */
         opacity: 0;
-        /* Optionally start with opacity 0 */
     }
 
     to {
         top: 4rem;
-        /* End position */
         opacity: 1;
-        /* Optionally end with opacity 1 */
     }
 }
 
 .slide-top {
-    /* Define initial position */
     top: 4rem;
-    /* Move it up by the amount you want it to slide from */
 
     /* Animation properties */
     animation-name: slideInFromTop;
@@ -72,15 +92,11 @@ body,
 @keyframes slideInFromTop {
     from {
         top: 4rem;
-        /* Start position */
         opacity: 1;
-        /* Optionally start with opacity 0 */
     }
 
     to {
         top: -10rem;
-        /* End position */
         opacity: 0;
-        /* Optionally end with opacity 1 */
     }
 }

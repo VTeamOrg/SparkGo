@@ -1,23 +1,24 @@
 import { Marker } from "react-map-gl";
 import useSupercluster from "use-supercluster";
 import { PiScooterFill } from "react-icons/pi";
-import { msgBoxData } from "../msgBox/MsgBox";
 import VehicleMsgContainer from "./VehicleMsgContainer";
-import { useState } from "react";
+import { useSignal } from "@preact/signals-react";
+import { msgBoxData } from "../../GStore";
 
-const VehicleMarkers = ({mapRef, scooters, viewport, setViewport}) => {
-    const [clickedVehicle, setClickedVehicle] = useState(null);
+const VehicleMarkers = ({mapRef, scooters, viewport}) => {
+    const clickedVehicle = useSignal(null);
     const { clusters, supercluster } = useSupercluster({
-        points: scooters,
-        bounds: mapRef ? mapRef.getMap().getBounds().toArray().flat() : null,
-        zoom: viewport.zoom,
+        points: scooters.value,
+        bounds: mapRef.value ? mapRef.value.getMap().getBounds().toArray().flat() : null,
+        zoom: viewport.value.zoom ?? 12,
         options: { radius: 75, maxZoom: 20 }
     });
 
     const handleScooterClick = (e, scooter) => {
         e.preventDefault();
-        setClickedVehicle(scooter.id);
-        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer />, onClose: ()=>setClickedVehicle(null) };
+
+        clickedVehicle.value = scooter.id;
+        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer />, onClose: ()=>clickedVehicle.value = null };
     }
     return (
         <>
@@ -39,28 +40,28 @@ const VehicleMarkers = ({mapRef, scooters, viewport, setViewport}) => {
                             onClick={() => {
                                 const expansionZoom = Math.min(
                                     supercluster.getClusterExpansionZoom(cluster.id),
-                                    50
+                                    20
                                 );
 
-                                setViewport({
-                                    ...viewport,
+                                viewport.value = {
+                                    ...viewport.value,
                                     latitude,
                                     longitude,
                                     zoom: expansionZoom,
-                                    transitionInterpolator: mapRef.flyTo({
+                                    transitionInterpolator: mapRef.value.flyTo({
                                         zoom: expansionZoom,
                                         center: [longitude, latitude],
                                         duration: 500
                                     }),
                                     transitionDuration: "auto"
-                                })
+                                }
                             }}
                         >
                             <div
-                                className="text-white bg-primary rounded-full p-3 flex justify-center items-center"
+                                className="text-white bg-accent-1 rounded-full p-3 flex justify-center items-center"
                                 style={{
-                                    width: `${10 + (pointCount / scooters.length) * 20}px`,
-                                    height: `${10 + (pointCount / scooters.length) * 20}px`
+                                    width: `${10 + (pointCount / scooters.value.length) * 20}px`,
+                                    height: `${10 + (pointCount / scooters.value.length) * 20}px`
                                 }}
                             >
                                 {pointCount}
@@ -76,7 +77,7 @@ const VehicleMarkers = ({mapRef, scooters, viewport, setViewport}) => {
                         latitude={latitude}
                         longitude={longitude}
                     >
-                        <PiScooterFill className={`${clickedVehicle === cluster.properties.id && msgBoxData.value.content && "bg-blue-300 rounded-full"} text-4xl text-primary`} onClick={(e) => handleScooterClick(e, cluster.properties)} />
+                        <PiScooterFill className={`${clickedVehicle.value === cluster.properties.id && msgBoxData.value.content && "bg-blue-300 rounded-full"} text-4xl text-accent-1`} onClick={(e) => handleScooterClick(e, cluster.properties)} />
 
                     </Marker>
                 );

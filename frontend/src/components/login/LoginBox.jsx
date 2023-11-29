@@ -1,8 +1,5 @@
 import { FcGoogle } from "react-icons/fc";
-import { useCookies } from "react-cookie";
 import Button from "../Button";
-import { app_dark } from "../../GStore";
-
 /**
  * LoginBox Component
  *
@@ -24,28 +21,27 @@ import { app_dark } from "../../GStore";
  * };
   */
 const LoginBox = () => {
-    const [cookies] = useCookies();
 
     return (
         <div className="w-full flex flex-col gap-16 items-center absolute left-2/4 top-[40%] translate-x-[-50%] translate-y-[-40%]">
             <div className="text-center flex flex-col gap-3">
                 <h1 className="font-bold text-4xl">
-                    <span className={`${app_dark.value ? "text-light" : "text-dark"}`}>
+                    <span className={`text-text_color`}>
                         Spark
                     </span>
-                    <span className={`text-primary`}>
+                    <span className={`text-accent-1 bg-bg_color`}>
                         GO
                     </span>
                 </h1>
 
-                <p className={`font-bold text-2xl ${app_dark.value ? "text-light" : "text-dark"}`}>
+                <p className={`font-semibold italic text-2xl text-text_color`}>
                     Your Two-Wheeled <br /> Adventure
                 </p>
             </div>
 
             <Button>
                 <FcGoogle className="text-5xl" />
-                <p className={`font-bold text-black text-xl ${app_dark.value ? "text-light" : "text-dark"}`}>Continue with Google</p>
+                <p className={`font-bold text-black text-xl text-text_color`}>Continue with Google</p>
             </Button>
         </div>
     );

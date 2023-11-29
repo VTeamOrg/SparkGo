@@ -7,11 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2C9AFF',
-        white: '#ffff',
-        black: '#222222',
-        dark: '#101010',
-        light: '#F6FCFF'
+        accent: {
+          1: 'rgba(var(--color-accent-1))',
+          2: "rgba(var(--color-accent-2))"
+        },
+        bg_color: 'rgba(var(--color-bg_color))',
+        text_color: 'rgba(var(--color-text_color))',
       }
     },
   },

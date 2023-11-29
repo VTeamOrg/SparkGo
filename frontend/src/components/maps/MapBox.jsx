@@ -1,109 +1,115 @@
 import ReactMapGL, { GeolocateControl, Layer, Source } from "react-map-gl";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import CitiesGeoJson from "../../../testData/cities_geo.json";
-import { useCallback, useEffect, useRef, useState } from "react";
 import noGoZoneSVG from "../../assets/no_go_zone.svg";
 import charginStationSVG from "../../assets/charging_station.svg";
 import noParkingSVG from "../../assets/no_parking.svg";
 import slowZoneSVG from "../../assets/slow_zone.svg";
-import { msgBoxData } from "../msgBox/MsgBox";
 import AreaMsgContainer from "./AreaMsgContainer";
 import generateScooters from "../../../testData/generateScooters";
 import VehicleMarkers from "./VehicleMarkers";
+import { computed, useSignal } from "@preact/signals-react";
+import { curr_theme, msgBoxData } from "../../GStore";
+
+/**
+ * Represents a map component with features like geolocation, area markers, and vehicle markers.
+ * @returns {JSX.Element} - Returns the JSX for the MapBox component.
+ */
 
 const MapBox = () => {
-  const [mapRef, setMapRef] = useState(null);
-  const geoControlRef = useRef();
-  const [viewport, setViewport] = useState({
+  const mapStyle = computed(()=> curr_theme.value === "dark" ? "mapbox://styles/mapbox/navigation-night-v1" : "mapbox://styles/mapbox/navigation-day-v1");
+  const mapRef = useSignal(null);
+  const geoControlRef = useSignal(null);
+  const viewport = useSignal({
     width: '100%',
     height: 400,
     latitude: 0,
     longitude: 0,
-    zoom: 20,
+    zoom: 12,
   });
 
-  const [scooters, setScooters] = useState([]);
+  const scooters = useSignal(generateScooters(50, 15.5869, 56.1612));
 
-  const onFeatureClick = (featureType) => {
-    switch (featureType) {
-      case "slow":
-        msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={slowZoneSVG} title="Slow" text="Your vehicle will automatically slow down in this area" /> };
-        break;
-      case "no_go":
-        msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={noGoZoneSVG} title="No Go Zone" text="Your vehicle will slow down and may stop completely. You can't end your ride here." /> };
-        break;
-      case "restrictid":
-        msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={noGoZoneSVG} title="Restrictid Area" text="You risk a fine if you end your ride here" /> };
-        break;
-      case "charging_station":
-        msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={charginStationSVG} title="Charging Station" text="Charge your ride here! Park your scooter and plug in for a powered-up journey ahead." /> };
-        break;
-      case "no_parking":
-        msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={noParkingSVG} title="No Parking Zone" text="Please avoid parking scooters in this area." /> };
-        break;
+  /**
+ * Handles the click event for different map features and displays corresponding information.
+ * @param {string} featureType - The type of feature clicked on the map.
+ * @returns {void}
+ */
+  const handleFeatureClick = (featureType) => {
+    const featureData = {
+      slow: { icon: slowZoneSVG, title: "Slow", text: "Your vehicle will automatically slow down in this area" },
+      no_go: { icon: noGoZoneSVG, title: "No Go Zone", text: "Your vehicle will slow down and may stop completely. You can't end your ride here." },
+      restrictid: { icon: noGoZoneSVG, title: "Restricted Area", text: "You risk a fine if you end your ride here" },
+      charging_station: { icon: charginStationSVG, title: "Charging Station", text: "Charge your ride here! Park your scooter and plug in for a powered-up journey ahead." },
+      no_parking: { icon: noParkingSVG, title: "No Parking Zone", text: "Please avoid parking scooters in this area." },
+    };
 
-      default:
-        msgBoxData.value = {
-          timeout: null,
-          content: null
-        };
-        break;
+    const selectedData = featureData[featureType];
+
+    if (!selectedData) {
+      return msgBoxData.value = {
+        ...msgBoxData.value,
+        timeout: 0,
+      };
     }
+
+    msgBoxData.value = { timeout: 5000, content: <AreaMsgContainer svgIcon={selectedData.icon} title={selectedData.title} text={selectedData.text} /> };
   };
 
+  /**
+   * Handles the click event on the map and triggers the display of information about the clicked feature.
+   * @param {object} e - The event object containing information about the click.
+   * @returns {void}
+   */
   const handleMapClick = (e) => {
     if (e.originalEvent.srcElement.tagName !== "CANVAS") return;
-    const map = mapRef.getMap();
+
+    const map = mapRef.value?.getMap();
     const bbox = [
       [e.point.x - 5, e.point.y - 5],
       [e.point.x + 5, e.point.y + 5],
     ];
 
     const selectedFeatures = map.queryRenderedFeatures(bbox);
-
     const featureType = selectedFeatures.map((feature) => feature.properties.type);
 
-    onFeatureClick(featureType[0]);
+    handleFeatureClick(featureType[0]);
   };
 
+  /**
+   * Handles the change in user location and logs a message.
+   * @returns {void}
+   */
   const handleLocationChange = () => {
     console.log("User moved");
   }
 
-  const onMove = useCallback(({ viewState }) => {
-    setViewport({ ...viewport, longitude: viewState.longitude, latitude: viewState.latitude, zoom: viewState.zoom });
-  }, [])
-
-  useEffect(() => {
-    setScooters(generateScooters(200, 15.5869, 56.1612))
-  }, [])
-
   return (
     <ReactMapGL
-      ref={(ref) => setMapRef(ref)}
+      ref={(ref) => mapRef.value = ref}
       className="h-full w-full"
-      onMove={onMove}
+      onMove={({ viewState }) => {
+        viewport.value = { ...viewport, longitude: viewState.longitude, latitude: viewState.latitude, zoom: viewState.zoom };
+      }}
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_KEY}
       initialViewState={{
         longitude: 15.5869,
         latitude: 56.1612,
-        zoom: 14
+        zoom: 12
       }}
-      mapStyle="mapbox://styles/mapbox/streets-v11"
+      mapStyle={mapStyle.value}
       onClick={handleMapClick}
       onLoad={() => {
-        geoControlRef.current?.trigger();
+        geoControlRef.value?.trigger();
       }}
     >
       <>
         <GeolocateControl
-          ref={geoControlRef}
+          ref={(ref) => geoControlRef.value = ref}
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
           showUserLocation={true}
           onGeolocate={handleLocationChange}
-          onTrackUserLocationStart={(e) => console.log(e)}
-
         />
 
         <Source id="allowedCities" type="geojson" data={CitiesGeoJson}>
@@ -126,7 +132,7 @@ const MapBox = () => {
           />
         </Source>
 
-        <VehicleMarkers mapRef={mapRef} scooters={scooters} viewport={viewport} setViewport={setViewport} />
+        <VehicleMarkers mapRef={mapRef} scooters={scooters} viewport={viewport} />
 
 
       </>

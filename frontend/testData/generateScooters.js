@@ -6,8 +6,8 @@ function generateNearbyScooters(total, lon, lat) {
         const range = `${Math.floor(Math.random() * 40) + 20}km`;
 
         // Generate random offsets for latitude and longitude
-        const lonOffset = Math.random() * 0.008 - 0.010; // Adjust the range as needed
-        const latOffset = Math.random() * 0.010 - 0.005; // Adjust the range as needed
+        const lonOffset = Math.random() * 0.008 - 0.010; 
+        const latOffset = Math.random() * 0.010 - 0.005;
 
         const coordinates = [
             (lon + lonOffset).toFixed(6),
@@ -33,3 +33,4 @@ function generateNearbyScooters(total, lon, lat) {
     return features;
 }
 export default generateNearbyScooters;
+
