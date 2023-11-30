@@ -18,7 +18,7 @@ const VehicleMarkers = ({mapRef, scooters, viewport}) => {
         e.preventDefault();
 
         clickedVehicle.value = scooter.id;
-        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer />, onClose: ()=>clickedVehicle.value = null };
+        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer vehicleId={scooter.id} batteryLevel={scooter.battery_level} cost={3.00} unlockFee={2.00} currency="sek" />, onClose: ()=>clickedVehicle.value = null };
     }
     return (
         <>

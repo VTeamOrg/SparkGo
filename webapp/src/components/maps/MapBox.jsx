@@ -28,7 +28,7 @@ const MapBox = () => {
     zoom: 12,
   });
 
-  const scooters = useSignal(generateScooters(50, 15.5869, 56.1612));
+  const scooters = useSignal(generateScooters(5000, 15.5869, 56.1612));
 
   /**
  * Handles the click event for different map features and displays corresponding information.
