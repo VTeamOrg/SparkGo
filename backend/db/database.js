@@ -1,10 +1,13 @@
 const mysql = require("mysql");
-const config = require("../config/test.json");
 
-// Create a pool to handle multiple connections
-const pool = mysql.createPool(config);
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    multipleStatements: true,
+});
 
-// Function to open a database connection
 const openDb = () => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -17,7 +20,6 @@ const openDb = () => {
     });
 };
 
-// Function to close a database connection
 const closeDb = (connection) => {
     return new Promise((resolve, reject) => {
         connection.release();
@@ -25,7 +27,6 @@ const closeDb = (connection) => {
     });
 };
 
-// Function to execute a SQL query
 const query = (connection, sql, params) => {
     return new Promise((resolve, reject) => {
         connection.query(sql, params, (err, results) => {

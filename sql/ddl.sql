@@ -1,4 +1,4 @@
-use sparkgo;
+--use sparkgo;
 
 -- initial drops
 drop trigger if exists log_scooter_insert;
@@ -10,10 +10,18 @@ drop table if exists user;
 drop table if exists renting_station;
 drop table if exists company;
 drop table if exists city;
+drop table if exists payment_method;
+drop table if exists price_list;
+drop table if exists receipt;
+drop table if exists vehicle_type;
+drop table if exists active_plan;
+drop table if exists member;
+drop table if exists plan;
+drop table if exists frequencies;
 
 -- create schema for e-scooter database
 create table city (
-    id int primary key,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name varchar(255)
 );
 
