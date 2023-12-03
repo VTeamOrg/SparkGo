@@ -1,0 +1,7 @@
+#leaflet-map {
+    height: 400px;
+  }
+
+  .leaflet-container {
+    touch-action: none; /* This rule ensures proper touch events handling for dragging on mobile devices */
+  }

@@ -6,7 +6,7 @@ const vehicles = {
             const db = await database.openDb();
             const allVehicles = await database.query(
                 db,
-                "SELECT * FROM vehicle ORDER BY id DESC"
+                "SELECT * FROM v_vehicle ORDER BY id DESC"
             );
 
             await database.closeDb(db);
@@ -26,7 +26,7 @@ const vehicles = {
             const vehicleId = req.params.vehicleId;
             const vehicle = await database.query(
                 db,
-                "SELECT * FROM vehicle WHERE id = ?",
+                "SELECT * FROM v_vehicle WHERE id = ?",
                 vehicleId
             );
 

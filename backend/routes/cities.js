@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const cityModule = require("../models/cities.js");
 
+/* GET routes */
 router.get("/", (req, res) => cityModule.getAllCities(req, res));
-
 router.get("/:cityId", (req, res) => cityModule.getCityById(req, res));
 
 router.post("/", (req, res) => cityModule.createCity(req, res));

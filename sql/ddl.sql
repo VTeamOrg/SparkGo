@@ -1,4 +1,4 @@
-use sparkgo;
+--use sparkgo;
 
 -- initial drops
 drop trigger if exists log_scooter_insert;
@@ -10,6 +10,14 @@ drop table if exists user;
 drop table if exists renting_station;
 drop table if exists company;
 drop table if exists city;
+drop table if exists payment_method;
+drop table if exists price_list;
+drop table if exists receipt;
+drop table if exists vehicle_type;
+drop table if exists active_plan;
+drop table if exists member;
+drop table if exists plan;
+drop table if exists frequencies;
 
 -- create schema for e-scooter database
 create table city (
@@ -20,6 +28,11 @@ create table city (
 CREATE TABLE frequencies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE vehicle_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE renting_station (
@@ -37,7 +50,8 @@ CREATE TABLE member (
     email VARCHAR(255),
     name VARCHAR(255),
     personal_number VARCHAR(255),
-    address VARCHAR(255)
+    address VARCHAR(255),
+    wallet DECIMAL(10,2)
 );
 
 CREATE TABLE payment_method (
@@ -52,10 +66,19 @@ CREATE TABLE payment_method (
 CREATE TABLE vehicle (
     id INT AUTO_INCREMENT PRIMARY KEY,
     city_id INT,
-    type VARCHAR(255),
+    type_id INT, 
     rented_by INT,
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (rented_by) REFERENCES member(id)
+    FOREIGN KEY (rented_by) REFERENCES member(id),
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+);
+
+CREATE TABLE price_list (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type_id INT, 
+    price_per_minute DECIMAL(10, 2),
+    price_per_unlock DECIMAL(10, 2),
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 
 CREATE TABLE plan (
