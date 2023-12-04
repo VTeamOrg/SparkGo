@@ -2,12 +2,15 @@ const database = require("../db/database.js");
 
 const receipt = {
     getAllReceipt: async function getAllReceipt(req, res) {
+        console.log("get all receipts");
         try {
+            console.log("try");
             const db = await database.openDb();
             const allReceipt = await database.query(
                 db,
-                "SELECT * FROM receipt"
+                "SELECT * FROM v_receipt"
             );
+            console.log("Data from database query:", allReceipt);
 
             await database.closeDb(db);
 
@@ -26,9 +29,10 @@ const receipt = {
             const userId = req.params.member_id;
             const user = await database.query(
                 db,
-                "SELECT * FROM receipt WHERE member_id = ?",
+                "SELECT * FROM v_receipt WHERE member_id = ?",
                 userId
             );
+            console.log("Data from database query:", allReceipt);
 
             await database.closeDb(db);
 
@@ -47,7 +51,7 @@ const receipt = {
             const userId = req.params.id;
             const user = await database.query(
                 db,
-                "SELECT * FROM receipt WHERE id = ?",
+                "SELECT * FROM v_receipt WHERE id = ?",
                 userId
             );
 
@@ -65,7 +69,7 @@ const receipt = {
     generateReceipt: async function generateReceipt(req, res) {
         try {
             const db = await database.openDb();
-            // Assuming there is data stored in the database tables rent, payment_method and price_list. 
+
             const { rent_id } = req.body; 
 
             const receipt_res = await database.query(

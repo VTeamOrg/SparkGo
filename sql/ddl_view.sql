@@ -6,6 +6,7 @@
 /* Drops */
 drop view if exists v_renting_station;
 drop view if exists v_vehicle;
+drop view if exists v_receipt;
 
 /* Renting station + city */
 CREATE VIEW v_renting_station AS
@@ -41,6 +42,15 @@ JOIN
 ON
     v.city_id = c.id;
 
+/* receipt + member */
+CREATE VIEW v_receipt AS
+SELECT
+    r.*,
+    m.name as member_name
+FROM
+    receipt r
+JOIN
+    member m ON r.member_id = m.id;
 
 SHOW CREATE VIEW v_renting_station;
 SHOW CREATE VIEW v_vehicle;

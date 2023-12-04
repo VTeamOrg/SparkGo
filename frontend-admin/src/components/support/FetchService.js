@@ -4,6 +4,8 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
+  console.log(endpoint);
+  console.log(apiUrl);
   try {
     const response = await fetch(apiUrl(endpoint));
     if (!response.ok) {

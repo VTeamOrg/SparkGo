@@ -10,7 +10,6 @@ function Navbar({ setActiveSection }) {
 
       const handleLinkClick = (section) => {
         setActiveSection(section);
-        console.log(section);
     
         // Dispatch a custom event to signal the MapView component
         const event = new CustomEvent('clearMarkers');

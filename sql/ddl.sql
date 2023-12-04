@@ -113,7 +113,10 @@ CREATE TABLE receipt (
     member_id INT,
     payment_details VARCHAR(255),
     payment_type VARCHAR(255),
-    receipt_details VARCHAR(255)
+    receipt_details VARCHAR(255),
+    sum DECIMAL(10, 2),
+    payment_date DATE,
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 

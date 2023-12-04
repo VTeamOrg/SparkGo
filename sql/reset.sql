@@ -10,10 +10,14 @@ create database test;
 use test;
 
 -- create user + grant
---CREATE USER 'dbadm'@'localhost' IDENTIFIED BY 'P@ssw0rd';
---GRANT ALL PRIVILEGES ON sparkgo.* TO 'dbadm'@'localhost';
---GRANT ALL PRIVILEGES ON test.* TO 'dbadm'@'localhost';
---FLUSH PRIVILEGES;
+/*
+CREATE USER 'dbadm'@'localhost' IDENTIFIED BY 'P@ssw0rd';
+GRANT ALL PRIVILEGES ON sparkgo.* TO 'dbadm'@'localhost';
+GRANT ALL PRIVILEGES ON test.* TO 'dbadm'@'localhost';
+GRANT CREATE VIEW, CREATE ROUTINE, TRIGGER ON sparkgo.* TO 'dbadm'@'localhost';
+GRANT CREATE VIEW, CREATE ROUTINE, TRIGGER ON test.* TO 'dbadm'@'localhost';
+FLUSH PRIVILEGES;
+*/
 
 -- runs tables script
 --source ddl test.sql
