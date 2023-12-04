@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const cityModule = require("../models/cities.js");
+const cityModule = require("../../models/cities.js");
 
 /* GET routes */
 router.get("/", (req, res) => cityModule.getAllCities(req, res));
