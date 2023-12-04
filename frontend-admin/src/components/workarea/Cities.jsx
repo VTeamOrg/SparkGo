@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Cities.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
-import { fetchCitiesData, createCity, deleteCity, updateCity } from './FetchService';
+import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 
 /**
  * Cities component for managing a list of connected cities.
@@ -68,13 +68,13 @@ const [editedCityName, setEditedCityName] = useState('');
     setFilteredCities(filtered);
   };
 
-/**
- * Effect to load the list of cities from a database and filter 
- * based on search term.
- * Effect is triggered when `searchTerm` change.
- */
+  /**
+   * Effect to load the list of cities from a database and filter 
+   * based on search term.
+   * Effect is triggered when `searchTerm` change.
+   */
   useEffect(() => {
-    fetchCitiesData(fetchDataAndUpdateState);
+    fetchData('cities', fetchDataAndUpdateState);
   }, [searchTerm]);
   
   /**
@@ -83,26 +83,25 @@ const [editedCityName, setEditedCityName] = useState('');
    * @function
    */
   const handleAddCity = async () => {
-
     /* Handle empty field */
     if (newCity.trim() === '') {
       return;
     }
 
-    /* Check if the city already exists in the current list */  
+    /* Check if the city already exists in the current list */
     if (cities.some((city) => city.name === newCity)) {
       alert('City already exists.');
       return;
     }
 
     try {
-      const createdCity = await createCity(newCity);
-  
+      const createdCity = await createData('cities', { name: newCity });
+
       /* Update the city list */
       setCities([...cities, createdCity]);
-  
+
       setNewCity('');
-      fetchCitiesData(fetchDataAndUpdateState);
+      fetchData('cities', fetchDataAndUpdateState);
     } catch (error) {
       console.error(error.message);
     }
@@ -115,12 +114,12 @@ const [editedCityName, setEditedCityName] = useState('');
    */
   const handleDeleteCity = async (city) => {
     try {
-      const success = await deleteCity(city.id);
+      const success = await deleteData('cities', city.id);
 
       if (success) {
         const updatedCities = cities.filter((c) => c.id !== city.id);
         setCities(updatedCities);
-        fetchCitiesData(fetchDataAndUpdateState);
+        fetchData('cities', fetchDataAndUpdateState);
       } else {
         console.error('Failed to delete city.');
       }
@@ -158,14 +157,16 @@ const [editedCityName, setEditedCityName] = useState('');
     const updatedCity = cities.find((city) => city.id === cityId);
 
     try {
-      const success = await updateCity(cityId, editedCityName);
+      const success = await updateData('cities', cityId, {
+        name: editedCityName
+      });
 
       if (success) {
         const updatedCities = cities.map((city) =>
           city.id === cityId ? { ...city, editing: false, name: editedCityName } : city
         );
         setCities(updatedCities);
-
+        fetchData('cities', fetchDataAndUpdateState);
         handleCancelEdit();
       } else {
         console.error('Failed to update city.');
@@ -180,10 +181,8 @@ const [editedCityName, setEditedCityName] = useState('');
    */
   const handleCancelEdit = () => {
     setEditingCityId(null);
-    fetchCitiesData(fetchDataAndUpdateState);
+    fetchData('cities', fetchDataAndUpdateState);
   };
-
-
 
 
   /* JSX to render data */

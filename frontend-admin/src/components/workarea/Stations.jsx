@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ApiTables.css';
-import { fetchStationsData } from './FetchService';
-import AddStationModal from './AddStationModal'; 
-import EditStationModal from './EditStationModal'; 
-import { createStation, deleteStation, updateStation } from './FetchService';
+import AddStationModal from './Modals/AddStationModal'; 
+import EditStationModal from './Modals/EditStationModal'; 
+import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -26,7 +25,7 @@ function Stations() {
 
   /* Function to fetch station data and update state */
   const fetchDataUpdateState = () => {
-    fetchStationsData((data) => {
+    fetchData('stations',(data) => {
       /* Update the component's state with station data */
       setStations(data);
 
@@ -56,7 +55,7 @@ function Stations() {
 
   const handleUpdateStation = async (editedStation) => {
     try {
-      await updateStation(editedStation.id, editedStation);
+      await updateData('stations',editedStation.id, editedStation);
 
       /* Refetch the station data to get the updated list */
       fetchDataUpdateState();
@@ -70,7 +69,7 @@ function Stations() {
 
   const handleSaveStation = async (newStation) => {
     try {
-      await createStation(newStation);
+      await createData('stations', newStation);
 
       /* Refetch the station data to get the updated list */
       fetchDataUpdateState();
@@ -84,7 +83,7 @@ function Stations() {
 
   const handleDeleteStation = async (stationId) => {
     try {
-      await deleteStation(stationId);
+      await deleteData('stations', stationId);
 
       /* Refetch the station data to get the updated list */
       fetchDataUpdateState();      
