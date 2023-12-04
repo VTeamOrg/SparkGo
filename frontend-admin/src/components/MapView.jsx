@@ -8,8 +8,18 @@ function MapView() {
   const mapRef = useRef(null);
   const citiesCoordinates = useRef(new Map());
   const [markers, setMarkers] = useState([]);
+  const [mapDisabled, setMapDisabled] = useState(false);
+  const [mapEnabled, setMapEnabled] = useState(true);
 
   useEffect(() => {
+    const handleDisableMap = () => {
+      setMapEnabled(false);
+    };
+  
+    const handleEnableMap = () => {
+      setMapEnabled(true);
+    };
+
     const handleClearMarkers = () => {
       setMarkers([]);
     };
@@ -17,6 +27,8 @@ function MapView() {
     window.addEventListener('stationsDataLoaded', handleStationsDataLoaded);
     window.addEventListener('clearMarkers', handleClearMarkers);
     window.addEventListener('citiesDataLoaded', handleCitiesDataLoaded);
+    window.addEventListener('disableMap', handleDisableMap);
+    window.addEventListener('enableMap', handleEnableMap);
 
     function handleCitiesDataLoaded(data) {
       if (data && data.detail && Array.isArray(data.detail)) {
@@ -70,6 +82,9 @@ function MapView() {
     return () => {
       window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
       window.removeEventListener('clearMarkers', handleClearMarkers);
+      window.removeEventListener('disableMap', handleDisableMap);
+      window.removeEventListener('enableMap', handleEnableMap);
+      window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
     };
   }, []);
 
@@ -98,22 +113,26 @@ function MapView() {
 
   return (
     <div id="leaflet-map" style={{ height: '100vh', width: '100%' }}>
-      <MapContainer
-        ref={mapRef} // Assign the ref to the MapContainer
-        center={[56.1697, 15.5829]}
-        zoom={13}
-        style={{ height: '100%', width: '100%' }}
-        scrollWheelZoom={true}
-        dragging={true}
-        minZoom={3}
-        maxZoom={18}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {markers}
-      </MapContainer>
+      {mapEnabled ? (
+        <MapContainer
+          ref={mapRef}
+          center={[56.1697, 15.5829]}
+          zoom={13}
+          style={{ height: '100%', width: '100%' }}
+          scrollWheelZoom={true}
+          dragging={true}
+          minZoom={3}
+          maxZoom={18}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {markers}
+        </MapContainer>
+      ) : (
+        <div className="map-disabled-message">Map is disabled for this view</div>
+      )}
     </div>
   );
 }
