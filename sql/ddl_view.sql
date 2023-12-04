@@ -1,6 +1,8 @@
 /* VIEW build */
 /* Run after ddl */
 
+
+
 /* Drops */
 drop view if exists v_renting_station;
 drop view if exists v_vehicle;
@@ -38,3 +40,7 @@ JOIN
     city AS c
 ON
     v.city_id = c.id;
+
+
+SHOW CREATE VIEW v_renting_station;
+SHOW CREATE VIEW v_vehicle;
