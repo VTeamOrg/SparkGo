@@ -19,7 +19,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
-    "react-modal": "^3.16.1"
+    "react-modal": "^3.16.1",
+    "react-vite": "^0.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
