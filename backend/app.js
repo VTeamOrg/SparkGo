@@ -9,6 +9,7 @@ const stations = require("./routes/stations.js");
 const vehicles = require("./routes/vehicles.js");
 const cities = require("./routes/cities.js");
 const receipts = require("./routes/receipts.js");
+const vehicleTypes = require("./routes/vehicleTypes.js");
 
 const app = express();
 const httpServer = require("http").createServer(app);
@@ -31,6 +32,7 @@ const io = require("socket.io")(httpServer, {
             "http://localhost:1337/cities",
             "http://localhost:1337/vehicles",
             "http://localhost:1337/receipts",
+            "http://localhost:1337/vehicleTypes",            
             "http://127.0.0.1:3306",
             "http://localhost:5137"
         ],
@@ -51,6 +53,7 @@ app.use("/stations", stations);
 app.use("/vehicles", vehicles);
 app.use("/cities", cities);
 app.use("/receipts", receipts);
+app.use("/vehicleTypes", vehicleTypes);
 
 httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

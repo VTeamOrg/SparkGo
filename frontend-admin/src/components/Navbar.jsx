@@ -30,6 +30,7 @@ function Navbar({ setActiveSection }) {
             <button onClick={() => handleLinkClick('receipts')}>Receipts</button>
             <button onClick={() => handleLinkClick('cities')}>Cities</button>
             <button onClick={() => handleLinkClick('stations')}>Stations</button>
+            <button onClick={() => handleLinkClick('vehicleTypes')}>Vehicle types</button>
             <button onClick={() => handleLinkClick('vehicles')}>Vehicles</button>
             <button onClick={() => handleLinkClick('customers')}>Customers</button>
           </div>

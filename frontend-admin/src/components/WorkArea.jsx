@@ -4,13 +4,17 @@ import RideHistory from './workarea/RideHistory';
 import Receipts from './workarea/Receipts'; 
 import Cities from './workarea/Cities'; 
 import Stations from './workarea/Stations'; 
+import VehicleTypes from './workarea/VehicleTypes'; 
+import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
 
 function WorkArea({ activeSection }) {
-
-  /* Emit an event when a new section is selected */
   useEffect(() => {
-    const event = new CustomEvent('sectionSelected', { detail: activeSection });
-    window.dispatchEvent(event);
+    /* Emit the appropriate map event based on the selected section */
+    if (activeSection === 'myAccount' || activeSection === 'vehicleTypes') {
+      emitDisableMapEvent(); 
+    } else {
+      emitEnableMapEvent(); 
+    }
   }, [activeSection]);
 
     const renderContent = () => {
@@ -25,6 +29,8 @@ function WorkArea({ activeSection }) {
           return <Cities />;  
         case 'stations':
           return <Stations />;  
+          case 'vehicleTypes':
+            return <VehicleTypes />; 
         case 'vehicles':
           return <div>Vehicles Content</div>;
         case 'customers':

@@ -52,5 +52,15 @@ FROM
 JOIN
     member m ON r.member_id = m.id;
 
+/* Price list, vehicle type */
+CREATE VIEW v_price_list AS
+SELECT
+    r.*,
+    t.name as type_name
+FROM
+    price_list r
+JOIN
+    vehicle_type t ON r.type_id = t.id;    
+
 SHOW CREATE VIEW v_renting_station;
 SHOW CREATE VIEW v_vehicle;

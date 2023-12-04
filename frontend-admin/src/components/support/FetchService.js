@@ -4,8 +4,6 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
-  console.log(endpoint);
-  console.log(apiUrl);
   try {
     const response = await fetch(apiUrl(endpoint));
     if (!response.ok) {
@@ -66,6 +64,8 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {
+  console.log("endpoint", endpoint);
+  console.log("id", itemId);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'DELETE',
