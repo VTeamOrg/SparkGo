@@ -5,12 +5,16 @@ import Receipts from './workarea/Receipts';
 import Cities from './workarea/Cities'; 
 import Stations from './workarea/Stations'; 
 import VehicleTypes from './workarea/VehicleTypes'; 
+import PriceList from './workarea/PriceList'; 
 import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
+
 
 function WorkArea({ activeSection }) {
   useEffect(() => {
+    console.log("active: ", activeSection);
     /* Emit the appropriate map event based on the selected section */
-    if (activeSection === 'myAccount' || activeSection === 'vehicleTypes') {
+    if (activeSection === 'myAccount' || activeSection === 'vehicleTypes'
+    || activeSection === 'pricingPlans') {
       emitDisableMapEvent(); 
     } else {
       emitEnableMapEvent(); 
@@ -29,11 +33,13 @@ function WorkArea({ activeSection }) {
           return <Cities />;  
         case 'stations':
           return <Stations />;  
-          case 'vehicleTypes':
-            return <VehicleTypes />; 
+        case 'vehicleTypes':
+          return <VehicleTypes />; 
         case 'vehicles':
           return <div>Vehicles Content</div>;
-        case 'customers':
+        case 'pricingPlans':
+          return <PriceList />;   
+          case 'customers':
           return <div>Customers Content</div>;
         default:
           return null;

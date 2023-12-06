@@ -42,7 +42,6 @@ export const createData = async (endpoint, newData) => {
 
 /* UPDATE data for a given endpoint */
 export const updateData = async (endpoint, itemId, updatedData) => {
-
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'PUT',
@@ -64,8 +63,6 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {
-  console.log("endpoint", endpoint);
-  console.log("id", itemId);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'DELETE',
