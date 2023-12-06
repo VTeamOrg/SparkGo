@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Cities.css';
+import './Data.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
@@ -187,7 +187,7 @@ const [editedCityName, setEditedCityName] = useState('');
 
   /* JSX to render data */
   return (
-    <div className="cities">
+    <div className="data">
       <h2>Connected Cities</h2>
 
       <div className="add-search">
@@ -198,7 +198,7 @@ const [editedCityName, setEditedCityName] = useState('');
           e.preventDefault();
           handleAddCity();
         }}
-        className="add-city-form"
+        className="add-data-form"
       >
         <input
           type="text"
@@ -206,7 +206,7 @@ const [editedCityName, setEditedCityName] = useState('');
           value={newCity}
           onChange={(e) => setNewCity(e.target.value)}
         />
-        <button type="submit" className="add-city-button">Add City</button>
+        <button type="submit" className="add-data-button">Add City</button>
       </form>
 
       {/* Search bar */}
@@ -223,12 +223,12 @@ const [editedCityName, setEditedCityName] = useState('');
     </div>
 
     {/* Existing cities list */}
-    <div className="city-list">
+    <div className="data-list">
         <ul>
 
           {filteredCities.map((city, index) => (
-            <li key={index} className="city-entry">
-              <div className="city-info">
+            <li key={index} className="data-entry">
+            <div className="data-info">
                 {editingCityId === city.id ? (
                   <form onSubmit={(e) => handleSaveEdit(e, city.id)}>
                     <input
@@ -242,7 +242,7 @@ const [editedCityName, setEditedCityName] = useState('');
                   city.name
                 )}
               </div>
-              <div className="city-buttons">
+              <div className="data-buttons">
                 {editingCityId === city.id ? (
                   <button className="cancel-button" onClick={() => handleCancelEdit()}>
                     Cancel

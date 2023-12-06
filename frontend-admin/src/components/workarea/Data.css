@@ -1,18 +1,18 @@
-/* Cities.css */
+/* Fetch.css */
 
-.city-list ul {
+.data-list ul {
   list-style-type: none;
   padding: 0;
 }
 
-.city-entry {
+.data-entry {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px;
 }
 
-.city-buttons {
+.data-buttons {
   display: flex;
   gap: 10px;
 }
@@ -42,20 +42,18 @@
   padding-left: 10px;
 }
 
-/* Cities.css */
-
 /* Style the form */
-.add-city-form {
+.add-data-form {
   display: flex;
   align-items: center;
 }
 
-.add-city-form input[type="text"] {
+.add-data-form input[type="text"] {
   flex-grow: 1;
   margin-right: 10px;
 }
 
-.add-city-button {
+.add-data-button {
   background-color: #2C9AFF;
   color: white;
   border: none;
@@ -65,6 +63,6 @@
   font-size: 16px;
 }
 
-.add-city-button:hover {
+.add-data-button:hover {
   box-shadow: 0px 0px 5px 2px rgba(44, 154, 255, 0.5); 
 }

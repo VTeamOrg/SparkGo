@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Cities.css';
+import './Data.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
@@ -115,7 +115,7 @@ function VehicleTypes() {
 
     /* JSX to render data */
   return (
-    <div className="cities">
+    <div className="data">
       <h2>Vehicle Types</h2>
 
       <div className="add-search">
@@ -125,7 +125,7 @@ function VehicleTypes() {
             e.preventDefault();
             handleAddVehicleType();
           }}
-          className="add-city-form"
+          className="add-data-form"
         >
           <input
             type="text"
@@ -133,7 +133,7 @@ function VehicleTypes() {
             value={newVehicleType}
             onChange={(e) => setNewVehicleType(e.target.value)}
           />
-          <button type="submit" className="add-city-button">
+          <button type="submit" className="add-data-button">
             Add Vehicle Type
           </button>
         </form>
@@ -151,11 +151,11 @@ function VehicleTypes() {
       </div>
 
       {/* Existing vehicle types list */}
-      <div className="city-list">
+      <div className="data-list">
         <ul>
         {filteredVehicleTypes.map((vehicleType, index) => (
-        <li key={index} className="city-entry">
-            <div className="city-info">
+        <li key={index} className="data-entry">
+            <div className="data-info">
             {editingVehicleTypeId === vehicleType.id ? (
                 <div>
                 <input
@@ -169,7 +169,7 @@ function VehicleTypes() {
                 vehicleType.name
             )}
             </div>
-            <div className="city-buttons">
+            <div className="data-buttons">
             {editingVehicleTypeId === vehicleType.id ? (
                 <button className="cancel-button" onClick={() => handleCancelEdit()}>
                 Cancel

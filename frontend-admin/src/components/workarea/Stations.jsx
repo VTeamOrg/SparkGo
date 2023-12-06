@@ -7,7 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 /**
- * Stations component to display station information.
+ * PriceList component for managing stations
+ *
+ * @returns {JSX.Element} The stations component JSX.
  */
 function Stations() {
   /* State to store station data */
@@ -111,11 +113,11 @@ function Stations() {
         <tbody>
           {stations.map((station) => (
             <tr key={station.id} className="api-row">
-              <td className="api-name">{station.name}</td>
-              <td className="api-coordinates">
+              <td >{station.name}</td>
+              <td >
                 ({station.coords_lat}, {station.coords_long})
               </td>
-              <td className="api-city-id">{station.city_name}</td>
+              <td >{station.city_name}</td>
               <td className="api-edit">
                 <button onClick={() => handleEditStation(station)}>
                   <FontAwesomeIcon icon={faPencilAlt} />
