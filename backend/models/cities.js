@@ -44,7 +44,7 @@ const cities = {
     createCity: async function (req, res) {
         try {
             const db = await database.openDb();
-            const { name } = req.body; // Assuming name and population are required fields for creating a city
+            const { name } = req.body; 
 
             const newCity = await database.query(
                 db,
