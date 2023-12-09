@@ -3,7 +3,7 @@ const router = express.Router();
 
 let vehicleModule;
 
-vehicleModule = require("../models/vehicles.js");
+vehicleModule = require("../../models/vehicles.js");
 
 router.get("/", (req, res) => vehicleModule.getAllVehicles(req, res));
 

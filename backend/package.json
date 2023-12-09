@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --exit test/app.js --exit test/user.js --exit test/city.js --exit test/station.js  --exit test/vehicle.js -exit test/receipt.js",
+        "test": "mocha --recursive test/",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },
@@ -12,7 +12,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "dotenv": "^16.3.1",
         "eventsource": "^2.0.2",
@@ -25,7 +24,8 @@
         "sinon": "^16.0.0",
         "socket.io": "^4.6.1",
         "sqlite": "^4.2.1",
-        "sqlite3": "^5.1.6"
+        "sqlite3": "^5.1.6",
+        "ws": "^8.14.2"
     },
     "devDependencies": {
         "chai": "^4.3.8",
