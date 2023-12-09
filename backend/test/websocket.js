@@ -1,19 +1,19 @@
 const chai = require('chai');
 const expect = chai.expect;
 const WebSocket = require('ws');
-const app = require('../app'); // Assuming your server setup is in app.js
+const app = require('../app');
 
 describe('WebSocket Connection', () => {
     let ws;
     let server;
 
     before((done) => {
-        // Start your server before running tests
+        // Start server before running tests
         server = app.appServer;
 
-        server.listen(3000, () => {
-            // Connect to your WebSocket server
-            ws = new WebSocket('ws://localhost:3000'); // Change the URL as needed
+        server.listen(1337, () => {
+            // Connect to WebSocket server
+            ws = new WebSocket('ws://localhost:1337'); // Change the URL as needed
             ws.on('open', () => {
                 done();
             });
