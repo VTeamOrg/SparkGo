@@ -2,7 +2,7 @@ const sinon = require("sinon");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 
-const priceListTest = require("../../backend/testmodels/priceListest.js");
+const priceListTest = require("../../backend/testmodels/priceListTest.js");
 const database = require("../db/database.js");
 
 chai.should();

@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-const plansModel = require("../../backend/testmodels/planstest.js"); // Import your plans model
+const plansModel = require("../../backend/testmodels/plansTest.js"); // Import your plans model
 const database = require("../../backend/db/database.js"); // Import your database functions
 
 describe("Plans Model Tests", () => {
