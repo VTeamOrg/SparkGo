@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 
 const handleConnection = (ws) => {
-    console.log(ws);
+    console.log("Connected");
 };
 
 // todo

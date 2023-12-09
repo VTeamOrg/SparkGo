@@ -36,4 +36,5 @@ server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
 
-module.exports = app; // Export the app variable
+app.appServer = server;
+module.exports = app;
