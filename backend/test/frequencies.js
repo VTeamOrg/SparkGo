@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-const frequencyModel = require("../../backend/testmodels/frequenciestest.js"); // Import your frequency model
+const frequencyModel = require("../../backend/testmodels/frequenciesTest.js"); // Import your frequency model
 const database = require("../../backend/db/database.js"); // Import your database functions
 
 describe("Frequency Model Tests", () => {

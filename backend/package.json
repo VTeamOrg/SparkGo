@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --recursive test/",
+        "test": "mocha --recursive --exit test/",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },
