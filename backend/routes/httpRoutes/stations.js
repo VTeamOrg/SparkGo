@@ -3,7 +3,7 @@ const router = express.Router();
 
 let stationsModule;
 
-stationsModule = require("../models/stations.js");
+stationsModule = require("../../models/stations.js");
 
 router.get("/", (req, res) => stationsModule.getAllStations(req, res));
 router.get("/:stationId", (req, res) =>

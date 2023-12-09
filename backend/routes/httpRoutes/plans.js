@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const planModule = require("../models/plans.js");
+const planModule = require("../../models/plans.js");
 
 // GET all plans
 router.get("/", (req, res) => planModule.getAllPlans(req, res));
