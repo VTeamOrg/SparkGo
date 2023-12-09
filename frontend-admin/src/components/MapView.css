@@ -5,3 +5,13 @@
   .leaflet-container {
     touch-action: none; /* This rule ensures proper touch events handling for dragging on mobile devices */
   }
+
+  .map-disabled-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-size: 20px;
+    color: #ff0000;
+    background-color: rgba(255, 255, 255, 0.8);
+  }

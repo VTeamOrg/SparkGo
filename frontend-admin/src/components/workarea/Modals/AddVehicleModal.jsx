@@ -1,67 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { fetchCitiesData } from './FetchService';
 
-const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
-  const [stationName, setStationName] = useState('');
+const AddVehicleModal = ({ isOpen, onRequestClose, onSave }) => {
+  const [vehicleName, setVehicleName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
 
-  const [cities, setCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [vehicleTypes, setVehicleTypes] = useState([]);
+  const [selectedVehicleType, setSelectedVehicleType] = useState('');
 
   const mapRef = useRef(null);
 
   useEffect(() => {
-    fetchCitiesData((data) => {
-      setCities(data);
-    });
+    // Fetch vehicle types here if needed
   }, []);
-
-  useEffect(() => {
-    /* Populate form fields with station data when modal opens */
-    if (isOpen && station) {
-      setStationName(station.name);
-      setLatitude(station.coords_lat);
-      setLongitude(station.coords_long);
-      setSelectedCity(station.city_id);
-      setSelectedCoordinates([station.coords_lat, station.coords_long]);
-    }
-  }, [isOpen, station]);
 
   const handleMapClick = (e) => {
     const { lat, lng } = e.latlng;
-    setLatitude(lat.toFixed(6));
-    setLongitude(lng.toFixed(6));
+    setLatitude(lat.toFixed(4));
+    setLongitude(lng.toFixed(4));
     setSelectedCoordinates([lat, lng]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!stationName || !latitude || !longitude || !selectedCity) {
+    if (!vehicleName || !latitude || !longitude || !selectedVehicleType) {
       alert('Please fill in all fields.');
       return;
     }
 
-    const editedStation = {
-      id: station.id,
-      name: stationName,
+    const newVehicle = {
+      name: vehicleName,
       coords_lat: parseFloat(latitude),
       coords_long: parseFloat(longitude),
-      city_id: selectedCity,
+      type_id: selectedVehicleType,
     };
 
-    onSave(editedStation);
+    onSave(newVehicle);
 
-    setStationName('');
+    setVehicleName('');
     setLatitude('');
     setLongitude('');
     setSelectedCoordinates(null);
-    setSelectedCity('');
+    setSelectedVehicleType('');
 
     onRequestClose();
   };
@@ -71,8 +55,8 @@ const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
       dblclick: (e) => {
         e.originalEvent.preventDefault();
         const { lat, lng } = e.latlng;
-        setLatitude(lat.toFixed(6));
-        setLongitude(lng.toFixed(6));
+        setLatitude(lat.toFixed(4));
+        setLongitude(lng.toFixed(4));
         setSelectedCoordinates([lat, lng]);
       },
     });
@@ -84,33 +68,29 @@ const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Edit Station Modal"
-      className="edit-station-modal"
+      contentLabel="Add Vehicle Modal"
     >
-      <h2>Edit Station</h2>
+      <h2>Add Vehicle</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="city">Select a City:</label>
+          <label htmlFor="vehicleType">Select a Vehicle Type:</label>
           <select
-            id="city"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
+            id="vehicleType"
+            value={selectedVehicleType}
+            onChange={(e) => setSelectedVehicleType(e.target.value)}
           >
-            <option value="">Select a city</option>
-            {cities.map((city) => (
-              <option key={city.id} value={city.id}>
-                {city.name}
-              </option>
-            ))}
+            <option value="">Select a vehicle type</option>
+            {/* Map over your vehicle types and populate options */}
           </select>
         </div>
+
         <div>
-          <label htmlFor="stationName">Station Name:</label>
+          <label htmlFor="vehicleName">Vehicle Name:</label>
           <input
             type="text"
-            id="stationName"
-            value={stationName}
-            onChange={(e) => setStationName(e.target.value)}
+            id="vehicleName"
+            value={vehicleName}
+            onChange={(e) => setVehicleName(e.target.value)}
           />
         </div>
         <div>
@@ -134,10 +114,8 @@ const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
         <div>
           <label>Coordinates:</label>
           <MapContainer
-            center={selectedCoordinates || [56.1612, 15.5866]}
+            center={[56.1612, 15.5866]}
             zoom={13}
-            zoomSnap={0}
-            zoomDelta={0.25}
             style={{ height: '200px', width: '100%' }}
             onClick={handleMapClick}
             doubleClickZoom={false}
@@ -159,4 +137,4 @@ const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
   );
 };
 
-export default EditStationModal;
+export default AddVehicleModal;

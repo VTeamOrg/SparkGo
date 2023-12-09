@@ -4,13 +4,24 @@ import RideHistory from './workarea/RideHistory';
 import Receipts from './workarea/Receipts'; 
 import Cities from './workarea/Cities'; 
 import Stations from './workarea/Stations'; 
+import VehicleTypes from './workarea/VehicleTypes'; 
+import PriceList from './workarea/PriceList'; 
+import Plans from './workarea/Plans'; 
+import Frequencies from './workarea/Frequencies'; 
+import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
+
 
 function WorkArea({ activeSection }) {
-
-  /* Emit an event when a new section is selected */
   useEffect(() => {
-    const event = new CustomEvent('sectionSelected', { detail: activeSection });
-    window.dispatchEvent(event);
+    console.log("active: ", activeSection);
+    /* Emit the appropriate map event based on the selected section */
+    if (activeSection === 'myAccount' || activeSection === 'vehicleTypes'
+    || activeSection === 'priceList' || activeSection === 'plans'
+    || activeSection === 'frequencies') {
+      emitDisableMapEvent(); 
+    } else {
+      emitEnableMapEvent(); 
+    }
   }, [activeSection]);
 
     const renderContent = () => {
@@ -25,8 +36,16 @@ function WorkArea({ activeSection }) {
           return <Cities />;  
         case 'stations':
           return <Stations />;  
+        case 'vehicleTypes':
+          return <VehicleTypes />; 
         case 'vehicles':
           return <div>Vehicles Content</div>;
+        case 'priceList':
+          return <PriceList />; 
+        case 'plans':
+          return <Plans />;     
+        case 'frequencies':
+          return <Frequencies />;             
         case 'customers':
           return <div>Customers Content</div>;
         default:

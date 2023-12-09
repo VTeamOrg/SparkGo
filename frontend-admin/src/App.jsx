@@ -9,21 +9,12 @@ function App() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
 
-  useEffect(() => {
-    console.log('App component mounted');
-
-    return () => {
-      console.log('App component unmounted');
-    };
-  }, []);
-
   const handleLogin = () => {
     setUserLoggedIn(true);
   };
 
   return (
     <div className="App">
-      {console.log('Rendering app')}
       {userLoggedIn ? (
         <div className="app-container">
           <div className="navbar">

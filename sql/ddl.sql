@@ -76,6 +76,7 @@ CREATE TABLE vehicle (
 CREATE TABLE price_list (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type_id INT, 
+    list_name VARCHAR(255),
     price_per_minute DECIMAL(10, 2),
     price_per_unlock DECIMAL(10, 2),
     FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
@@ -113,7 +114,10 @@ CREATE TABLE receipt (
     member_id INT,
     payment_details VARCHAR(255),
     payment_type VARCHAR(255),
-    receipt_details VARCHAR(255)
+    receipt_details VARCHAR(255),
+    sum DECIMAL(10, 2),
+    payment_date DATE,
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 

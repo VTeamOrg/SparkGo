@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import './Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import { fetchCitiesData } from './FetchService';
+import { fetchData } from '../../support/FetchService';
 
 /**
  * AddStationModal component for adding a new station.
@@ -24,9 +24,8 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    fetchCitiesData((data) => {
+    fetchData('cities',(data) => {
       setCities(data);
-      console.log(data);
     });
   }, []);
 
@@ -85,8 +84,8 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
       dblclick: (e) => {
         e.originalEvent.preventDefault(); 
         const { lat, lng } = e.latlng;
-        setLatitude(lat.toFixed(6));
-        setLongitude(lng.toFixed(6));
+        setLatitude(lat.toFixed(4));
+        setLongitude(lng.toFixed(4));
         setSelectedCoordinates([lat, lng]);
       },
     });

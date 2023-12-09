@@ -10,7 +10,6 @@ function Navbar({ setActiveSection }) {
 
       const handleLinkClick = (section) => {
         setActiveSection(section);
-        console.log(section);
     
         // Dispatch a custom event to signal the MapView component
         const event = new CustomEvent('clearMarkers');
@@ -31,7 +30,11 @@ function Navbar({ setActiveSection }) {
             <button onClick={() => handleLinkClick('receipts')}>Receipts</button>
             <button onClick={() => handleLinkClick('cities')}>Cities</button>
             <button onClick={() => handleLinkClick('stations')}>Stations</button>
+            <button onClick={() => handleLinkClick('vehicleTypes')}>Vehicle types</button>
             <button onClick={() => handleLinkClick('vehicles')}>Vehicles</button>
+            <button onClick={() => handleLinkClick('priceList')}>Price lists</button>
+            <button onClick={() => handleLinkClick('plans')}>Plans</button>
+            <button onClick={() => handleLinkClick('frequencies')}>Frequencies</button>
             <button onClick={() => handleLinkClick('customers')}>Customers</button>
           </div>
           <button className="logout-button" onClick={handleLogout}>
