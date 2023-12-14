@@ -22,8 +22,9 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
 
 const handleMessage = (ws, message) => {
     console.log('Received message:', message.toString());
+    const msg = JSON.parse(message.toString());
     if (ws.readyState === WebSocket.OPEN) {
-        switch (message.toString()) {
+        switch (msg.action) {
             case 'rentVehicle':
                 ws.send("Vehicle rented")
                 break;
