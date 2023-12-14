@@ -1,3 +1,4 @@
+use sparkgo;
 /* VIEW build */
 /* Run after ddl */
 

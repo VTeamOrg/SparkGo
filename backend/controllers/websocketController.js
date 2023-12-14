@@ -1,13 +1,14 @@
 const WebSocket = require("ws");
+const { connectedVehicles } = require("../routes/websocketRoutes/store");
 
 // handleConnection is called when a new WebSocket connection is established
-const handleConnection = (ws, req, connectedClients, connectionId, deviceType) => {
+const handleConnection = (ws, req, connectionId, deviceType) => {
     // Add the client to the list of connected clients
     if (deviceType === 'vehicle') {
         // if deviceType is vehicle, add the client to the list of connected vehicles
-        connectedClients.vehicles?.push({id: connectionId, ws});
+        connectedVehicles.add({id: connectionId, ws});
     }
-    console.log('Vehicles count: ', connectedClients.vehicles?.length);
+    console.log('Vehicles count: ', connectedVehicles.get().length);
 };
 
 // todo
@@ -22,21 +23,34 @@ const handleConnection = (ws, req, connectedClients, connectionId, deviceType) =
 const handleMessage = (ws, message) => {
     console.log('Received message:', message.toString());
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send("Server Hello")
+        switch (message.toString()) {
+            case 'rentVehicle':
+                ws.send("Vehicle rented")
+                break;
+            case 'startVehicle':
+                ws.send("Vehicle started")
+                break;
+            case 'stopVehicle':
+                ws.send("Vehicle stopped")
+                break;
+            case 'vehicleStatus':
+                ws.send("Vehicle status")
+                break;
+            default:
+                break;
+        }
     }
 };
 
 // handleClose is called when a WebSocket connection is closed
 // todo: Update database with last known location of vehicle before removing it from the list of connected vehicles
-const handleClose = (connectedClients, connectionId, deviceType) => {
+const handleClose = (connectionId, deviceType) => {
     // Remove the client from the list of connected clients
     if (deviceType === 'vehicle') {
-        // if deviceType is vehicle, remove the client from the list of connected vehicles
-        const index = connectedClients.vehicles?.findIndex(vehicle => vehicle.id === connectionId);
         // Remove the client from the list of connected clients
-        connectedClients.vehicles?.splice(index, 1);
+        connectedVehicles.remove(connectionId);
         console.log('(Vehicle) WebSocket connection closed and removed from store.');
-        console.log('Vehicles count: ', connectedClients.vehicles?.length);
+        console.log('Vehicles count: ', connectedVehicles.get()?.length);
     }
 };
 

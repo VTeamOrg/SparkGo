@@ -1,13 +1,22 @@
 const database = require("../db/database.js");
+const { connectedVehicles } = require("../routes/websocketRoutes/store");
 
 const vehicles = {
     getAllVehicles: async function getAllVehicles(req, res) {
+        const activeVehicles = connectedVehicles.get().map(vehicle => parseInt(vehicle.id));
         try {
             const db = await database.openDb();
-            const allVehicles = await database.query(
+            const getAllVehicles = await database.query(
                 db,
                 "SELECT * FROM v_vehicle ORDER BY id DESC"
             );
+
+            const allVehicles = getAllVehicles.map(vehicle => {
+                return {
+                    ...vehicle,
+                    status: activeVehicles.includes(vehicle.id) ? 'active' : 'inactive'
+                }
+            });
 
             await database.closeDb(db);
 

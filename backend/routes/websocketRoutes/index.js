@@ -1,23 +1,40 @@
 const websocketController = require('../../controllers/websocketController');
 
-module.exports = (wss) => {
-    const connectedClients = {
-        vehicles: [],
-        users: [],
-        admins: [],
-    };
-    let connectionId = 0;
+function wsUrlParser(wsUrlString) {
+    const urlParts = wsUrlString.split("?");
+    const params = {};
+  
+    if (urlParts.length > 1) {
+      const queryString = urlParts[1];
+      const queryParams = new URLSearchParams(queryString);
+  
+      for (const [param, value] of queryParams) {
+        const paramName = param.startsWith('/') ? param.slice(1) : param;
+        params[paramName] = value;
+      }
+    }
+  
+    return params;
+  }
+
+const loadWebsocket = (wss) => {
     wss.on('connection', (ws, req) => {
-        const deviceType = req.url.split('=')[1];
-        connectionId += 1;
-        websocketController.handleConnection(ws, req, connectedClients, connectionId, deviceType);
+        const params = wsUrlParser(req.url);
+        console.log(params);
+        const type = params.type;
+        console.log('params', params);
+        const id = params.id;
+        websocketController.handleConnection(ws, req, id, type);
 
         ws.on('message', (message) => {
             websocketController.handleMessage(ws, message);
         });
 
         ws.on('close', () => {
-            websocketController.handleClose(connectedClients, connectionId, deviceType);
+            websocketController.handleClose(id, type);
         });
     });
 };
+
+
+module.exports = loadWebsocket;

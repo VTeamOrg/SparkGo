@@ -5,7 +5,7 @@ const http = require('http');
 const cors = require("cors");
 const websocket = require('ws');
 const loadHttpRoutes = require("./routes/httpRoutes");
-const loadWebsocketRoutes = require('./routes/websocketRoutes');
+const loadWebsocket = require('./routes/websocketRoutes');
 
 
 const app = express();
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 
 loadHttpRoutes(app);
-loadWebsocketRoutes(wss);
+loadWebsocket(wss);
 
 server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
