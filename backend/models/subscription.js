@@ -1,6 +1,6 @@
 const database = require("../db/database.js");
 
-const receipt = {
+const subscription = {
     getSubscription: async function getSubscription(req, res) {
         try {
             const db = await database.openDb();
@@ -68,4 +68,4 @@ const receipt = {
     
 };
 
-module.exports = receipt;
+module.exports = subscription;
