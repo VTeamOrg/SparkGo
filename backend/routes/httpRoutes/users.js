@@ -3,7 +3,7 @@ const router = express.Router();
 
 let usersModule;
 
-usersModule = require("../models/users.js");
+usersModule = require("../../models/users.js");
 
 router.get("/", (req, res) => usersModule.getAllUsers(req, res));
 

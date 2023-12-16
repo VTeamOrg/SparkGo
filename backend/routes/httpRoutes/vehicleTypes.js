@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const vehicleTypeModule = require("../models/vehicleTypes.js");
+const vehicleTypeModule = require("../../models/vehicleTypes.js");
 
 // GET all vehicle types
 router.get("/", (req, res) => vehicleTypeModule.getAllVehicleTypes(req, res));
