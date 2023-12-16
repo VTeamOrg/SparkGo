@@ -8,6 +8,7 @@ const users = {
                 db,
                 "SELECT * FROM member ORDER BY id DESC"
             );
+            console.log("Data from database query:", allUsers);
 
             await database.closeDb(db);
 

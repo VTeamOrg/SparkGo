@@ -49,3 +49,8 @@
 .api-table tbody tr:nth-child(odd) td {
   background-color: #ffffff; 
 }
+
+/* Highlight the row on hover */
+.clickable-row:hover {
+  background-color: #ff0000 !important;
+}

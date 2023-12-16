@@ -81,5 +81,3 @@ LEFT JOIN
     frequencies imf ON p.included_minutes_frequency_id = imf.id;
 
 
-SHOW CREATE VIEW v_renting_station;
-SHOW CREATE VIEW v_vehicle;
