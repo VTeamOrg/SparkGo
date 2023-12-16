@@ -1,16 +1,13 @@
 const database = require("../db/database.js");
 
-const receipt = {
+const paymentMethods = {
     getPaymentMethod: async function getPaymentMethod(req, res) {
-        console.log("get Payment Method");
         try {
-            console.log("try");
             const db = await database.openDb();
             const paymentMethods = await database.query(
                 db,
                 "SELECT * FROM payment_method"
             );
-            console.log("Data from database query:", paymentMethods);
 
             await database.closeDb(db);
 
@@ -26,18 +23,17 @@ const receipt = {
     getPaymentMethodByMemberId: async function getPaymenmethodByMemberId(req, res) {
         try {
             const db = await database.openDb();
-            const userId = req.params.member_id;
-            const user = await database.query(
+            const memberId = req.params.memberId;
+            const member = await database.query(
                 db,
                 "SELECT * FROM payment_method WHERE member_id = ?",
-                userId
+                memberId
             );
-            console.log("Data from database query:", paymentMethods);
 
             await database.closeDb(db);
 
             return res.json({
-                data: user[0],
+                data: member[0],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -46,4 +42,4 @@ const receipt = {
     },
 };
 
-module.exports = receipt;
+module.exports = paymentMethods;
