@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const receiptModule = require("../models/receipts.js");
+const receiptModule = require("../../models/receipts.js");
 
 // GET all receipts
 router.get("/", (req, res) => receiptModule.getAllReceipt(req, res));

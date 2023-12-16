@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const priceListModule = require("../models/priceList.js");
+const priceListModule = require("../../models/priceList.js");
 
 router.get("/", (req, res) => priceListModule.getAllPriceListItems(req, res));
 router.get("/:itemId", (req, res) => priceListModule.getPriceListItemById(req, res));
