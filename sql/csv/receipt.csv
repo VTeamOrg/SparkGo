@@ -1,9 +1,0 @@
-id,member_id,payment_details,payment_type,receipt_details,sum,payment_date
-1,1,0701234567,Card,Weekly Unlimited,100,2023-01-15
-2,1,0739876543,Swish,Monthly Premium,200,2023-02-20
-3,2,0701111222,Klarna,One-Time Rental,150,2023-03-10
-4,1,0765555555,Card,Weekly Discount,300,2023-04-05
-5,1,0728888888,Swish,Monthly Premium,199,2023-05-18
-6,2,0701111222,Klarna,One-Time Rental,150,2023-03-10
-7,1,0765555555,Card,Weekly Discount,300,2023-04-05
-8,1,0728888888,Swish,Monthly Premium,199,2023-05-18
