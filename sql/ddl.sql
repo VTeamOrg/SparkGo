@@ -1,36 +1,23 @@
-use sparkgo;
+--use sparkgo;
 
 -- initial drops
---
--- Drop tables with foregin key
---
-drop table if exists payment_method;
-drop table if exists vehicle;
-drop table if exists price_list;
-drop table if exists plan;
-drop table if exists active_plan;
-drop table if exists receipt;
-drop table if exists rent;
-drop table if exists scooter;
-drop table if exists renting_station;
-
-/*drop trigger if exists log_scooter_insert;
+drop trigger if exists log_scooter_insert;
 drop trigger if exists log_scooter_update;
-
+drop table if exists rent;
+drop table if exists vehicle;
+drop table if exists number;
+drop table if exists user;
+drop table if exists renting_station;
 drop table if exists company;
-SELECT * FROM company;*/
-
-
-
-
-
---
--- Drop tables with only primary key
--- 
 drop table if exists city;
-drop table if exists frequencies;
+drop table if exists payment_method;
+drop table if exists price_list;
+drop table if exists receipt;
 drop table if exists vehicle_type;
+drop table if exists active_plan;
 drop table if exists member;
+drop table if exists plan;
+drop table if exists frequencies;
 
 -- create schema for e-scooter database
 create table city (
@@ -72,8 +59,8 @@ CREATE TABLE payment_method (
     member_id INT,
     method_name VARCHAR(255),
     reference_info VARCHAR(255),
-    is_selected ENUM('Y', 'N') DEFAULT 'N'
-   -- FOREIGN KEY (member_id) REFERENCES member(id)
+    is_selected ENUM('Y', 'N') DEFAULT 'N',
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 CREATE TABLE vehicle (
@@ -91,8 +78,8 @@ CREATE TABLE price_list (
     type_id INT, 
     list_name VARCHAR(255),
     price_per_minute DECIMAL(10, 2),
-    price_per_unlock DECIMAL(10, 2)
-   -- FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+    price_per_unlock DECIMAL(10, 2),
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 
 CREATE TABLE plan (
@@ -117,49 +104,45 @@ CREATE TABLE active_plan (
     available_minutes INT,
     available_unlocks INT,
     is_paused ENUM('Y', 'N'),
-    PRIMARY KEY (plan_id, member_id, activation_date)
-    -- FOREIGN KEY (plan_id) REFERENCES plan(id),
-    -- FOREIGN KEY (member_id) REFERENCES member(id)
+    PRIMARY KEY (plan_id, member_id, activation_date),
+    FOREIGN KEY (plan_id) REFERENCES plan(id),
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 CREATE TABLE receipt (
     id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT,
-    vehicle_id INT,
+    payment_details VARCHAR(255),
     payment_type VARCHAR(255),
-    start_time DATETIME,
-    end_time DATETIME,
-    total_time_minutes INT,
-    unlock_cost INT,
-    cost_per_minute INT,
-    total_cost DECIMAL(10, 2),
-    payment_date DATE
-   -- FOREIGN KEY (member_id) REFERENCES member(id)
+    receipt_details VARCHAR(255),
+    sum DECIMAL(10, 2),
+    payment_date DATE,
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 
-create table scooter (
+/*create table scooter (
     id int primary key,
     country varchar(255),
     price decimal(10, 2),
     status varchar(255),
     scooter_is_on_station int,
     foreign key (scooter_is_on_station) references renting_station(id)
-);
+);*/
 
-create table rent (
-    id int AUTO_INCREMENT primary key,
+/*create table rent (
+    id int primary key,
     rented_at datetime,
     returned_at datetime,
     user_renting varchar(255),
     r_station_rented_from int,
     r_station_returned_to int,
-    scooter_rented_scooter int
-    -- foreign key (user_renting) references member(id),
-   -- foreign key (r_station_rented_from) references renting_station(id),
-   -- foreign key (r_station_returned_to) references renting_station(id),
-   -- foreign key (scooter_rented_scooter) references scooter(id)
-); 
+    scooter_rented_scooter int,
+    foreign key (user_renting) references member(embg),
+    foreign key (r_station_rented_from) references renting_station(id),
+    foreign key (r_station_returned_to) references renting_station(id),
+    foreign key (scooter_rented_scooter) references scooter(id)
+); */
 
 -- create triggers for the scooter table
 /*drop trigger if exists log_scooter_insert;

@@ -9,7 +9,6 @@ drop view if exists v_vehicle;
 drop view if exists v_receipt;
 drop view if exists v_price_list;
 drop view if exists v_plan;
-drop view if exists v_member;
 
 /* Renting station + city */
 CREATE VIEW v_renting_station AS
@@ -80,20 +79,6 @@ LEFT JOIN
     frequencies iuf ON p.included_unlocks_frequency_id = iuf.id
 LEFT JOIN
     frequencies imf ON p.included_minutes_frequency_id = imf.id;
-    
-/* member, active plan, payment method */
-    CREATE VIEW v_member AS
-    SELECT
-		m.*,
-        ap.plan_id,
-        ap.activation_date,
-        ap.is_paused,
-        pm.method_name,
-        pm.is_selected
-	FROM
-		member m
-	JOIN active_plan ap ON m.id = ap.member_id
-    JOIN payment_method pm ON m.id = pm.member_id;
 
 
 SHOW CREATE VIEW v_renting_station;
