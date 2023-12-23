@@ -4,6 +4,8 @@ const vehicles = require("./vehicles.js");
 const cities = require("./cities.js");
 const subscription = require("./subscription.js");
 const paymentMethods = require("./paymentMethods.js");
+const plans = require("./plans.js");
+const priceList = require("./priceList.js");
 
 const loadHttpRoutes = (app)=> {
     app.use("/users", users);
@@ -12,6 +14,8 @@ const loadHttpRoutes = (app)=> {
     app.use("/cities", cities);
     app.use("/subscription", subscription);
     app.use("/paymentMethods", paymentMethods);
+    app.use("/plans", plans);
+    app.use("/pricelist", priceList);
 }
 
 module.exports = loadHttpRoutes;

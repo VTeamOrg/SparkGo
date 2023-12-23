@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const paymentModule = require("../../models/paymentMethods.js");
+
+const paymentMethodsController = require("../../controllers/paymentMethodsController.js");
 
 // GET all payment method
-router.get("/", (req, res) => paymentModule.getPaymentMethod(req, res));
+router.get("/", paymentMethodsController.getPaymentMethod);
 
 // GET payment method by member ID
-router.get("/memberid/:memberId", (req, res) => paymentModule.getPaymentMethodByMemberId(req, res));
+router.get("/memberid/:memberId", paymentMethodsController.getPaymentMethodByMemberId);
 
 
 
