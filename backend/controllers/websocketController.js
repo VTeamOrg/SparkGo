@@ -6,33 +6,30 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
     // Add the client to the list of connected clients
     if (deviceType === 'vehicle') {
         // if deviceType is vehicle, add the client to the list of connected vehicles
-        connectedVehicles.add({id: connectionId, ws});
+        connectedVehicles.add({id: connectionId, rentedBy: null, ws, userUsageLog: [], updateCreditInterval: null});
     }
-    console.log('Vehicles count: ', connectedVehicles.get().length);
+    console.info('Vehicles count: ', connectedVehicles.get().length);
 };
-
-// todo
-// describe how the request would looklike: right now, we have to create the following events:
-// rentVehicle: {vehicleId, userId} -> return {status: 'success'/'error', message: 'error message'}
-// startVehicle: {vehicleId, userId} -> return {status: 'success'/'error', message: 'error message'}
-// stopVehicle: {vehicleId, userId} -> return {status: 'success'/'error', message: 'error message'}
-// vehicleStatus: {vehicleId} -> return {maxSpeed: number, emidietlyStop: boolean, message: string}
 
 // create seperate files for each topic ex (vehicles, cities ...)
 
 const handleMessage = (ws, message) => {
-    console.log('Received message:', message.toString());
+    // console.log('Received message:', message.toString());
     const msg = JSON.parse(message.toString());
+    const vehicleFunctions = require("../routes/websocketRoutes/vehicles");
     if (ws.readyState === WebSocket.OPEN) {
         switch (msg.action) {
             case 'rentVehicle':
-                ws.send("Vehicle rented")
+                vehicleFunctions.rentVehicle(ws, msg);
                 break;
             case 'startVehicle':
-                ws.send("Vehicle started")
+                vehicleFunctions.startVehicle(ws, msg);
                 break;
             case 'stopVehicle':
-                ws.send("Vehicle stopped")
+                vehicleFunctions.stopVehicle(ws, msg);
+                break;
+            case 'returnVehicle':
+                vehicleFunctions.returnVehicle(ws, msg);
                 break;
             case 'vehicleStatus':
                 ws.send("Vehicle status")
@@ -50,8 +47,7 @@ const handleClose = (connectionId, deviceType) => {
     if (deviceType === 'vehicle') {
         // Remove the client from the list of connected clients
         connectedVehicles.remove(connectionId);
-        console.log('(Vehicle) WebSocket connection closed and removed from store.');
-        console.log('Vehicles count: ', connectedVehicles.get()?.length);
+        console.info('(Vehicle) WebSocket connection closed and removed from store. \n Vehicles count: ', connectedVehicles.get()?.length);
     }
 };
 
