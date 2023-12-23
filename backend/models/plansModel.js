@@ -1,47 +1,36 @@
 const database = require("../db/database.js");
 
-const plans = {
-    getAllPlans: async function (req, res) {
+const plansModel = {
+    getAllPlans: async function () {
         try {
             const db = await database.openDb();
             const allPlans = await database.query(
                 db,
                 "SELECT * FROM v_plan ORDER BY id DESC"
             );
-
             await database.closeDb(db);
-
-            return res.json({
-                data: allPlans,
-            });
+            return allPlans;
         } catch (error) {
-            console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw error;
         }
     },
 
-    getPlanById: async function (req, res) {
+    getPlanById: async function (planId) {
         try {
             const db = await database.openDb();
-            const planId = req.params.planId;
             const plan = await database.query(
                 db,
                 "SELECT * FROM plan WHERE id = ?",
                 planId
             );
-
             await database.closeDb(db);
-
-            return res.json({
-                data: plan[0],
-            });
+            return plan[0];
         } catch (error) {
-            console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw error;
         }
     },
 
-    createPlan: async function (req, res) {
+    createPlan: async function (planData) {
         try {
             const db = await database.openDb();
             const {
@@ -53,7 +42,7 @@ const plans = {
                 included_unlocks_frequency_id,
                 included_minutes,
                 included_minutes_frequency_id,
-            } = req.body;
+            } = planData;
 
             const newPlan = await database.query(
                 db,
@@ -71,21 +60,15 @@ const plans = {
             );
 
             await database.closeDb(db);
-
-            return res.status(201).json({
-                message: "Plan created successfully",
-                data: newPlan,
-            });
+            return newPlan;
         } catch (error) {
-            console.error("Error creating plan:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw error;
         }
     },
 
-    updatePlan: async function (req, res) {
+    updatePlan: async function (planId, updatedFields) {
         try {
             const db = await database.openDb();
-            const planId = req.params.planId;
             const {
                 title,
                 description,
@@ -95,7 +78,7 @@ const plans = {
                 included_unlocks_frequency_id,
                 included_minutes,
                 included_minutes_frequency_id,
-            } = req.body; // Fields to update
+            } = updatedFields;
 
             const updatedPlan = await database.query(
                 db,
@@ -114,34 +97,21 @@ const plans = {
             );
 
             await database.closeDb(db);
-
-            return res.json({
-                message: "Plan updated successfully",
-                data: updatedPlan,
-            });
+            return updatedPlan;
         } catch (error) {
-            console.error("Error updating plan:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw error;
         }
     },
 
-    deletePlan: async function (req, res) {
+    deletePlan: async function (planId) {
         try {
             const db = await database.openDb();
-            const planId = req.params.planId;
-
             await database.query(db, "DELETE FROM plan WHERE id = ?", planId);
-
             await database.closeDb(db);
-
-            return res.json({
-                message: "Plan deleted successfully",
-            });
         } catch (error) {
-            console.error("Error deleting plan:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            throw error;
         }
     },
 };
 
-module.exports = plans;
+module.exports = plansModel;
