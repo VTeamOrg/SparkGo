@@ -1,0 +1,85 @@
+const vehiclesModel = require("../models/vehiclesModel");
+const { connectedVehicles } = require("../routes/websocketRoutes/store");
+
+const vehiclesController = {
+    getAllVehicles: async function (req, res) {
+        const activeVehicles = connectedVehicles.get().map(vehicle => parseInt(vehicle.id));
+        try {
+            const allVehicles = await vehiclesModel.getAllVehicles();
+            const modifiedVehicles = allVehicles.map(vehicle => {
+                return {
+                    ...vehicle,
+                    status: activeVehicles.includes(vehicle.id) ? 'active' : 'inactive'
+                }
+            });
+
+            return res.json({
+                data: modifiedVehicles ?? [],
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    getVehicleById: async function (req, res) {
+        try {
+            const vehicleId = req.params.vehicleId;
+            const vehicle = await vehiclesModel.getVehicleById(vehicleId);
+
+            return res.json({
+                data: vehicle,
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    createVehicle: async function (req, res) {
+        try {
+            const { city_id, type_id, rented_by } = req.body;
+            const newVehicle = await vehiclesModel.createVehicle(city_id, type_id, rented_by);
+
+            return res.status(201).json({
+                message: "Vehicle created successfully",
+                data: newVehicle,
+            });
+        } catch (error) {
+            console.error("Error creating vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    updateVehicle: async function (req, res) {
+        try {
+            const vehicleId = req.params.vehicleId;
+            const { city_id, type_id, rented_by } = req.body;
+            const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, rented_by);
+
+            return res.json({
+                message: "Vehicle updated successfully",
+                data: updatedVehicle,
+            });
+        } catch (error) {
+            console.error("Error updating vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    deleteVehicle: async function (req, res) {
+        try {
+            const vehicleId = req.params.vehicleId;
+            await vehiclesModel.deleteVehicle(vehicleId);
+
+            return res.json({
+                message: "Vehicle deleted successfully",
+            });
+        } catch (error) {
+            console.error("Error deleting vehicle:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+};
+
+module.exports = vehiclesController;
