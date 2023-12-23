@@ -4,8 +4,10 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
+
   try {
     const response = await fetch(apiUrl(endpoint));
+
     if (!response.ok) {
       throw new Error(`Failed to fetch data for endpoint: ${endpoint}`);
     }
@@ -41,7 +43,11 @@ export const createData = async (endpoint, newData) => {
 };
 
 /* UPDATE data for a given endpoint */
+/* UPDATE data for a given endpoint */
 export const updateData = async (endpoint, itemId, updatedData) => {
+  console.log("endpoint ", endpoint);
+  console.log("update ", itemId);
+  console.log("updateData ", updatedData);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'PUT',
@@ -52,14 +58,19 @@ export const updateData = async (endpoint, itemId, updatedData) => {
     });
 
     if (response.ok) {
-      return await response.json();
+      const responseData = await response.json();
+      console.log(`Successfully updated data for endpoint: ${endpoint}`);
+      console.log('Response Data:', responseData); // Log the response data
+      return responseData;
     } else {
       throw new Error(`Failed to update data for endpoint: ${endpoint}`);
     }
   } catch (error) {
+    console.error(`Error updating data for endpoint ${endpoint}: ${error.message}`); // Log the error
     throw new Error(`Error updating data for endpoint ${endpoint}: ${error.message}`);
   }
 };
+
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {

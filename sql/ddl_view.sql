@@ -64,7 +64,7 @@ FROM
 JOIN
     vehicle_type t ON r.type_id = t.id;    
 
-/* plan, temp view */
+/* plan view */
 CREATE VIEW v_plan AS 
 SELECT 
     p.*,
@@ -80,4 +80,24 @@ LEFT JOIN
 LEFT JOIN
     frequencies imf ON p.included_minutes_frequency_id = imf.id;
 
-
+/* Member view with plan addons */
+CREATE VIEW v_member AS
+SELECT
+    m.*,
+    pm.method_name AS payment_method,
+    pm.reference_info AS payment_reference,
+    pm.is_selected AS payment_selected,
+    ap.plan_id AS active_plan_id,
+    ap.activation_date AS active_plan_activation,
+    ap.available_minutes AS active_plan_minutes,
+    ap.available_unlocks AS active_plan_unlocks,
+    ap.is_paused AS active_plan_paused,
+    p.title AS active_plan_name
+FROM
+    member m
+LEFT JOIN
+    payment_method pm ON m.id = pm.member_id
+LEFT JOIN
+    active_plan ap ON m.id = ap.member_id
+LEFT JOIN
+    plan p ON ap.plan_id = p.id;    

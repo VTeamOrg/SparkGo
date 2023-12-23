@@ -3,8 +3,8 @@ import './ApiTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { fetchData } from '../support/FetchService';
-import AddMemberModal from './Modals/AddMemberModal'; // Import your AddMemberModal component
-import MemberModal from './Modals/MemberModal'; // Import your MemberModal component
+import AddMemberModal from './Modals/AddMemberModal'; 
+import MemberModal from './Modals/MemberModal'; 
 
 /**
  * Component for managing and displaying members.
@@ -18,14 +18,24 @@ function Members() {
 
   useEffect(() => {
     fetchData('users', (data) => {
-      setMembers(data);
+      // Remove duplicate members based on their IDs
+      const uniqueMembers = data.filter((member, index, self) =>
+        index === self.findIndex((m) => m.id === member.id)
+      );
+  
+      setMembers(uniqueMembers);
     });
   }, []);
 
   const refreshMembersData = () => {
     fetchData('users', (data) => {
-      setMembers(data);
-    });
+        // Remove duplicate members based on their IDs
+        const uniqueMembers = data.filter((member, index, self) =>
+          index === self.findIndex((m) => m.id === member.id)
+        );
+    
+        setMembers(uniqueMembers);
+      });
   };
 
   /**
@@ -97,6 +107,7 @@ return (
         <table>
           <thead>
             <tr>
+            <th>ID</th>
               <th>Name</th>
               <th>Role</th>
               <th>Email</th>
@@ -109,6 +120,7 @@ return (
                 className="api-row"
                 onClick={() => openMemberModal(member)} // Handle click to open MemberModal
               >
+                <td>{member.id}</td>
                 <td>
                   {/* Make the member name clickable */}
                   <button className="member-name-button" onClick={() => openMemberModal(member)}>

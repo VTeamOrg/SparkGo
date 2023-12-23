@@ -22,9 +22,45 @@
     width: 100%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     z-index: 10000;
+    max-height: 99vh;
+    overflow-y: auto;
   }
 
   .address-input {
     width: 100%;
     height: auto; /* Adjust the height as needed */
   }
+
+/* MODAL TABLE STYLES */
+
+  /* "row" class for the container div */
+.row {
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Style the labels */
+.row label {
+  margin-right: 10px;
+}
+
+/* Style for input checkbox */
+.row input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.divider {
+  border-top: 1px solid #ccc; 
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+}
+
+.full-width-address {
+  width: 100%;
+  height: 80px; 
+  resize: none; 
+  border: 1px solid #ccc; 
+  padding: 5px; 
+}
+

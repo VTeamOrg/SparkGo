@@ -1,14 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './Modal.css';
 import PropTypes from 'prop-types';
 import { fetchData, updateData, deleteData } from '../../support/FetchService';
-import { validateEmail } from '../../support/Utils';
+import { validateEmail, formatDateTime } from '../../support/Utils';
+import AddPaymentModal from './AddPaymentModal.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { PaymentMethodFields, MemberFields, PlanFields } from '../Fields/Fields.jsx';
 
-function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers }) {
+function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers }) { 
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedMember, setEditedMember] = useState({ ...member });
   const [emailError, setEmailError] = useState('');
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); 
+  const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
+
+  const refreshMembersModalData = () => {
+    const memberId = editedMember.id;
+    
+    if (memberId) {
+      fetchData(`paymentMethods/memberid/${memberId}`, (data) => {
+        // Find the selected payment method (is_selected === 'Y')
+        const selectedMethod = data.find((method) => method.is_selected === 'Y');
+  
+
+  
+        // Find the selected payment method index (is_selected === 'Y')
+        const selectedIndex = data.findIndex((method) => method.is_selected === 'Y');
+        setSelectedPaymentMethodIndex(selectedIndex);
+  
+        // Update the payment reference for the entire row
+        setEditedMember((prevMember) => ({
+          ...prevMember,
+          payment_reference: selectedMethod ? selectedMethod.reference_info : '',
+        }));
+  
+        // Update paymentMethods state
+        setPaymentMethods(data);
+      });
+    }
+  };
+  
+  useEffect(() => {
+    fetchData('plans', (data) => {
+      setPlans(data);
+      console.log(data);
+    });
+  
+    const memberId = editedMember.id;
+  
+    if (memberId) {
+      refreshMembersModalData();
+    }
+  }, [editedMember.id]);
+  
+  
+  // Function to open the "AddPaymentModal"
+  const openAddPaymentModal = () => {
+    setIsAddPaymentModalOpen(true);
+  };
+
+  // Function to close the "AddPaymentModal"
+  const closeAddPaymentModal = () => {
+    setIsAddPaymentModalOpen(false);
+  };
+
+  const handleAddPaymentSave = () => {
+    refreshMembersModalData();
+    closeAddPaymentModal();
+  };
 
   const handleFieldChange = (field, value) => {
     setEditedMember({ ...editedMember, [field]: value });
@@ -20,6 +85,26 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     }
   };
 
+  const handlePaymentMethodChange = (selectedMethod, index) => {
+    setSelectedPaymentMethod(selectedMethod);
+    setSelectedPaymentMethodIndex(index);
+  
+    const updatedPaymentMethods = [...paymentMethods];
+    updatedPaymentMethods.forEach((method, i) => {
+      method.is_selected = i === index ? 'Y' : 'N';
+    });
+  
+    setPaymentMethods(updatedPaymentMethods);
+  
+    // Update the editedMember with selected payment method info
+    setEditedMember((prevEditedMember) => ({
+      ...prevEditedMember,
+      payment_method: selectedMethod,
+      payment_reference: updatedPaymentMethods[index].reference_info || '',
+      payment_selected: 'Y', // Always set to 'Y' for the selected method
+    }));
+  };
+  
   const handleEdit = () => {
     // Check if email is valid before editing
     if (editedMember.email && !validateEmail(editedMember.email)) {
@@ -30,26 +115,58 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     // Update the member data
     updateData('users', editedMember.id, editedMember)
       .then(() => {
-        if (onEditMember) {
-          onEditMember(editedMember);
-        }
-        setIsEditing(false);
-        onRequestClose();
+        // Update all payment method data for the member
+        const updatedPaymentMethodData = paymentMethods.map((method) => ({
+          id: method.id,
+          member_id: editedMember.id, 
+          method_name: method.method_name,
+          reference_info: method.reference_info,
+          is_selected: method.is_selected === 'Y' ? 'Y' : 'N', 
+        }));
   
-        if (refreshMembers) {
-          refreshMembers();
-        }
+        // Update paymentMethod data
+        Promise.all(
+          updatedPaymentMethodData.map((methodData) =>
+            updateData('paymentMethods', methodData.id, methodData)
+          )
+        )
+          .then(() => {
+            if (onEditMember) {
+              onEditMember(editedMember);
+            }
+            setIsEditing(false);
+            onRequestClose();
+  
+            if (refreshMembers) {
+              refreshMembers();
+            }
+          })
+          .catch((error) => {
+            console.error('Error updating paymentMethod:', error);
+          });
       })
       .catch((error) => {
         console.error('Error updating member:', error);
       });
+  };
+  
+  const handleDeletePaymentMethod = (paymentMethodId) => {
+    if (window.confirm('Are you sure you want to delete this payment method?')) {
+      deleteData('paymentMethods', paymentMethodId)
+        .then(() => {
+          refreshMembersModalData();
+        })
+        .catch((error) => {
+          console.error('Error deleting payment method:', error);
+        });
+    }
   };
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this member?')) {
       deleteData('users', member.id)
         .then(() => {
-          onRequestClose(); // Close the modal
+          onRequestClose();
           if (refreshMembers) {
             refreshMembers();
           }
@@ -63,90 +180,34 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="member-modal">
       <h2>{isEditing ? 'Edit Member' : 'View Member'}</h2>
-      <div>
-        <label>Role:</label>
-        {isEditing ? (
-          <select
-            value={editedMember.role}
-            onChange={(e) => handleFieldChange('role', e.target.value)}
-            required
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        ) : (
-          <span>{editedMember.role}</span>
-        )}
-      </div>
-      <div>
-        <label>Email:</label>
-        {isEditing ? (
-          <>
-            <input
-              type="email"
-              value={editedMember.email}
-              onChange={(e) => handleFieldChange('email', e.target.value)}
-              required
-            />
-            <span className="error">{emailError}</span>
-          </>
-        ) : (
-          <span>{editedMember.email}</span>
-        )}
-      </div>
-      <div>
-        <label>Name:</label>
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedMember.name}
-            onChange={(e) => handleFieldChange('name', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.name}</span>
-        )}
-      </div>
-      <div>
-        <label>Personal Number:</label>
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedMember.personal_number}
-            onChange={(e) => handleFieldChange('personal_number', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.personal_number}</span>
-        )}
-      </div>
-      <div>
-        <label>Wallet SEK:</label>
-        {isEditing ? (
-            <input
-            type="number"
-            value={editedMember.wallet}
-            onChange={(e) => handleFieldChange('wallet', e.target.value)}
-            required
-            />
-        ) : (
-            <span>{editedMember.wallet}</span>
-        )}
-        </div>
-      <div>
-        <label>Address:</label>
-        {isEditing ? (
-          <textarea
-            className="full-width four-lines"
-            value={editedMember.address}
-            onChange={(e) => handleFieldChange('address', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.address}</span>
-        )}
-      </div>
-      <div>
+
+      <MemberFields
+        editedMember={editedMember}
+        isEditing={isEditing}
+        handleFieldChange={handleFieldChange}
+        emailError={emailError}
+        />
+
+      <PaymentMethodFields
+        paymentMethods={paymentMethods}
+        isEditing={isEditing}
+        selectedPaymentMethodIndex={selectedPaymentMethodIndex}
+        handlePaymentMethodChange={handlePaymentMethodChange}
+        handleDeletePaymentMethod={handleDeletePaymentMethod}
+        openAddPaymentModal={openAddPaymentModal}
+        />
+
+        <PlanFields
+        editedMember={editedMember}
+        isEditing={isEditing}
+        handleFieldChange={handleFieldChange}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        onRequestClose={onRequestClose}
+        />
+
+      <div className="divider"></div>
+      <div className="row">
         {isEditing ? (
           <>
             <button onClick={handleEdit}>Save</button>
@@ -160,6 +221,18 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
         )}
         <button onClick={onRequestClose}>Close</button>
       </div>
+    
+    {/* AddPaymentModal */}
+    {isAddPaymentModalOpen && (
+        <AddPaymentModal
+          isOpen={isAddPaymentModalOpen}
+          onRequestClose={closeAddPaymentModal}
+          memberId={editedMember.id}
+          memberName={editedMember.name}
+          onSave={handleAddPaymentSave}
+        />
+      )}
+
     </Modal>
   );
 }

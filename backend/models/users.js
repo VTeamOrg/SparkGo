@@ -6,9 +6,8 @@ const users = {
             const db = await database.openDb();
             const allUsers = await database.query(
                 db,
-                "SELECT * FROM member ORDER BY id DESC"
+                "SELECT * FROM v_member ORDER BY id DESC"
             );
-            console.log("Data from database query:", allUsers);
 
             await database.closeDb(db);
 
@@ -25,7 +24,7 @@ const users = {
         try {
             const db = await database.openDb();
             const { role, email, name, personal_number, address, wallet } =
-                req.body; // Assuming these are required fields for creating a user
+                req.body;
 
             const newUser = await database.query(
                 db,
@@ -51,7 +50,7 @@ const users = {
             const userId = req.params.id;
             const user = await database.query(
                 db,
-                "SELECT * FROM member WHERE id = ?",
+                "SELECT * FROM v_member WHERE id = ?",
                 userId
             );
 
@@ -76,10 +75,8 @@ const users = {
                 personal_number,
                 address,
                 wallet,
-                /* Other fields you might need to update */
             } = req.body;
 
-            // Construct the SET part of the SQL query dynamically
             const setFields = [];
             const updateParams = [];
 
