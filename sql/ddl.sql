@@ -100,11 +100,12 @@ CREATE TABLE plan (
 CREATE TABLE active_plan (
     plan_id INT,
     member_id INT,
-    activation_date DATE,
+    creation_date DATETIME,
+    activation_date DATETIME,
     available_minutes INT,
     available_unlocks INT,
     is_paused ENUM('Y', 'N'),
-    PRIMARY KEY (plan_id, member_id, activation_date),
+    PRIMARY KEY (plan_id, member_id),
     FOREIGN KEY (plan_id) REFERENCES plan(id),
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
@@ -116,7 +117,7 @@ CREATE TABLE receipt (
     payment_type VARCHAR(255),
     receipt_details VARCHAR(255),
     sum DECIMAL(10, 2),
-    payment_date DATE,
+    payment_date DATETIME,
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
 

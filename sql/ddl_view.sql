@@ -88,11 +88,15 @@ SELECT
     pm.reference_info AS payment_reference,
     pm.is_selected AS payment_selected,
     ap.plan_id AS active_plan_id,
+    ap.creation_date AS active_plan_creation,
     ap.activation_date AS active_plan_activation,
     ap.available_minutes AS active_plan_minutes,
     ap.available_unlocks AS active_plan_unlocks,
     ap.is_paused AS active_plan_paused,
-    p.title AS active_plan_name
+    p.title AS active_plan_name,
+    p.price AS active_plan_price,
+    p.price_frequency_id AS active_plan_frequency,
+    f.name AS active_plan_frequency_name
 FROM
     member m
 LEFT JOIN
@@ -100,4 +104,7 @@ LEFT JOIN
 LEFT JOIN
     active_plan ap ON m.id = ap.member_id
 LEFT JOIN
-    plan p ON ap.plan_id = p.id;    
+    plan p ON ap.plan_id = p.id
+LEFT JOIN
+frequencies f ON p.price_frequency_id = f.id;
+

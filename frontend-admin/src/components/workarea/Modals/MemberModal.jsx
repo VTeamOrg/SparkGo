@@ -3,11 +3,15 @@ import Modal from 'react-modal';
 import './Modal.css';
 import PropTypes from 'prop-types';
 import { fetchData, updateData, deleteData } from '../../support/FetchService';
-import { validateEmail, formatDateTime } from '../../support/Utils';
+import { validateEmail, formatDateTime, translateUnlimited } from '../../support/Utils';
 import AddPaymentModal from './AddPaymentModal.jsx';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { PaymentMethodFields, MemberFields, PlanFields } from '../Fields/Fields.jsx';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faPlus, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { PaymentMethodFields, MemberFields, PlanFields } from '../HTML/MemberModal.jsx';
+import { SearchBar, ButtonRow } from '../HTML/General';
+import ManagePlanModal from './ManagePlanModal';
+import ChangePlanModal from './ChangePlanModal';
+
 
 function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers }) { 
 
@@ -17,40 +21,35 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); 
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
-  const [plans, setPlans] = useState([]);
   const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
+  const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
+  const [isChangePlanModalOpen, setIsChangePlanModalOpen] = useState(false);
 
   const refreshMembersModalData = () => {
     const memberId = editedMember.id;
     
     if (memberId) {
-      fetchData(`paymentMethods/memberid/${memberId}`, (data) => {
-        // Find the selected payment method (is_selected === 'Y')
-        const selectedMethod = data.find((method) => method.is_selected === 'Y');
-  
+      fetchData(`users/${memberId}`, (data) => {
+        setEditedMember(data);
+      });
 
-  
-        // Find the selected payment method index (is_selected === 'Y')
+      fetchData(`paymentMethods/memberid/${memberId}`, (data) => {
+        const selectedMethod = data.find((method) => method.is_selected === 'Y');
         const selectedIndex = data.findIndex((method) => method.is_selected === 'Y');
+        
         setSelectedPaymentMethodIndex(selectedIndex);
   
-        // Update the payment reference for the entire row
         setEditedMember((prevMember) => ({
           ...prevMember,
           payment_reference: selectedMethod ? selectedMethod.reference_info : '',
         }));
   
-        // Update paymentMethods state
         setPaymentMethods(data);
       });
     }
   };
   
   useEffect(() => {
-    fetchData('plans', (data) => {
-      setPlans(data);
-      console.log(data);
-    });
   
     const memberId = editedMember.id;
   
@@ -58,14 +57,35 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
       refreshMembersModalData();
     }
   }, [editedMember.id]);
+
+  const openManagePlanModal = () => {
+    setIsManagePlanModalOpen(true);
+  };
+
+  const closeManagePlanModal = () => {
+    setIsManagePlanModalOpen(false);
+  };  
+
+  const editedActivePlan = (editedPlan) => {
+    refreshMembersModalData();
+    };
+
+    const openChangePlanModal = () => {
+      setIsChangePlanModalOpen(true);
+    };
   
+    const closeChangePlanModal = () => {
+      setIsChangePlanModalOpen(false);
+    };  
   
-  // Function to open the "AddPaymentModal"
+    const editedChangedPlan = (editedPlan) => {
+      refreshMembersModalData();
+      };
+
   const openAddPaymentModal = () => {
     setIsAddPaymentModalOpen(true);
   };
 
-  // Function to close the "AddPaymentModal"
   const closeAddPaymentModal = () => {
     setIsAddPaymentModalOpen(false);
   };
@@ -78,7 +98,6 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   const handleFieldChange = (field, value) => {
     setEditedMember({ ...editedMember, [field]: value });
 
-    // Validate email when email field changes
     if (field === 'email') {
       const isValidEmail = validateEmail(value);
       setEmailError(isValidEmail ? '' : 'Invalid email format');
@@ -96,26 +115,23 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   
     setPaymentMethods(updatedPaymentMethods);
   
-    // Update the editedMember with selected payment method info
     setEditedMember((prevEditedMember) => ({
       ...prevEditedMember,
       payment_method: selectedMethod,
       payment_reference: updatedPaymentMethods[index].reference_info || '',
-      payment_selected: 'Y', // Always set to 'Y' for the selected method
+      payment_selected: 'Y',
     }));
   };
   
   const handleEdit = () => {
-    // Check if email is valid before editing
     if (editedMember.email && !validateEmail(editedMember.email)) {
       setEmailError('Invalid email format');
       return;
     }
   
-    // Update the member data
     updateData('users', editedMember.id, editedMember)
       .then(() => {
-        // Update all payment method data for the member
+
         const updatedPaymentMethodData = paymentMethods.map((method) => ({
           id: method.id,
           member_id: editedMember.id, 
@@ -124,7 +140,6 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
           is_selected: method.is_selected === 'Y' ? 'Y' : 'N', 
         }));
   
-        // Update paymentMethod data
         Promise.all(
           updatedPaymentMethodData.map((methodData) =>
             updateData('paymentMethods', methodData.id, methodData)
@@ -162,6 +177,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     }
   };
 
+  // NOTE: NEEDS THE DELETE MEMBER PROCEDURE!!!! 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this member?')) {
       deleteData('users', member.id)
@@ -181,6 +197,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="member-modal">
       <h2>{isEditing ? 'Edit Member' : 'View Member'}</h2>
 
+    {/* MemberFields */}
       <MemberFields
         editedMember={editedMember}
         isEditing={isEditing}
@@ -188,6 +205,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
         emailError={emailError}
         />
 
+    {/* PaymentMethodFields */}
       <PaymentMethodFields
         paymentMethods={paymentMethods}
         isEditing={isEditing}
@@ -197,30 +215,26 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
         openAddPaymentModal={openAddPaymentModal}
         />
 
-        <PlanFields
-        editedMember={editedMember}
-        isEditing={isEditing}
-        handleFieldChange={handleFieldChange}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        onRequestClose={onRequestClose}
-        />
+    {/* PlanFields */}
+    <PlanFields
+      editedMember={editedMember}
+      isEditing={isEditing}
+      handleFieldChange={handleFieldChange}
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+      onRequestClose={() => closeManagePlanModal} 
+      openManagePlanModal={openManagePlanModal} 
+      openChangePlanModal={openChangePlanModal} 
+    />
 
-      <div className="divider"></div>
-      <div className="row">
-        {isEditing ? (
-          <>
-            <button onClick={handleEdit}>Save</button>
-            <button onClick={() => setIsEditing(false)}>Cancel</button>
-          </>
-        ) : (
-          <>
-            <button onClick={() => setIsEditing(true)}>Edit</button>
-            <button onClick={handleDelete}>Delete</button>
-          </>
-        )}
-        <button onClick={onRequestClose}>Close</button>
-      </div>
+    {/* General Buttons */}
+      <ButtonRow
+        isEditing={isEditing}
+        handleEdit={handleEdit}
+        setIsEditing={setIsEditing}
+        handleDelete={handleDelete} 
+        onRequestClose={onRequestClose} 
+        />
     
     {/* AddPaymentModal */}
     {isAddPaymentModalOpen && (
@@ -232,6 +246,26 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
           onSave={handleAddPaymentSave}
         />
       )}
+
+    {/* ManagePlanModal */}
+    {isManagePlanModalOpen && (
+      <ManagePlanModal
+        isOpen={isManagePlanModalOpen}
+        onRequestClose={() => closeManagePlanModal()} 
+        activePlan={editedMember}
+        onSave={editedActivePlan}
+      />
+    )}
+
+    {/* ChangePlanModal */}
+    {isChangePlanModalOpen && (
+      <ChangePlanModal
+        isOpen={isChangePlanModalOpen}
+        onRequestClose={() => closeChangePlanModal()} 
+        activePlan={editedMember}
+        onSave={editedChangedPlan}
+      />
+    )}
 
     </Modal>
   );

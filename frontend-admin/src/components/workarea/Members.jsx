@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ApiTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { fetchData } from '../support/FetchService';
 import AddMemberModal from './Modals/AddMemberModal'; 
 import MemberModal from './Modals/MemberModal'; 
+import MembersTable from './HTML/Members'; 
+import { SearchBar, ButtonRow } from './HTML/General';
 
 /**
  * Component for managing and displaying members.
@@ -17,14 +19,7 @@ function Members() {
   const [isMemberModalOpen, setMemberModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchData('users', (data) => {
-      // Remove duplicate members based on their IDs
-      const uniqueMembers = data.filter((member, index, self) =>
-        index === self.findIndex((m) => m.id === member.id)
-      );
-  
-      setMembers(uniqueMembers);
-    });
+    refreshMembersData();
   }, []);
 
   const refreshMembersData = () => {
@@ -33,9 +28,10 @@ function Members() {
         const uniqueMembers = data.filter((member, index, self) =>
           index === self.findIndex((m) => m.id === member.id)
         );
-    
+        console.log(data);    
         setMembers(uniqueMembers);
       });
+
   };
 
   /**
@@ -92,48 +88,13 @@ return (
       </button>
   
       {/* Search bar */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <FontAwesomeIcon icon={faSearch} className="search-icon" />
-      </div>
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
   
-      {/* Members Table */}
-      <div className="api-table">
-        <table>
-          <thead>
-            <tr>
-            <th>ID</th>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMembers.map((member, index) => (
-              <tr
-                key={index}
-                className="api-row"
-                onClick={() => openMemberModal(member)} // Handle click to open MemberModal
-              >
-                <td>{member.id}</td>
-                <td>
-                  {/* Make the member name clickable */}
-                  <button className="member-name-button" onClick={() => openMemberModal(member)}>
-                    {member.name}
-                  </button>
-                </td>
-                <td>{member.role}</td>                
-                <td>{member.email}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Member Table */ }
+      <MembersTable
+        filteredMembers={filteredMembers}
+        openMemberModal={openMemberModal}
+      />
   
       {/* Add Member Modal */}
       {isAddMemberModalOpen && (
@@ -144,7 +105,7 @@ return (
         />
       )}
   
-      {/* Member Modal */}
+      {/* Edit Member Modal */}
       {isMemberModalOpen && selectedMember && (
         <MemberModal
           isOpen={isMemberModalOpen}

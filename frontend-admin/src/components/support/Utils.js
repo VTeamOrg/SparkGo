@@ -19,4 +19,6 @@ const options = {
 return new Date(dateTimeString).toLocaleString(undefined, options);
 }
 
- 
+export const translateUnlimited = (value) => {
+  return value === -1 ? 'Unlimited' : value;
+};

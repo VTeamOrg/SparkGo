@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPlus,faCheck } from '@fortawesome/free-solid-svg-icons';
-import { formatDateTime } from '../../support/Utils';
+import { faTrash, faPlus,faCheck, faListAlt,faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { formatDateTime, translateUnlimited } from '../../support/Utils';
 
 function PaymentMethodFields({
   paymentMethods,
@@ -181,58 +181,99 @@ function PlanFields({
   handleEdit,
   handleDelete,
   onRequestClose,
+  openManagePlanModal,
+  openChangePlanModal
 }) {
   return (
     <>
       {/* PLAN FIELDS */}
       <div className="divider"></div>
-      <div className="row">
-        <div>
-          <label>Active Plan ID:</label>
-          <span>{editedMember.active_plan_id}</span>
-        </div>
-
-        <div>
-          <label>Active Plan Name:</label>
-          <span>{editedMember.active_plan_name}</span>
-        </div>
-
-        <div>
-          <label>Active Plan Activation:</label>
-          <span>{formatDateTime(editedMember.active_plan_activation)}</span>
-        </div>
-      </div>
-
-      <div className="row">
-        <div>
-          <label>Active Plan Minutes:</label>
-          <span>{editedMember.active_plan_minutes}</span>
-        </div>
-        <div>
-          <label>Active Plan Unlocks:</label>
-          <span>{editedMember.active_plan_unlocks}</span>
-        </div>
-        <div>
-          <label>Active Plan Paused:</label>
-          {isEditing ? (
-            <input
-              type="checkbox"
-              checked={editedMember.active_plan_paused === 'Y'}
-              onChange={(e) =>
-                handleFieldChange(
-                  'active_plan_paused',
-                  e.target.checked ? 'Y' : 'N'
-                )
-              }
-            />
-          ) : (
-            <span>{editedMember.active_plan_paused === 'Y' ? 'Yes' : 'No'}</span>
-          )}
-        </div>
-      </div>
-
+      <table className="custom-table">
+        <tbody>
+          <tr>
+            <td>
+              <label>Active Plan:</label>
+            </td>
+            <td>
+              <span>{editedMember.active_plan_id} </span>
+              <span>{editedMember.active_plan_name}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Price:</label>
+            </td>
+            <td>
+              <span>{editedMember.active_plan_price}</span>
+            </td>
+            <td>
+              <label>Billing Frequency:</label>
+            </td>
+            <td>
+              <span>{editedMember.active_plan_frequency_name}</span>
+            </td>
+          </tr>
+          <tr>
+  <td>
+    <label>Creation:</label>
+  </td>
+  <td>
+    <span>{formatDateTime(editedMember.active_plan_creation)}</span>
+  </td>
+  <td>
+    <label>Last activation:</label>
+  </td>
+  <td>
+    {editedMember.active_plan_paused === 'Y' ? (
+      <span>Inactive</span>
+    ) : (
+      <span>{formatDateTime(editedMember.active_plan_activation)}</span>
+    )}
+  </td>
+</tr>
+          <tr>
+            <td>
+              <label>Available Minutes:</label>
+            </td>
+            <td>
+              <span>{translateUnlimited(editedMember.active_plan_minutes)}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Available Unlocks:</label>
+            </td>
+            <td>
+              <span>{translateUnlimited(editedMember.active_plan_unlocks)}</span>
+              
+            </td>
+            <td>
+              <label>Plan Paused:</label>
+            </td>
+            <td>
+              <span>{editedMember.active_plan_paused === 'Y' ? 'Yes' : 'No'}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button onClick={openManagePlanModal}>
+                <FontAwesomeIcon icon={faListAlt} /> Manage plan
+              </button>
+            </td>
+            <td>
+              <button onClick={openChangePlanModal}>
+                <FontAwesomeIcon icon={faPencilAlt} /> Change plan
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="divider"></div>
     </>
   );
+  
+  
+  
 }
 
 

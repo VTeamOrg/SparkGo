@@ -44,12 +44,12 @@ const activePlan = {
     createActivePlan: async function (req, res) {
         try {
             const db = await database.openDb();
-            const { plan_id, member_id, activation_date, available_minutes, available_unlocks, is_paused } = req.body;
+            const { plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused } = req.body;
 
             const newActivePlan = await database.query(
                 db,
-                "INSERT INTO active_plan (plan_id, member_id, activation_date, available_minutes, available_unlocks, is_paused) VALUES (?, ?, ?, ?, ?, ?)",
-                [plan_id, member_id, activation_date, available_minutes, available_unlocks, is_paused]
+                "INSERT INTO active_plan (plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused) VALUES (?, ?, ?, ?, ?, ?)",
+                [plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused]
             );
 
             await database.closeDb(db);
@@ -67,27 +67,48 @@ const activePlan = {
     updateActivePlan: async function (req, res) {
         console.log("update active plan");
         try {
-            const db = await database.openDb();
-            const activePlanId = req.params.activePlanId;
-            const { plan_id, member_id, activation_date, available_minutes, available_unlocks, is_paused } = req.body; // Fields to update
+          const db = await database.openDb();
+          const activePlanId = req.params.activePlanId;
+          const { plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused } = req.body; // Fields to update
+      
+            // Convert date strings to 'YYYY-MM-DD hh:mm:ss' format
+            const creationDate = new Date(creation_date);
+            const formattedCreationDate = creationDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
 
-            const updatedActivePlan = await database.query(
-                db,
-                "UPDATE active_plan SET plan_id = ?, member_id = ?, activation_date = ?, available_minutes = ?, available_unlocks = ?, is_paused = ? WHERE plan_id = ?",
-                [plan_id, member_id, activation_date, available_minutes, available_unlocks, is_paused, activePlanId]
-            );
+            const activationDate = new Date(activation_date);
+            const formattedActivationDate = activationDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
 
-            await database.closeDb(db);
-
-            return res.json({
-                message: "Active Plan updated successfully",
-                data: updatedActivePlan,
-            });
+          const updatedActivePlan = await database.query(
+            db,
+            `
+            UPDATE active_plan 
+            SET 
+              plan_id = ?,
+              member_id = ?,
+              creation_date = ?,
+              activation_date = ?,
+              available_minutes = ?,
+              available_unlocks = ?,
+              is_paused = ? 
+            WHERE 
+              plan_id = ? AND member_id = ?;
+            `,
+            [plan_id, member_id, formattedCreationDate, formattedActivationDate, available_minutes, available_unlocks, is_paused, activePlanId, member_id]
+          );
+          
+      
+          await database.closeDb(db);
+      
+          return res.json({
+            message: "Active Plan updated successfully",
+            data: updatedActivePlan,
+          });
         } catch (error) {
-            console.error("Error updating Active Plan:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+          console.error("Error updating Active Plan:", error.message);
+          return res.status(500).json({ error: "Internal Server Error" });
         }
-    },
+      },
+      
 
     deleteActivePlan: async function (req, res) {
         try {
