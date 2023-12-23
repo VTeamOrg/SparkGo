@@ -23,7 +23,7 @@ const loadWebsocket = (wss) => {
         console.log(params);
         const type = params.type;
         console.log('params', params);
-        const id = params.id;
+        const id = parseInt(params.id);
         websocketController.handleConnection(ws, req, id, type);
 
         ws.on('message', (message) => {
