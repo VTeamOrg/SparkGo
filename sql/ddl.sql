@@ -60,9 +60,7 @@ CREATE TABLE member (
     name VARCHAR(255),
     personal_number VARCHAR(255),
     address VARCHAR(255),
-    wallet DECIMAL(10,2),
-    price_list_id INT,
-    FOREIGN KEY (price_list_id) REFERENCES price_list(id)
+    wallet DECIMAL(10,2)
 );
 
 CREATE TABLE payment_method (
