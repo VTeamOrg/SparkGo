@@ -44,6 +44,15 @@ CREATE TABLE renting_station (
     FOREIGN KEY (city_id) REFERENCES city(id)
 );
 
+CREATE TABLE price_list (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type_id INT, 
+    list_name VARCHAR(255),
+    price_per_minute DECIMAL(10, 2),
+    price_per_unlock DECIMAL(10, 2),
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+);
+
 CREATE TABLE member (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role VARCHAR(255),
@@ -51,7 +60,9 @@ CREATE TABLE member (
     name VARCHAR(255),
     personal_number VARCHAR(255),
     address VARCHAR(255),
-    wallet DECIMAL(10,2)
+    wallet DECIMAL(10,2),
+    price_list_id INT,
+    FOREIGN KEY (price_list_id) REFERENCES price_list(id)
 );
 
 CREATE TABLE payment_method (
@@ -70,15 +81,6 @@ CREATE TABLE vehicle (
     vehicle_status VARCHAR(255),
     name VARCHAR(255),
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
-);
-
-CREATE TABLE price_list (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    type_id INT, 
-    list_name VARCHAR(255),
-    price_per_minute DECIMAL(10, 2),
-    price_per_unlock DECIMAL(10, 2),
     FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 
