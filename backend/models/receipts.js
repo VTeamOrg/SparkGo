@@ -2,7 +2,7 @@ const database = require("../db/database.js");
 
 const receipt = {
     getAllReceipt: async function getAllReceipt(req, res) {
-        console.log("get all receipts");
+
         try {
             console.log("try");
             const db = await database.openDb();
@@ -10,7 +10,6 @@ const receipt = {
                 db,
                 "SELECT * FROM v_receipt"
             );
-            console.log("Data from database query:", allReceipt);
 
             await database.closeDb(db);
 

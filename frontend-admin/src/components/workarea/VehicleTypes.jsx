@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './Data.css';
+import './CSS/Data.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt, faTrash  } from '@fortawesome/free-solid-svg-icons';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
+import { SearchBar } from './HTML/General';
 
 /**
  * Component for managing and displaying vehicle types.
@@ -138,16 +139,8 @@ function VehicleTypes() {
           </button>
         </form>
 
-        {/* Search bar */}
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <FontAwesomeIcon icon={faSearch} className="search-icon" />
-        </div>
+      {/* Search bar */}
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </div>
 
       {/* Existing vehicle types list */}

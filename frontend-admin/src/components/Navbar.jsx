@@ -35,7 +35,7 @@ function Navbar({ setActiveSection }) {
             <button onClick={() => handleLinkClick('priceList')}>Price lists</button>
             <button onClick={() => handleLinkClick('plans')}>Plans</button>
             <button onClick={() => handleLinkClick('frequencies')}>Frequencies</button>
-            <button onClick={() => handleLinkClick('customers')}>Customers</button>
+            <button onClick={() => handleLinkClick('members')}>Members</button>
           </div>
           <button className="logout-button" onClick={handleLogout}>
             Logout
