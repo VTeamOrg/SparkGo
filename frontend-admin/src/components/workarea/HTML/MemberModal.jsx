@@ -214,23 +214,23 @@ function PlanFields({
             </td>
           </tr>
           <tr>
-  <td>
-    <label>Creation:</label>
-  </td>
-  <td>
-    <span>{formatDateTime(editedMember.active_plan_creation)}</span>
-  </td>
-  <td>
-    <label>Last activation:</label>
-  </td>
-  <td>
-    {editedMember.active_plan_paused === 'Y' ? (
-      <span>Inactive</span>
-    ) : (
-      <span>{formatDateTime(editedMember.active_plan_activation)}</span>
-    )}
-  </td>
-</tr>
+          <td>
+            <label>Creation:</label>
+          </td>
+          <td>
+            <span>{formatDateTime(editedMember.active_plan_creation)}</span>
+          </td>
+          <td>
+            <label>Last activation:</label>
+          </td>
+          <td>
+            {editedMember.active_plan_paused === 'Y' ? (
+              <span>Inactive</span>
+            ) : (
+              <span>{formatDateTime(editedMember.active_plan_activation)}</span>
+            )}
+          </td>
+        </tr>
           <tr>
             <td>
               <label>Available Minutes:</label>

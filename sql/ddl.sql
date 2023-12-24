@@ -67,9 +67,9 @@ CREATE TABLE vehicle (
     id INT AUTO_INCREMENT PRIMARY KEY,
     city_id INT,
     type_id INT, 
-    rented_by INT,
+    vehicle_status VARCHAR(255),
+    name VARCHAR(255),
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (rented_by) REFERENCES member(id),
     FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 

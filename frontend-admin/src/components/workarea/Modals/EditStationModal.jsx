@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
+import '../CSS/Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchData } from '../../support/FetchService';
 

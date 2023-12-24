@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
+import '../CSS/Modal.css';
 import PropTypes from 'prop-types';
 import { fetchData, updateData, deleteData } from '../../support/FetchService';
 import { validateEmail, formatDateTime, translateUnlimited } from '../../support/Utils';

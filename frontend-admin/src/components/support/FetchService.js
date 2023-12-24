@@ -74,6 +74,7 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {
+  console.log("in delete, ", endpoint, " ", itemId);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'DELETE',

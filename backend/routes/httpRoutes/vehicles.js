@@ -9,4 +9,10 @@ router.get("/", (req, res) => vehicleModule.getAllVehicles(req, res));
 
 router.get("/:vehicleId", (req, res) => vehicleModule.getVehicleById(req, res));
 
+router.post("/", (req, res) => vehicleModule.createVehicle(req, res));
+
+router.put("/:vehicleId", (req, res) => vehicleModule.updateVehicleById(req, res));
+
+router.delete("/:vehicleId", (req, res) => vehicleModule.deleteVehicleById(req, res));
+
 module.exports = router;

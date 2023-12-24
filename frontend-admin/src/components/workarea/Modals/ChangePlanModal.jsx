@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { fetchData, updateData } from '../../support/FetchService';
-import './Modal.css';
+import '../CSS/Modal.css';
 import { translateUnlimited } from '../../support/Utils';
 
 /**

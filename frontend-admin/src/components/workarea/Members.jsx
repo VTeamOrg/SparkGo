@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ApiTables.css';
+import './CSS/ApiTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { fetchData } from '../support/FetchService';

@@ -9,6 +9,7 @@ import PriceList from './workarea/PriceList';
 import Plans from './workarea/Plans'; 
 import Frequencies from './workarea/Frequencies'; 
 import Members from './workarea/Members'; 
+import Vehicles from './workarea/Vehicles'; 
 import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
 
 
@@ -40,7 +41,7 @@ function WorkArea({ activeSection }) {
         case 'vehicleTypes':
           return <VehicleTypes />; 
         case 'vehicles':
-          return <div>Vehicles Content</div>;
+          return <Vehicles />;
         case 'priceList':
           return <PriceList />; 
         case 'plans':

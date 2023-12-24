@@ -23,7 +23,7 @@ ON
     rs.city_id = c.id;
 
 /* Vehicle + city / member / vehicle_type */
-CREATE VIEW v_vehicle AS
+/*CREATE VIEW v_vehicle AS
 SELECT
     v.*,
     vt.name AS type_name,
@@ -42,7 +42,7 @@ ON
 JOIN
     city AS c
 ON
-    v.city_id = c.id;
+    v.city_id = c.id; */
 
 /* receipt + member */
 CREATE VIEW v_receipt AS
@@ -108,3 +108,14 @@ LEFT JOIN
 LEFT JOIN
 frequencies f ON p.price_frequency_id = f.id;
 
+CREATE VIEW v_vehicle AS
+SELECT
+    v.*,
+    vt.name AS vehicle_type_name,
+    c.name AS city_name
+FROM
+    vehicle v
+LEFT JOIN
+    vehicle_type vt ON v.type_id = vt.id
+LEFT JOIN
+    city c ON v.city_id = c.id;
