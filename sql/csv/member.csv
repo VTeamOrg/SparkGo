@@ -1,11 +1,11 @@
-id,role,email,name,personal_number,wallet
-1,user,anna.h.blixt@gmail.com,Anders Andersson,190101-1234,0.00
-2,user,anna.h.blixt@gmail.com,Berit Bengtsson,190102-5678,0.00
-3,user,anna.h.blixt@gmail.com,Carl Carlsson,190103-9012,0.00
-4,user,anna.h.blixt@gmail.com,Diana Davidsson,190104-3456,0.00
-5,user,anna.h.blixt@gmail.com,Erik Eriksson,190105-7890,0.00
-6,user,anna.h.blixt@gmail.com,Frida Fredriksson,190106-2345,0.00
-7,user,anna.h.blixt@gmail.com,Gustav Gustavsson,190107-6789,0.00
-8,user,anna.h.blixt@gmail.com,Hanna Hansson,190108-0123,0.00
-9,user,anna.h.blixt@gmail.com,Ingrid Isaksson,190109-4567,0.00
-10,admin,anna.h.blixt@gmail.com,Anna Blixt,190110-8901,0.00
+id,role,email,name,personal_number,address,wallet,price_list_id
+1,user,anna.h.blixt@gmail.com,Anders Andersson,190101-1234,123 Main St,0.00,1
+2,user,anna.h.blixt@gmail.com,Berit Bengtsson,190102-5678,456 Elm St,0.00,2
+3,user,anna.h.blixt@gmail.com,Carl Carlsson,190103-9012,789 Oak St,0.00,3
+4,user,anna.h.blixt@gmail.com,Diana Davidsson,190104-3456,101 Pine St,0.00,4
+5,user,anna.h.blixt@gmail.com,Erik Eriksson,190105-7890,202 Maple St,0.00,1
+6,user,anna.h.blixt@gmail.com,Frida Fredriksson,190106-2345,303 Cedar St,0.00,2
+7,user,anna.h.blixt@gmail.com,Gustav Gustavsson,190107-6789,404 Birch St,0.00,3
+8,user,anna.h.blixt@gmail.com,Hanna Hansson,190108-0123,505 Spruce St,0.00,4
+9,user,anna.h.blixt@gmail.com,Ingrid Isaksson,190109-4567,606 Redwood St,0.00,1
+10,admin,anna.h.blixt@gmail.com,Anna Blixt,190110-8901,707 Cedar St,0.00,2
