@@ -1,4 +1,4 @@
-const stationsModel = require("../models/stationsModel");
+const stationsModel = require("../models/stationsModel.js");
 
 const stationsController = {
     getAllStations: async function (req, res) {

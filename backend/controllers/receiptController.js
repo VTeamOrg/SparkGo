@@ -1,4 +1,4 @@
-const receiptModel = require("../models/receiptModel");
+const receiptModel = require("../models/receiptModel.js");
 
 const receiptController = {
     getAllReceipts: async function (req, res) {

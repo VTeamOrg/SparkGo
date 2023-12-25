@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const { connectedVehicles } = require("../routes/websocketRoutes/store");
+const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
 // handleConnection is called when a new WebSocket connection is established
 const handleConnection = (ws, req, connectionId, deviceType) => {

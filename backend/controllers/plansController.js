@@ -1,4 +1,4 @@
-const plansModel = require("../models/plansModel");
+const plansModel = require("../models/plansModel.js");
 
 const plansController = {
     getAllPlans: async function (req, res) {

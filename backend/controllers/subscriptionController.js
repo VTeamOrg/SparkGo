@@ -1,4 +1,4 @@
-const subscriptionModel = require("../models/subscriptionModel");
+const subscriptionModel = require("../models/subscriptionModel.js");
 
 const subscriptionController = {
     getSubscription: async function (req, res) {

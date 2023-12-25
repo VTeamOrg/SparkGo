@@ -9,9 +9,16 @@ const vehiclesModel = {
                 "SELECT * FROM v_vehicle ORDER BY id DESC"
             );
 
+            console.log('getAllVehicles:', getAllVehicles); // Log the result for debugging
+
             await database.closeDb(db);
 
-            return getAllVehicles;
+            // Check and ensure the result is an array or convert if needed
+            const vehiclesArray = Array.isArray(getAllVehicles)
+                ? getAllVehicles // If it's already an array, use it as is
+                : (getAllVehicles ? [getAllVehicles] : []); // Convert to array or use an empty array if null/undefined
+
+            return vehiclesArray;
         } catch (error) {
             throw error;
         }

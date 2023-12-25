@@ -1,4 +1,4 @@
-const vehicleTypeModel = require("../models/vehicleTypeModel");
+const vehicleTypeModel = require("../models/vehicleTypeModel.js");
 
 const vehicleTypeController = {
     getAllVehicleTypes: async function (req, res) {
@@ -11,6 +11,8 @@ const vehicleTypeController = {
             console.error("Error querying database:", error.message);
             return res.status(500).json({ error: "Internal Server Error" });
         }
+
+        
     },
 
     getVehicleTypeById: async function (req, res) {

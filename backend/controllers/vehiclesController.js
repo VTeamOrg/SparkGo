@@ -1,5 +1,5 @@
-const vehiclesModel = require("../models/vehiclesModel");
-const { connectedVehicles } = require("../routes/websocketRoutes/store");
+const vehiclesModel = require("../models/vehiclesModel.js");
+const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
 const vehiclesController = {
     getAllVehicles: async function (req, res) {

@@ -1,4 +1,4 @@
-const frequencyModel = require("../models/frequencyModel");
+const frequencyModel = require("../models/frequencyModel.js");
 
 const frequenciesController = {
     getAllFrequencies: async function (req, res) {

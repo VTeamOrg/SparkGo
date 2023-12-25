@@ -1,12 +1,12 @@
 // Import necessary models
-const PriceListModel = require("../../models/priceListModel");
-const SubscriptionModel = require("../../models/subscriptionModel");
-const UserModel = require("../../models/userModel");
-const vehiclesModel = require("../../models/vehiclesModel");
+const PriceListModel = require("../../models/priceListModel.js");
+const SubscriptionModel = require("../../models/subscriptionModel.js");
+const UserModel = require("../../models/userModel.js");
+const vehiclesModel = require("../../models/vehiclesModel.js");
 
 // Destructure functions from vehiclesModel
-const { getVehicleById } = require("../../models/vehiclesModel");
-const { connectedVehicles } = require("./store");
+const { getVehicleById } = require("../../models/vehiclesModel.js");
+const { connectedVehicles } = require("./store.js");
 
 // Define the vehicles object with various methods
 const vehicles = {

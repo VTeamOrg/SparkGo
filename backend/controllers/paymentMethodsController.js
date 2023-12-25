@@ -1,4 +1,4 @@
-const paymentMethodsModel = require("../models/paymentMethodsModel");
+const paymentMethodsModel = require("../models/paymentMethodsModel.js");
 
 const paymentMethodsController = {
     getPaymentMethod: async function (req, res) {

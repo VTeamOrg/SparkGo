@@ -1,4 +1,4 @@
-const priceListModel = require("../models/priceListModel");
+const priceListModel = require("../models/priceListModel.js");
 
 const priceListController = {
     getAllPriceListItems: async function (req, res) {
