@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { fetchData, updateData } from '../../support/FetchService';
+import { fetchData, createData, updateData } from '../../support/FetchService';
 import '../CSS/Modal.css';
 import { translateUnlimited } from '../../support/Utils';
 
@@ -21,10 +21,9 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
   useEffect(() => {
     if (isOpen) {
       fetchData('plans', (data) => {
-        console.log(data);
         data.sort((a, b) => a.id - b.id);
         setAvailablePlans(data);
-  
+
         const currentActivePlan = data.find((plan) => plan.id === activePlan.active_plan_id);
         if (currentActivePlan) {
           setSelectedPlan(currentActivePlan);
@@ -39,9 +38,9 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     const today = new Date().toISOString().slice(0, 10);
-  
+
     const updatedPlan = {
       plan_id: selectedPlan.id,
       member_id: activePlan.id,
@@ -51,15 +50,28 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
       available_unlocks: selectedPlan.included_unlocks,
       is_paused: 'Y',
     };
-  
-    updateData('activePlan', activePlan.active_plan_id, updatedPlan)
-      .then(() => {
-        onSave(selectedPlan.id);
-        onRequestClose();
-      })
-      .catch((error) => {
-        console.error('Error changing plan:', error);
-      });
+
+    if (activePlan.active_plan_id) {
+      // User has an active plan, perform an update
+      updateData('activePlan', activePlan.active_plan_id, updatedPlan)
+        .then(() => {
+          onSave(selectedPlan.id);
+          onRequestClose();
+        })
+        .catch((error) => {
+          console.error('Error changing plan:', error);
+        });
+    } else {
+      // User has no active plan, perform an insert (create)
+      createData('activePlan', updatedPlan)
+        .then(() => {
+          onSave(selectedPlan.id);
+          onRequestClose();
+        })
+        .catch((error) => {
+          console.error('Error creating plan:', error);
+        });
+    }
   };
 
   return (
@@ -89,7 +101,7 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
                   key={plan.id}
                   className={`plan-box ${selectedPlan && selectedPlan.id === plan.id ? 'selected' : ''}`}
                   onClick={() => handlePlanClick(plan)}
-                  type="button" 
+                  type="button"
                 >
                   <strong></strong> {plan.id}
                   <br />
@@ -97,9 +109,9 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
                   <br />
                   Frequency: {plan.price_frequency_name}
                   <br />
-                  Minutes: {translateUnlimited(plan.included_minutes)} 
+                  Minutes: {translateUnlimited(plan.included_minutes)}
                   <br />
-                  Unlocks: {translateUnlimited(plan.included_unlocks)} 
+                  Unlocks: {translateUnlimited(plan.included_unlocks)}
                   <br />
                   ${plan.price}
                 </button>

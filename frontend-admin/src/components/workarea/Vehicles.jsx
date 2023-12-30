@@ -148,20 +148,3 @@ function Vehicles() {
 }
 
 export default Vehicles;
-
-
-/*      <AddVehicleModal
-        isOpen={showAddVehicleModal}
-        onRequestClose={() => setShowAddVehicleModal(false)}
-        onSave={handleSaveVehicle}
-      />
-
-
-      {editingVehicle && (
-        <EditVehicleModal
-          isOpen={showEditVehicleModal}
-          onRequestClose={() => setShowEditVehicleModal(false)}
-          onSave={handleUpdateVehicle}
-          vehicle={editingVehicle}
-        />
-      )} */
