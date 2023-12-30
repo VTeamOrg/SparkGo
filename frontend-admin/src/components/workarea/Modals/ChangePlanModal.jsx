@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { fetchData, createData, updateData } from '../../support/FetchService';
 import '../CSS/Modal.css';
-import { translateUnlimited } from '../../support/Utils';
+import ChangePlan from '../HTML/ChangePlan'; 
 
 /**
  * ChangePlanModal component for changing a member's active plan.
@@ -32,10 +32,18 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
     }
   }, [isOpen, activePlan]);
 
+  /**
+   * Handle the click event on a plan.
+   * @param {object} plan - The selected plan object.
+   */
   const handlePlanClick = (plan) => {
     setSelectedPlan(plan);
   };
 
+  /**
+   * Handle the form submission to change the plan.
+   * @param {object} e - The form submission event.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -80,51 +88,14 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
       onRequestClose={onRequestClose}
       contentLabel="Change Plan Modal"
     >
-      <div className="change-plan-modal">
-        <h2>Change Plan</h2>
-
-        {/* Display current plan */}
-        <div className="current-plan">
-          <p>
-            <strong>Active Plan Name:</strong> {activePlan.active_plan_name}
-          </p>
-          <p>
-            <strong>Active Plan Price:</strong> ${activePlan.active_plan_price}
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <div className="plan-container">
-              {availablePlans.map((plan) => (
-                <button
-                  key={plan.id}
-                  className={`plan-box ${selectedPlan && selectedPlan.id === plan.id ? 'selected' : ''}`}
-                  onClick={() => handlePlanClick(plan)}
-                  type="button"
-                >
-                  <strong></strong> {plan.id}
-                  <br />
-                  <strong></strong> {plan.title}
-                  <br />
-                  Frequency: {plan.price_frequency_name}
-                  <br />
-                  Minutes: {translateUnlimited(plan.included_minutes)}
-                  <br />
-                  Unlocks: {translateUnlimited(plan.included_unlocks)}
-                  <br />
-                  ${plan.price}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="submit">Change Plan</button>
-            <button onClick={onRequestClose}>Cancel</button>
-          </div>
-        </form>
-      </div>
+      <ChangePlan
+        selectedPlan={selectedPlan}
+        availablePlans={availablePlans}
+        activePlan={activePlan}
+        handlePlanClick={handlePlanClick}
+        handleSubmit={handleSubmit}
+        onRequestClose={onRequestClose}
+      />
     </Modal>
   );
 }

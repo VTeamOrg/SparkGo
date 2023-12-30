@@ -76,7 +76,6 @@ const activePlan = {
     },    
 
     updateActivePlan: async function (req, res) {
-        console.log("update active plan");
         try {
           const db = await database.openDb();
           const activePlanId = req.params.activePlanId;
