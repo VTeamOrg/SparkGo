@@ -81,6 +81,19 @@ describe("Server Connection Behavior", () => {
         });
     });
 
+    describe("Get User by email (GET)", () => {
+        it("should retrieve a user by email from the database", async () => {
+            try {
+                // Attempt to get the user with ID 11
+                const user = await usersModel.getUserByEmail('updated@example.com');
+                // Log or assert based on the received user data
+                console.log(user);
+            } catch (error) {
+                throw error;
+            }
+        });
+    });
+    
     describe("Delete User by ID (DELETE)", () => {
         it("should manually delete a user by ID from the database", async () => {
             try {
@@ -92,5 +105,6 @@ describe("Server Connection Behavior", () => {
                 throw error;
             }
         });
+
+        });
     });
-});

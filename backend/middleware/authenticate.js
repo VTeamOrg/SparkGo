@@ -1,41 +1,49 @@
-require('dotenv').config();
+const express = require('express');
+const axios = require('axios');
 const jwt = require('jsonwebtoken');
-const db = require('../db/database'); // Ensure this path is correct
+require('dotenv').config();
+const userModel = require('../usersController.js'); // Update with the correct path to your user model
 
-const authenticate = (req, res, next) => {
-    const token = req.headers['authorization'];
+const app = express();
 
-    if (!token) {
-        console.error('No token provided');
-        return res.status(401).send('Access denied. No token provided.');
-    }
-
+app.get('/auth/google/callback', async (req, res) => {
+    const code = req.query.code;
+    
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id; 
-
-        db.openDb().then(connection => {
-            db.query(connection, 'SELECT * FROM member WHERE id = ?', [userId])
-                .then(user => {
-                    if (user.length > 0) {
-                        req.user = user[0];
-                        next();
-                    } else {
-                        console.error('User not found');
-                        res.status(401).send('Unauthorized');
-                    }
-                    db.closeDb(connection);
-                })
-                .catch(err => {
-                    console.error('Database error:', err.message);
-                    res.status(500).send('Internal Server Error');
-                    db.closeDb(connection);
-                });
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+            // ... same as before
         });
-    } catch (ex) {
-        console.error('Token verification error:', ex.message);
-        res.status(400).send('Invalid token.');
-    }
-};
+        const accessToken = tokenResponse.data.access_token;
 
-module.exports = authenticate;
+        // Fetch user info from Google
+        const userResponse = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${accessToken}`);
+        const userData = userResponse.data;
+
+        // Use userModel to check if the user exists
+        try {
+            const existingUser = await userModel.getUserByEmail(userData.email);
+            
+            if (existingUser) {
+                // User found, issue JWT with user ID and role
+                const userToken = jwt.sign({ 
+                    user_id: existingUser.id, 
+                    role: existingUser.role 
+                }, process.env.JWT_SECRET);
+
+                // Send the JWT back to the client
+                res.send({ token: userToken });
+            } else {
+                // Handle registration for new user
+                // You can create a new user in the database here
+                // ...
+            }
+        } catch (error) {
+            console.error('Error handling user data:', error.message);
+            res.status(500).send('Internal Server Error');
+        }
+    } catch (error) {
+        res.status(500).send('Authentication failed');
+    }
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
