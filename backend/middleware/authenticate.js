@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const userModel = require('../usersController.js'); // Update with the correct path to your user model
+const userModel = require('../controllers/usersController.js'); // Update with the correct path to your user model
 
 const app = express();
 

@@ -7,7 +7,7 @@ const paymentMethods = require("./paymentMethods.js");
 const plans = require("./plans.js");
 const priceList = require("./priceList.js");
 
-const authenticate = require('../../middleware/authenticate');
+// const authenticate = require('../../middleware/authenticate');
 
 const loadHttpRoutes = (app) => {
     app.use("/v1/users", users);
