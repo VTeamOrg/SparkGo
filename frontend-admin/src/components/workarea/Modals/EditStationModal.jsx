@@ -3,7 +3,6 @@ import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchData } from '../../support/FetchService';
-import EditStation from '../HTML/EditStation';
 
 const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
   const [stationName, setStationName] = useState('');
