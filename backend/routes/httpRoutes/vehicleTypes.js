@@ -1,20 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const vehicleTypeModule = require("../../models/vehicleTypes.js");
+
+const vehicleTypeController = require("../../controllers/vehicleTypeController.js");
+
 
 // GET all vehicle types
-router.get("/", (req, res) => vehicleTypeModule.getAllVehicleTypes(req, res));
+router.get("/", vehicleTypeController.getAllVehicleTypes);
 
 // GET vehicle type by ID
-router.get("/:id", (req, res) => vehicleTypeModule.getVehicleTypeById(req, res));
+router.get("/:id", vehicleTypeController.getVehicleTypeById);
 
 // POST create vehicle type
-router.post("/", (req, res) => vehicleTypeModule.createVehicleType(req, res));
+router.post("/", vehicleTypeController.createVehicleType);
 
 // PUT update vehicle type by ID
-router.put("/:id", (req, res) => vehicleTypeModule.updateVehicleType(req, res));
+router.put("/:id", vehicleTypeController.updateVehicleType);
 
 // DELETE delete vehicle type by ID
-router.delete("/:id", (req, res) => vehicleTypeModule.deleteVehicleType(req, res));
+router.delete("/:id", vehicleTypeController.deleteVehicleType);
 
 module.exports = router;
