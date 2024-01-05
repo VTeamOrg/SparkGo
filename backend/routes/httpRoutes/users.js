@@ -4,8 +4,11 @@ const router = express.Router();
 let usersConroller = require("../../controllers/usersController.js");
 
 router.get("/", usersConroller.getAllUsers);
+console.log("Reached /v1/users route");
+router.get("/email/:email", usersConroller.getUserByEmail);
 
 router.get("/:id", usersConroller.getUserById);
+console.log("Reached /v1/users/:id route");
 
 router.post("/", usersConroller.createUser);
 

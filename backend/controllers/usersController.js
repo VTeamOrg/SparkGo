@@ -88,9 +88,13 @@ const usersController = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },
+
     getUserByEmail: async function getUserByEmail(req, res) {
+        console.log("getbyEmail");
+        console.log('Received parameters:', req.params);
         try {
             const userEmail = req.params.email; // or however you're planning to receive the email
+            console.log('Searching for user by email:', userEmail);
             const user = await userModel.getUserByEmail(userEmail);
     
             if (user) {

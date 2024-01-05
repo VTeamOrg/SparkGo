@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import './ApiTables.css';
+import './CSS/ApiTables.css';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
-import AddVehicleModal from './AddVehicleModal'; 
-import EditVehicleModal from './EditVehicleModal'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt, faTrash, faCheck, faTimes  } from '@fortawesome/free-solid-svg-icons';
+import { SearchBar } from './HTML/General';
+import AddVehicleModal from './Modals/AddVehicleModal';
+import EditVehicleModal from './Modals/EditVehicleModal';
 
 function Vehicles() {
   const [vehicles, setVehicles] = useState([]);
   const [showAddVehicleModal, setShowAddVehicleModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showEditVehicleModal, setShowEditVehicleModal] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
+
 
   useEffect(() => {
     fetchDataUpdateState();
@@ -62,61 +65,84 @@ function Vehicles() {
     }
   };
 
+    /**
+ * Filter and display vehicle types based on the search term.
+ * @type {array} filteredVehicleTypes - The filtered vehicle types to be displayed.
+ */
+    const filteredVehicles = vehicles
+    ? searchTerm
+      ? vehicles.filter((vehicle) =>
+          vehicle.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : vehicles
+    : [];
+
   return (
     <div className="api">
       <h2>Vehicles</h2>
       <button onClick={handleAddVehicle}>Add Vehicle</button>
 
+      {/* Search bar */}
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
       <table className="api-table">
+
         <thead>
           <tr>
-            <th>Vehicle ID</th>
-            <th>City ID</th>
-            <th>Type ID</th>
-            <th>Rented By</th>
+            <th>ID</th>
+            <th>City</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Status</th>
             <th></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {vehicles.map((vehicle) => (
-            <tr key={vehicle.id} className="api-row">
-              <td className="api-name">{vehicle.id}</td>
-              <td className="api-coordinates">{vehicle.city_id}</td>
-              <td className="api-city-id">{vehicle.type_id}</td>
-              <td className="api-rented-by">{vehicle.rented_by}</td>
-              <td className="api-edit">
-                <button onClick={() => handleEditVehicle(vehicle)}>
-                  <FontAwesomeIcon icon={faPencilAlt} />
-                </button>
-              </td>
-              <td className="api-delete">
-                <button onClick={() => handleDeleteVehicle(vehicle.id)}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        {filteredVehicles.map((vehicle) => (
+          <tr key={vehicle.id} className="api-row">
+            <td>{vehicle.id}</td>
+            <td>{vehicle.city_name}</td>
+            <td>{vehicle.vehicle_type_name}</td>
+            <td>{vehicle.name}</td>
+            <td>
+            {vehicle.vehicle_status === '1' ? (
+              <FontAwesomeIcon icon={faCheck} style={{ color: 'green' }} />
+            ) : (
+              <FontAwesomeIcon icon={faTimes} style={{ color: 'red' }} />
+            )}
+          </td>
+            <td className="api-edit">
+              <button onClick={() => handleEditVehicle(vehicle)}>
+                <FontAwesomeIcon icon={faPencilAlt} />
+              </button>
+            </td>
+            <td className="api-delete">
+              <button onClick={() => handleDeleteVehicle(vehicle.id)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
       </table>
 
-      {/* AddVehicleModal component */}
       <AddVehicleModal
         isOpen={showAddVehicleModal}
         onRequestClose={() => setShowAddVehicleModal(false)}
         onSave={handleSaveVehicle}
       />
+    {editingVehicle && (
+      <EditVehicleModal
+        isOpen={showEditVehicleModal}
+        onRequestClose={() => setShowEditVehicleModal(false)}
+        onSave={handleUpdateVehicle}
+        vehicle={editingVehicle}
+      />
+    )}
 
-      {/* EditVehicleModal component */}
-      {editingVehicle && (
-        <EditVehicleModal
-          isOpen={showEditVehicleModal}
-          onRequestClose={() => setShowEditVehicleModal(false)}
-          onSave={handleUpdateVehicle}
-          vehicle={editingVehicle}
-        />
-      )}
     </div>
+    
   );
 }
 

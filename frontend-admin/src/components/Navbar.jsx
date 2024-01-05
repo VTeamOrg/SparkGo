@@ -4,7 +4,11 @@ import './Navbar.css';
 function Navbar({ setActiveSection }) {
 
     const handleLogout = () => {
-        /* Reload the page to go back to the beginning */
+
+      localStorage.removeItem('userLoggedIn');
+      localStorage.removeItem('userEmail');
+      
+      /* Reload the page to go back to the beginning */
         window.location.reload();
       };
 
@@ -35,7 +39,7 @@ function Navbar({ setActiveSection }) {
             <button onClick={() => handleLinkClick('priceList')}>Price lists</button>
             <button onClick={() => handleLinkClick('plans')}>Plans</button>
             <button onClick={() => handleLinkClick('frequencies')}>Frequencies</button>
-            <button onClick={() => handleLinkClick('customers')}>Customers</button>
+            <button onClick={() => handleLinkClick('members')}>Members</button>
           </div>
           <button className="logout-button" onClick={handleLogout}>
             Logout

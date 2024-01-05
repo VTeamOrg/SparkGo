@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
+import '../CSS/Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchData } from '../../support/FetchService';
+import AddStationFields from '../HTML/AddStation'; 
 
 /**
  * AddStationModal component for adding a new station.
@@ -103,49 +104,18 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
       <h2>Add Station</h2>
       <form onSubmit={handleSubmit}>
 
-      <div>
-        <label htmlFor="city">Select a City:</label>
-        <select
-            id="city"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-        >
-            <option value="">Select a city</option>
-            {cities.map((city) => (
-            <option key={city.id} value={city.id}>
-                {city.name}
-            </option>
-            ))}
-        </select>
-        </div>
-
-        <div>
-          <label htmlFor="stationName">Station Name:</label>
-          <input
-            type="text"
-            id="stationName"
-            value={stationName}
-            onChange={(e) => setStationName(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="latitude">Latitude:</label>
-          <input
-            type="text"
-            id="latitude"
-            value={latitude}
-            onChange={(e) => setLatitude(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="longitude">Longitude:</label>
-          <input
-            type="text"
-            id="longitude"
-            value={longitude}
-            onChange={(e) => setLongitude(e.target.value)}
-          />
-        </div>
+      <AddStationFields
+        selectedCity={selectedCity}
+        setSelectedCity={setSelectedCity}
+        stationName={stationName}
+        setStationName={setStationName}
+        latitude={latitude}
+        setLatitude={setLatitude}
+        longitude={longitude}
+        setLongitude={setLongitude}
+        cities={cities}
+      />
+      
         <div>
           <label>Coordinates:</label>
           <MapContainer

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
+import '../CSS/Modal.css';
 import { fetchData } from '../../support/FetchService';
+import EditPriceList from '../HTML/EditPriceList'; // Import the EditPriceList component
 
 /**
  * EditPriceListModal component for editing a price list item.
@@ -30,12 +31,10 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
     });
   }, []);
 
-  
-    /**
+  /**
    * Handles the submission of the edited price item.
    */
   const handleSubmit = async () => {
-
     /* Check if price_per_minute and price_per_unlock are valid numbers */
     const pricePerMinute = parseFloat(editedPriceItem.price_per_minute);
     const pricePerUnlock = parseFloat(editedPriceItem.price_per_unlock);
@@ -59,80 +58,16 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
       onRequestClose={onRequestClose}
       contentLabel="Edit Station Modal"
     >
-      <div className="edit-price-list-modal">
-        <h3>Edit Price List</h3>
-        <form onSubmit={(e) => handleSubmit(e)}>
-          {/* Dropdown list for selecting vehicle type */}
-          <div className="form-group">
-            <label>Select Vehicle Type</label>
-            <select
-              value={selectedType.id.toString()}
-              onChange={(e) => {
-                const selectedTypeId = e.target.value;
-                const selectedTypeObj = types.find(
-                  (type) => type.id.toString() === selectedTypeId
-                );
-                setSelectedType(selectedTypeObj || { id: '' });
-              }}
-              required
-            >
-              <option value="">Select Type</option>
-              {types.map((type) => (
-                <option key={type.id} value={type.id.toString()}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Text field for list_name */}
-          <div className="form-group">
-            <label>List Name</label>
-            <input
-              type="text"
-              value={editedPriceItem.list_name}
-              onChange={(e) =>
-                setEditedPriceItem({ ...editedPriceItem, list_name: e.target.value })
-              }
-              required
-            />
-          </div>
-
-          {/* Numeric fields for price_per_minute and price_per_unlock */}
-          <div className="form-group">
-            <label>Price per Minute</label>
-            <input
-              type="text"
-              value={editedPriceItem.price_per_minute}
-              onChange={(e) =>
-                setEditedPriceItem({
-                  ...editedPriceItem,
-                  price_per_minute: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Price per Unlock</label>
-            <input
-              type="text"
-              value={editedPriceItem.price_per_unlock}
-              onChange={(e) =>
-                setEditedPriceItem({
-                  ...editedPriceItem,
-                  price_per_unlock: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <button type="button" onClick={handleSubmit}>
-            Save
-            </button>
-          <button onClick={onRequestClose}>Cancel</button>
-        </form>
-      </div>
+      {/* Use the EditPriceList component here */}
+      <EditPriceList
+        selectedType={selectedType}
+        editedPriceItem={editedPriceItem}
+        types={types}
+        handleSubmit={handleSubmit}
+        setSelectedType={setSelectedType}
+        setEditedPriceItem={setEditedPriceItem}
+        onRequestClose={onRequestClose}
+      />
     </Modal>
   );
 }
