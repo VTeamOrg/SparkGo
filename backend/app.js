@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const session = require('express-session');
 const http = require('http');
 const cors = require("cors");
 const websocket = require('ws');
@@ -13,13 +14,29 @@ const app = express();
 const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
+const { v4: uuidv4 } = require('uuid');
+
+// Configure express-session
+const sessionSecret = uuidv4();
+
+const sessionOptions = {
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    sameSite: 'none', // Set sameSite to 'none' for cross-site requests
+  },
+};
+
+app.use(session(sessionOptions)); // Use session middleware
+
 
 // Configure CORS to allow requests from your frontend URL
 const corsOptions = {
     origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
     methods: 'GET,POST', // Specify the methods you want to allow
     allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization'], // Specify the headers you want to allow
-    credentials: true, // If your frontend needs to pass credentials
+    credentials: true,
     optionsSuccessStatus: 200
 };
 

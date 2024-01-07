@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
 import './Login.css';
+import axios from 'axios';
 
 function Login({ setUserLoggedIn }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +12,17 @@ function Login({ setUserLoggedIn }) {
     console.log('User logged in:', userLoggedIn);
 
     if (userLoggedIn === 'true') {
-      setUserLoggedIn(true);
+      // Add a check here to make sure the user is an admin before setting userLoggedIn
+      axios.get('http://localhost:3000/v1/auth/check-admin')
+        .then((response) => {
+          const { isLoggedIn, isAdmin } = response.data;
+          if (isAdmin) {
+            setUserLoggedIn(true);
+          }
+        })
+        .catch((error) => {
+          console.error('Error checking admin status:', error);
+        });
     }
   }, [setUserLoggedIn]);
 
@@ -28,15 +39,7 @@ function Login({ setUserLoggedIn }) {
       const data = await response.json();
   
       if (data.url) {
-        localStorage.setItem('userLoggedIn', 'true');
-  
-        if (data.userByEmail) {
-          const userByEmail = data.userByEmail;
-          localStorage.setItem('userId', userByEmail.id); // Store user ID
-  
-          // Set user as logged in
-          setUserLoggedIn(true);
-        }
+        // localStorage.setItem('userLoggedIn', 'true'); // Don't set this here
   
         window.location.href = data.url;
       } else {
@@ -51,11 +54,6 @@ function Login({ setUserLoggedIn }) {
 
   const handleGoogleClick = () => {
     auth();
-  };
-
-  const handleLogin = () => {
-    // Set user as logged in
-    setUserLoggedIn(true);
   };
 
   return (
@@ -77,13 +75,6 @@ function Login({ setUserLoggedIn }) {
           </button>
 
           <br />
-
-          <button
-            onClick={handleLogin}
-            className="blue-button button-text"
-          >
-            <span>Login (cheat, auto login)</span>
-          </button>
         </div>
       </div>
     </div>

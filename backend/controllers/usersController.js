@@ -93,7 +93,7 @@ const usersController = {
         console.log("getbyEmail");
         console.log('Received parameters:', req.params);
         try {
-            const userEmail = req.params.email; // or however you're planning to receive the email
+            const userEmail = req.params.email; 
             console.log('Searching for user by email:', userEmail);
             const user = await userModel.getUserByEmail(userEmail);
     
@@ -106,6 +106,20 @@ const usersController = {
             }
         } catch (error) {
             console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    isAdminByEmail: async function isAdminByEmail(req, res) {
+        try {
+            const userEmail = req.params.email; 
+            const isAdmin = await userModel.isAdminByEmail(userEmail);
+
+            return res.json({
+                isAdmin: isAdmin
+            });
+        } catch (error) {
+            console.error("Error checking if user is admin:", error.message);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },

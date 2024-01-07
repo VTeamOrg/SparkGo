@@ -124,6 +124,24 @@ const userModel = {
         } catch (error) {
             throw error;
         }
+    },
+
+    isAdminByEmail: async function isAdminByEmail(email) {
+        if (!email) {
+            throw new Error("Missing user email");
+        }
+        try {
+            const db = await database.openDb();
+            const user = await database.query(
+                db,
+                "SELECT * FROM member WHERE email = ?;",
+                [email]
+            );
+            await database.closeDb(db);
+            return user.length > 0 && user[0].role === 'admin';
+        } catch (error) {
+            throw error;
+        }    
     }
 };
 
