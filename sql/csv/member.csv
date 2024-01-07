@@ -9,3 +9,4 @@ id,role,email,name,personal_number,wallet
 8,user,niklas.n@gmail.com,Sara Nilsson,200208-0123,Björkvägen 8,55.00
 9,user,peter.p@gmail.com,Karin Eriksson,200209-4567,Ekstigen 14,80.00
 10,admin,admin@admin.com,Admin User,200210-8901,Adminvägen 1,100.00
+11,admin,adrian.dedorson@gmail.com,Admin User,200210-8901,Adminvägen 1,100.00

@@ -12,7 +12,8 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 router.post('/', async (req, res) => {
     res.header('Access-Control-Allow-Origin','http://127.0.0.1:5173')
-    res.header('Referred-Policy','no-reffered-when-downgrade')
+    res.header("Access-Control-Allow-Credentials", 'true');
+    res.header("Referrer-Policy","no-referrer-when-downgrade");
     
     REDIRECT_URI='http://localhost:3000/v1/auth'
 
@@ -20,7 +21,7 @@ router.post('/', async (req, res) => {
 
     const authorizeUrl = oAuth2Client.generateAuthUrl({
         access_type:'offline',
-        scope:'https://www.googleapis.com/auth/userinfo.profile openid',
+        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
         prompt:'consent'
     });
 

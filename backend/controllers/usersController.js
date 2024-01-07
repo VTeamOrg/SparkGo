@@ -105,6 +105,22 @@ const usersController = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },
+
+    isAdminByEmail: async function isAdminByEmail(req, res) {
+        try {
+            const userEmail = req.params.email; // or req.body.email, depending on how you're receiving the email
+            const isAdmin = await userModel.isAdminByEmail(userEmail);
+
+            return res.json({
+                isAdmin: isAdmin
+            });
+        } catch (error) {
+            console.error("Error checking if user is admin:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    
 };
 
 module.exports = usersController;
