@@ -9,27 +9,15 @@ const loadHttpRoutes = require("./routes/httpRoutes");
 const loadWebsocket = require('./routes/websocketRoutes');
 const loadAuthRoutes = require('./routes/oauthRoutes');
 
+// Create a separate module for session configuration
+const sessionConfig = require('./config/sessionConfig');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
-const { v4: uuidv4 } = require('uuid');
-
-// Configure express-session
-const sessionSecret = uuidv4();
-
-const sessionOptions = {
-  secret: sessionSecret,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    sameSite: 'none', // Set sameSite to 'none' for cross-site requests
-  },
-};
-
-app.use(session(sessionOptions)); // Use session middleware
-
+// Use the sessionConfig module for session middleware
+app.use(session(sessionConfig));
 
 // Configure CORS to allow requests from your frontend URL
 const corsOptions = {
@@ -56,7 +44,6 @@ app.get("/", (req, res) => {
         data: "Hello World!",
     });
 });
-
 
 loadAuthRoutes(app);
 loadHttpRoutes(app);

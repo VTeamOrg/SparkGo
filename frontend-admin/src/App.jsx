@@ -4,8 +4,6 @@ import Login from './Login';
 import Navbar from './components/Navbar';
 import WorkArea from './components/WorkArea';
 import MapView from './components/MapView';
-import axios from 'axios';
-import { API_URL } from '../config';
 
 function App() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -13,15 +11,11 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check if the user is logged in and is an admin
-    axios.get(`${API_URL}/v1/auth/check-admin`)
-    .then((response) => {
-      const { isLoggedIn, isAdmin } = response.data;
-      if (isLoggedIn && isAdmin) {
-        setUserLoggedIn(true);
-        console.log("admin!");
-      }
-    });
+    // Check if the user is already logged in based on the presence of a JWT token
+/*    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      setUserLoggedIn(true);
+    } */
   }, []);
 
   return (
@@ -39,7 +33,7 @@ function App() {
           </div>
         </div>
       ) : (
-        <Login setUserLoggedIn={setUserLoggedIn} /> 
+        <Login setUserLoggedIn={setUserLoggedIn} />
       )}
     </div>
   );

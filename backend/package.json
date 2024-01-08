@@ -19,6 +19,7 @@
         "express-rate-limit": "^7.1.5",
         "express-session": "^1.17.3",
         "google-auth-library": "^9.4.1",
+        "js-cookie": "^3.0.5",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^7.6.3",
         "morgan": "^1.10.0",
