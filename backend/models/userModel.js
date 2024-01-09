@@ -125,6 +125,7 @@ const userModel = {
             throw error;
         }
     },
+
     isAdminByEmail: async function isAdminByEmail(email) {
         if (!email) {
             throw new Error("Missing user email");

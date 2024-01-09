@@ -4,7 +4,11 @@ import './Navbar.css';
 function Navbar({ setActiveSection }) {
 
     const handleLogout = () => {
-        /* Reload the page to go back to the beginning */
+
+      localStorage.removeItem('userLoggedIn');
+      localStorage.removeItem('userEmail');
+      
+      /* Reload the page to go back to the beginning */
         window.location.reload();
       };
 

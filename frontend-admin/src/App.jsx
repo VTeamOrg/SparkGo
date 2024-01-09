@@ -8,10 +8,15 @@ import MapView from './components/MapView';
 function App() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogin = () => {
-    setUserLoggedIn(true);
-  };
+  useEffect(() => {
+    // Check if the user is already logged in based on the presence of a JWT token
+/*    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      setUserLoggedIn(true);
+    } */
+  }, []);
 
   return (
     <div className="App">
@@ -28,7 +33,7 @@ function App() {
           </div>
         </div>
       ) : (
-        <Login setUserLoggedIn={handleLogin} />
+        <Login setUserLoggedIn={setUserLoggedIn} />
       )}
     </div>
   );

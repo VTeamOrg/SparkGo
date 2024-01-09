@@ -1,33 +1,55 @@
-import React, { useState } from 'react';
-import googleButton from '../assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
+import React, { useState, useEffect } from 'react';
+import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
 import './Login.css';
+import Cookies from 'js-cookie';
 
 function Login({ setUserLoggedIn }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [authSuccess, setAuthSuccess] = useState(null);
 
-  // Navigate to a given URL
-  const navigate = (url) => {
-    window.location.href = url;
-  };
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const successParam = urlParams.get('success');
+  
+    if (successParam === 'true') {
+      setAuthSuccess(true);
+      Cookies.set('userLoggedIn', 'true', { secure: true, sameSite: 'strict', expires: 1 });
+      setUserLoggedIn(true);
+  
+      // Remove the 'success' parameter from the URL
+      const newUrl = window.location.href.split('?')[0];
+      window.history.replaceState({}, document.title, newUrl);
+    } else if (successParam === 'false') {
+      setAuthSuccess(false);
+    }
+  
+    // Clear 'userLoggedIn' cookie when the component unmounts
+    return () => {
+      Cookies.remove('userLoggedIn', { secure: true, sameSite: 'strict' });
+    };
+  }, [setUserLoggedIn]);
 
-  // Authenticate with Google OAuth
   const auth = async () => {
     try {
-      const response = await fetch('http://localhost:3000/v1/request', { method: 'POST' });
+      setIsLoading(true);
+      const response = await fetch('http://localhost:3000/v1/request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
-      navigate(data.url);
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Authentication URL not received:', data.error);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error('Error during authentication:', error);
+      setIsLoading(false);
     }
-  };
-
-  const handleGoogleClick = () => {
-    auth();
-  };
-
-  const handleLoginClick = () => {
-    setIsLoggedIn(true);
-    setUserLoggedIn(true);
   };
 
   return (
@@ -40,15 +62,22 @@ function Login({ setUserLoggedIn }) {
         </h2>
         <h3>Your two-wheeled adventure</h3>
         <div className="button-container">
-          <button onClick={handleGoogleClick} className="blue-button button-text"> 
-            <img src={googleButton} alt='Google Sign In'/>
-          </button>
-
+          {!Cookies.get('userLoggedIn') ? (
+            <button
+              onClick={auth}
+              className={`blue-button button-text ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Loading...' : <img src={googleButton} alt="Google Sign In" />}
+            </button>
+          ) : null}
           <br />
-
-          <button onClick={handleLoginClick} className="blue-button button-text">
-            <span>Login</span>
-          </button>
+          {authSuccess === true && (
+            <p style={{ color: 'green' }}>Authentication successful!</p>
+          )}
+          {authSuccess === false && (
+            <p style={{ color: 'red' }}>Authentication failed. Please try again.</p>
+          )}
         </div>
       </div>
     </div>
