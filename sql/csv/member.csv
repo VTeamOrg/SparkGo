@@ -1,6 +1,6 @@
 id,role,email,name,personal_number,address,wallet
 1,admin,anna.h.blixt@gmail.com,Anna Blixt,200201-1234,Gågatan 5,10.00
-2,user,emma.e@gmail.com,Oskar Olsson,200202-5678,Ängsvägen 10,50.00
+2,user,anna.h.svensson@gmail.com,Anna Blixt,200202-5678,Ängsvägen 10,50.00
 3,user,fredrik.f@gmail.com,Maria Andersson,200203-9012,Boulevarden 3,75.00
 4,user,hanna.h@gmail.com,Anders Johansson,200204-3456,Lingonvägen 7,30.00
 5,user,gustav.g@gmail.com,Elsa Karlsson,200205-7890,Rosengatan 12,45.00

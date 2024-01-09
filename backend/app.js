@@ -22,7 +22,7 @@ app.use(session(sessionConfig));
 // Configure CORS to allow requests from your frontend URL
 const corsOptions = {
     origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-    methods: 'GET,POST', // Specify the methods you want to allow
+    methods: 'GET,POST,PUT,DELETE', // Specify the methods you want to allow
     allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization'], // Specify the headers you want to allow
     credentials: true,
     optionsSuccessStatus: 200

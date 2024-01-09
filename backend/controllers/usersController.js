@@ -44,8 +44,10 @@ const usersController = {
     },
 
     getUserById: async function getUserById(req, res) {
+        console.log("controller by id");
         try {
             const userId = req.params.id;
+            console.log("userId ", userId);
             const user = await userModel.getUserById(userId);
 
             return res.json({

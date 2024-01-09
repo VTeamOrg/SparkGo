@@ -1,130 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CSS/WorkArea.css';
+import { fetchById, updateData } from '../support/FetchService';
+import MemberModal from './Modals/MemberModal'; // Import the MemberModal component
 
 /**
  * MyAccount component for displaying and editing account information.
  */
-function MyAccount() {
-    /**
-     * State to track whether the form is in edit mode or not.
-     * @type {boolean}
-     */    
-    const [isEditing, setIsEditing] = useState(false);
-  
-    /**
-     * Initial account information (dummy data).
-     * @type {Object}
-     */
-    const initialAccountInfo = {
-      name: 'John Doe',
-      address: '123 Main St, City',
-      personalNumber: '123-45-6789',
-      activePlan: 'Premium Plan',
-      wallet: '500.00 SEK',
-      email: 'anna.blixt@gmail.com'
-    };
-  
-    /**
-     * State to store the current account information.
-     * @type {Object}
-     */
-    const [accountInfo, setAccountInfo] = useState(initialAccountInfo);
-  
-    /**
-     * Function to handle the "Edit" button click, toggling edit mode.
-     */
-    const handleEditClick = () => {
-      setIsEditing(!isEditing);
-    };
+function MyAccount({ userId }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isMemberModalOpen, setMemberModalOpen] = useState(false); // Initialize modal as closed
+  const [accountInfo, setAccountInfo] = useState({
+    name: '',
+    email: '',
+    address: '',
+    personal_number: '', // Updated field name
+    active_plan_name: '',
+    wallet: '',
+  });
 
-    /**
-     * Function to handle input field changes and update the information state.
-     * @param {Object} e - The event object.
-     */
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-  
-      setAccountInfo({
-        ...accountInfo,
-        [name]: value,
-      });
-    };
+  const [editedAccountInfo, setEditedAccountInfo] = useState({
+    name: '',
+    address: '',
+    personal_number: '', // Updated field name
+    active_plan_name: '',
+  });
 
-    /* RETURN */
+  // Fetch account data when not in editing mode
+  useEffect(() => {
+    if (!isEditing) {
+      const fetchData = async () => {
+        try {
+          console.log("Fetching data for userId: ", userId);
+          const data = await fetchById('users', userId);
+          console.log(data);
+          setAccountInfo(data);
+          setEditedAccountInfo(data);
+          setMemberModalOpen(true); // Open the modal when data is loaded
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+        }
+      };
+  
+      fetchData();
+    }
+  }, [userId, isEditing]);
+
+  const handleEditClick = () => {
+    setIsEditing(!isEditing);
+  };
+
+  // Rest of your component code...
+
   return (
     <div className="my-account">
       <h2>My Account</h2>
-      <form>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={accountInfo.name}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
+      {/* Rest of your component code... */}
+      
+      {/* Render the MemberModal component */}
+      {isMemberModalOpen && (
+        <div className="custom-member-modal"> 
+          <MemberModal
+            isOpen={isMemberModalOpen}
+            onRequestClose={() => setMemberModalOpen(false)}
+            member={accountInfo} // Pass the accountInfo as the member
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="name">Email</label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            value={accountInfo.email}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={accountInfo.address}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="personalNumber">Personal Number</label>
-          <input
-            type="text"
-            id="personalNumber"
-            name="personalNumber"
-            value={accountInfo.personalNumber}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="activePlan">Active Plan</label>
-          <input
-            type="text"
-            id="activePlan"
-            name="activePlan"
-            value={accountInfo.activePlan}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="wallet">Wallet</label>
-          <input
-            type="text"
-            id="wallet"
-            name="wallet"
-            value={accountInfo.wallet}
-            readOnly={!isEditing}
-            onChange={handleInputChange}
-          />
-        </div>
-      </form>
-      <button onClick={handleEditClick}>
-        {isEditing ? 'Save' : 'Edit'} 
-      </button>      
+      )}
     </div>
   );
 }
