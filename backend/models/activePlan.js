@@ -64,7 +64,7 @@ const activePlan = {
             );
     
             await database.closeDb(db);
-    
+
             return res.status(201).json({
                 message: "Active Plan created successfully",
                 data: newActivePlan,
@@ -74,6 +74,7 @@ const activePlan = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },    
+
 
     updateActivePlan: async function (req, res) {
         try {

@@ -46,6 +46,8 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
+SELECT * FROM member;
+
 LOAD DATA LOCAL INFILE 'csv/renting_station.csv'
 INTO TABLE renting_station
 FIELDS TERMINATED BY ','

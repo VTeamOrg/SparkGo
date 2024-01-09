@@ -4,11 +4,10 @@ const router = express.Router();
 let usersController = require("../../controllers/usersController.js");
 
 router.get("/", usersController.getAllUsers);
-console.log("Reached /v1/users route");
+
 router.get("/email/:email", usersController.getUserByEmail);
 
 router.get("/:id", usersController.getUserById);
-console.log("Reached /v1/users/:id route");
 
 router.post("/", usersController.createUser);
 
