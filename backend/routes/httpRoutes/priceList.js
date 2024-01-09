@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const priceListModule = require("../../models/priceList.js");
 
-router.get("/", (req, res) => priceListModule.getAllPriceListItems(req, res));
-router.get("/:itemId", (req, res) => priceListModule.getPriceListItemById(req, res));
+const priceListController = require("../../controllers/priceListController.js");
 
-router.post("/", (req, res) => priceListModule.createPriceListItem(req, res));
+router.get("/", priceListController.getAllPriceListItems);
+router.get("/:itemId", priceListController.getPriceListItemById);
 
-router.put("/:itemId", (req, res) => priceListModule.updatePriceListItem(req, res));
+router.post("/", priceListController.createPriceListItem);
 
-router.delete("/:itemId", (req, res) => priceListModule.deletePriceListItem(req, res));
+router.put("/:itemId", priceListController.updatePriceListItem);
+
+router.delete("/:itemId", priceListController.deletePriceListItem);
 
 module.exports = router;

@@ -8,6 +8,7 @@ const pool = mysql.createPool({
     multipleStatements: true,
 });
 
+
 const openDb = () => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {

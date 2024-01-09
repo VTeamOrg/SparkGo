@@ -1,20 +1,22 @@
 const express = require("express");
 const router = express.Router();
 
-let usersModule;
+let usersController = require("../../controllers/usersController.js");
 
-usersModule = require("../../models/users.js");
+router.get("/", usersController.getAllUsers);
 
-router.get("/", (req, res) => usersModule.getAllUsers(req, res));
+router.get("/:id", usersController.getUserById);
 
-router.get("/:id", (req, res) => usersModule.getUserById(req, res));
-
-router.post("/", (req, res) => usersModule.createUser(req, res));
+router.post("/", usersController.createUser);
 
 // PUT route to update a user by ID
-router.put("/:id", (req, res) => usersModule.updateUser(req, res));
+router.put("/:id", usersController.updateUser);
 
 // DELETE route to delete a user by ID
-router.delete("/:id", (req, res) => usersModule.deleteUser(req, res));
+router.delete("/:id", usersController.deleteUser);
+
+router.get("/email/:email", usersController.getUserByEmail); 
+
+router.get("/isAdminByEmail/:email", usersController.isAdminByEmail); // Add this route
 
 module.exports = router;

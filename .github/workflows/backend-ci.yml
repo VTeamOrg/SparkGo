@@ -6,6 +6,7 @@ on:
             - feature/backend/apitests
             - dev
             - master
+            - feature/vehicles
 
 jobs:
     build:
