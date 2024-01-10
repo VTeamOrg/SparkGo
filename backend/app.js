@@ -9,19 +9,19 @@ const loadHttpRoutes = require("./routes/httpRoutes");
 const loadWebsocket = require('./routes/websocketRoutes');
 const loadAuthRoutes = require('./routes/oauthRoutes');
 
-// Create a separate module for session configuration
-const sessionConfig = require('./config/sessionConfig');
+// // Create a separate module for session configuration
+// const sessionConfig = require('./config/sessionConfig');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
-// Use the sessionConfig module for session middleware
-app.use(session(sessionConfig));
+// // Use the sessionConfig module for session middleware
+// app.use(session(sessionConfig));
 
 // Configure CORS to allow requests from your frontend URL
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173','http://127.0.0.1:5174'],
     methods: 'GET,POST', // Specify the methods you want to allow
     allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization'], // Specify the headers you want to allow
     credentials: true,
@@ -36,8 +36,8 @@ app.disable("x-powered-by");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
-//const port = process.env.NODE_ENV === "test" ? 1337 : 3000; // Use port 1337 for testing
-const port = 3000; // Use port 1337 for testing
+const port = process.env.NODE_ENV === "test" ? 1337 : 3000; // Use port 1337 for testing
+// const port = 3000; // Use port 1337 for testing
 
 app.get("/", (req, res) => {
     res.json({

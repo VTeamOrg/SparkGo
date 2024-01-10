@@ -3,8 +3,8 @@ const sinon = require("sinon");
 
 chai.should();
 
-const paymentMethods = require("../../backend/testmodels/paymentMethodsTest.js"); // Replace with your paymentMethods model
-const database = require("../../backend/db/database.js"); // Replace with your database functions
+const paymentMethods = require("../../testmodels/paymentMethodsTest.js"); // Replace with your paymentMethods model
+const database = require("../../db/database.js"); // Replace with your database functions
 
 describe("PaymentMethods Model Tests", () => {
     let sandbox;

@@ -10,3 +10,4 @@ id,role,email,name,personal_number,address,wallet
 9,user,peter.p@gmail.com,Karin Eriksson,200209-4567,Ekstigen 14,80.00
 10,admin,admin@admin.com,Admin User,200210-8901,Adminvägen 1,100.00
 11,admin,adrian.dedorson@gmail.com,Admin User,200210-8901,Adminvägen 1,100.00
+12,repair,carlcarlsson150@gmail.com,carl calrsson,200209-4567,Ekstigen 14,80.00

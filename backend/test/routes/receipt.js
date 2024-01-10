@@ -5,8 +5,8 @@ const chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-const receiptModel = require("../../backend/testmodels/receipTest.js"); // Import your receipt model
-const database = require("../../backend/db/database.js"); // Import your database functions
+const receiptModel = require("../../testmodels/receipTest.js"); // Import your receipt model
+const database = require("../../db/database.js"); // Import your database functions
 
 describe("Receipt Model Tests", () => {
     let sandbox;

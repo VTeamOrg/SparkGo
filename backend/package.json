@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --recursive --exit test/",
+        "test": "mocha --recursive --exit test/routes test/apiLimiter/",
         "watch": "nodemon app.js",
         "start": "node app.js"
     },

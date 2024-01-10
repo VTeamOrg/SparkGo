@@ -5,8 +5,8 @@ const chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-const vehicleTypeModel = require("../../backend/testmodels/vehicleTypesTest.js"); // Replace with your vehicleType model
-const database = require("../../backend/db/database.js"); // Replace with your database functions
+const vehicleTypeModel = require("../../testmodels/vehicleTypesTest.js"); // Replace with your vehicleType model
+const database = require("../../db/database.js"); // Replace with your database functions
 
 describe("VehicleType Model Tests", () => {
     let sandbox;

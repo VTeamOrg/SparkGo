@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const WebSocket = require('ws');
-const app = require('../app');
+const app = require('../../app');
 
 describe('WebSocket Connection', () => {
     let ws;

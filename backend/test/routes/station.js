@@ -5,8 +5,8 @@ const chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-const stationsModel = require("../../backend/testmodels/stationTest.js"); // Import your station model
-const database = require("../../backend/db/database.js"); // Import your database functions
+const stationsModel = require("../../testmodels/stationTest.js"); // Import your station model
+const database = require("../../db/database.js"); // Import your database functions
 
 describe("Station Model Tests", () => {
     let sandbox;

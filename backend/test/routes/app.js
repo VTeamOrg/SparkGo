@@ -5,9 +5,9 @@ process.env.NODE_ENV = "test";
 const sinon = require("sinon");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-const app = require("../../backend/app.js");
+const app = require("../../app.js");
 const expect = chai.expect;
-const database = require("../../backend/db/database.js"); // Import your database functions
+const database = require("../../db/database.js"); // Import your database functions
 
 chai.should();
 chai.use(chaiHttp);

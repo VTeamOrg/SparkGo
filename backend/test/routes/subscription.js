@@ -2,8 +2,8 @@ const chai = require("chai");
 const sinon = require("sinon");
 const expect = chai.expect;
 
-const database = require("../../backend/db/database.js");
-const subscription = require("../../backend/testmodels/subscriptionTest.js");
+const database = require("../../db/database.js");
+const subscription = require("../../testmodels/subscriptionTest.js");
 
 describe("Subscription Model Tests", () => {
     let sandbox;

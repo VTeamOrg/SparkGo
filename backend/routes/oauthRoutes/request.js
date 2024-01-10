@@ -12,8 +12,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 router.post('/', async (req, res) => {
     res.header('Access-Control-Allow-Origin',
-    'http://127.0.0.1:5173',
-    'http://localhost:5173')
+    'http://127.0.0.1:5173')
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header('Referred-Policy','no-reffered-when-downgrade');
     

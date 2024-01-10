@@ -2,8 +2,8 @@ const chai = require("chai");
 const sinon = require("sinon");
 const chaiHttp = require("chai-http");
 const expect = chai.expect;
-const citiesModel = require("../../backend/testmodels/citiesTest.js");
-const database = require("../../backend/db/database.js"); // Import your database functions
+const citiesModel = require("../../testmodels/citiesTest.js");
+const database = require("../../db/database.js"); // Import your database functions
 
 chai.should();
 chai.use(chaiHttp);
