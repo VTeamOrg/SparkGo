@@ -63,36 +63,47 @@ const userModel = {
 
     updateUser: async function updateUser(userId, updatedFields) {
         if (!userId) {
-            throw new Error("Missing user ID");
+          throw new Error("Missing user ID");
         }
+
+        console.log("updated fields", updatedFields);
         try {
-            const db = await database.openDb();
-
-            const setFields = [];
-            const updateParams = [];
-
-            for (const field in updatedFields) {
-                setFields.push(`${field} = ?`);
-                updateParams.push(updatedFields[field]);
+          const db = await database.openDb();
+      
+          const setFields = [];
+          const updateParams = [];
+      
+          for (const field in updatedFields) {
+            // Check if the field value is not null before adding it to setFields
+            if (updatedFields[field] !== null) {
+              setFields.push(`${field} = ?`);
+              updateParams.push(updatedFields[field]);
             }
-
-            updateParams.push(userId);
-
-            const setFieldsStr = setFields.join(", ");
-            const updateQuery = `UPDATE member SET ${setFieldsStr} WHERE id = ?`;
-
-            const updatedUser = await database.query(
-                db,
-                updateQuery,
-                updateParams
-            );
-
-            await database.closeDb(db);
-            return updatedUser;
+          }
+      
+          if (setFields.length === 0) {
+            // No fields to update, return early
+            return null;
+          }
+      
+          updateParams.push(userId);
+      
+          const setFieldsStr = setFields.join(", ");
+          const updateQuery = `UPDATE member SET ${setFieldsStr} WHERE id = ?`;
+      
+          const updatedUser = await database.query(
+            db,
+            updateQuery,
+            updateParams
+          );
+      
+          await database.closeDb(db);
+          return updatedUser;
         } catch (error) {
-            throw error;
+          throw error;
         }
-    },
+      },
+      
 
     deleteUser: async function deleteUser(userId) {
         if (!userId) {

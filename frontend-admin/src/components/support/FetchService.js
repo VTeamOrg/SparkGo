@@ -4,6 +4,7 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
+  console.log("Fethcing ", endpoint);
 
   try {
     const response = await fetch(apiUrl(endpoint));
@@ -12,6 +13,7 @@ export const fetchData = async (endpoint, callback) => {
       throw new Error(`Failed to fetch data for endpoint: ${endpoint}`);
     }
     const data = await response.json();
+    console.log(data.data);
 
     if (typeof callback === 'function') {
       callback(data.data);
@@ -24,7 +26,7 @@ export const fetchData = async (endpoint, callback) => {
 /* FETCH data for a given endpoint by ID */
 export const fetchById = async (endpoint, id) => {
   const endpointWithId = `${endpoint}/${id}`;
-  console.log(endpointWithId);
+//  console.log(endpointWithId);
 
   try {
     const response = await fetch(apiUrl(endpointWithId));
@@ -43,6 +45,9 @@ export const fetchById = async (endpoint, id) => {
 
 /* CREATE data for a given endpoint */
 export const createData = async (endpoint, newData) => {
+
+//  console.log(endpoint);
+//  console.log(newData);
   try {
     const response = await fetch(apiUrl(endpoint), {
       method: 'POST',
@@ -63,11 +68,10 @@ export const createData = async (endpoint, newData) => {
 };
 
 /* UPDATE data for a given endpoint */
-/* UPDATE data for a given endpoint */
 export const updateData = async (endpoint, itemId, updatedData) => {
-  console.log("endpoint ", endpoint);
-  console.log("update ", itemId);
-  console.log("updateData ", updatedData);
+//  console.log("endpoint ", endpoint);
+//  console.log("update ", itemId);
+//  console.log("updateData ", updatedData);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'PUT',
@@ -79,8 +83,8 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
     if (response.ok) {
       const responseData = await response.json();
-      console.log(`Successfully updated data for endpoint: ${endpoint}`);
-      console.log('Response Data:', responseData); // Log the response data
+//      console.log(`Successfully updated data for endpoint: ${endpoint}`);
+//      console.log('Response Data:', responseData); // Log the response data
       return responseData;
     } else {
       throw new Error(`Failed to update data for endpoint: ${endpoint}`);

@@ -10,7 +10,7 @@ import { SearchBar, ButtonRow } from '../HTML/General';
 import ManagePlanModal from './ManagePlanModal';
 import ChangePlanModal from './ChangePlanModal';
 
-function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers }) { 
+function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers, isFromMyAccount }) { 
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedMember, setEditedMember] = useState({ ...member });
@@ -200,6 +200,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
         isEditing={isEditing}
         handleFieldChange={handleFieldChange}
         emailError={emailError}
+        isFromMyAccount={isFromMyAccount}
         />
 
     {/* PaymentMethodFields */}

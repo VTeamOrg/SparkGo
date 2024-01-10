@@ -61,20 +61,32 @@ const usersController = {
 
     updateUser: async function updateUser(req, res) {
         try {
-            const userId = req.params.id;
-            const updatedFields = req.body;
-
-            const updatedUser = await userModel.updateUser(userId, updatedFields);
-
-            return res.json({
-                message: "User updated successfully",
-                data: updatedUser,
-            });
+          const userId = req.params.id;
+          const requestBody = req.body;
+      
+          // Specify the allowed fields to be updated
+          const allowedFields = ['role', 'email', 'name', 'personal_number', 'address', 'wallet'];
+      
+          // Extract only the allowed fields from the request body
+          const updatedFields = {};
+          for (const field of allowedFields) {
+            if (requestBody.hasOwnProperty(field)) {
+              updatedFields[field] = requestBody[field];
+            }
+          }
+      
+          const updatedUser = await userModel.updateUser(userId, updatedFields);
+      
+          return res.json({
+            message: "User updated successfully",
+            data: updatedUser,
+          });
         } catch (error) {
-            console.error("Error updating user:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+          console.error("Error updating user:", error.message);
+          return res.status(500).json({ error: "Internal Server Error" });
         }
-    },
+      },
+      
 
     deleteUser: async function deleteUser(req, res) {
         try {

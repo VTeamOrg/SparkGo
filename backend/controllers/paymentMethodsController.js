@@ -14,8 +14,10 @@ const paymentMethodsController = {
     },
 
     getPaymentMethodByMemberId: async function (req, res) {
+        console.log("get pyament by id");
         try {
             const memberId = req.params.memberId;
+            console.log("memberId ", memberId);
             const memberPaymentMethod = await paymentMethodsModel.getPaymentMethodByMemberId(memberId);
 
             return res.json({
@@ -29,20 +31,22 @@ const paymentMethodsController = {
 
     createPaymentMethod: async function (req, res) {
         try {
-            const { member_id, method_name, reference_info, is_selected } = req.body;
-            const newPaymentMethod = await paymentMethodsModel.createPaymentMethod(member_id, method_name, reference_info, is_selected);
-
-            return res.status(201).json({
-                message: "Payment method created successfully",
-                data: newPaymentMethod,
-            });
+          const { member_id, method_name, reference_info, is_selected } = req.body;
+          console.log("Received data:", req.body);
+          const newPaymentMethod = await paymentMethodsModel.createPaymentMethod(member_id, method_name, reference_info, is_selected);
+    
+          return res.status(201).json({
+            message: "Payment method created successfully",
+            data: newPaymentMethod,
+          });
         } catch (error) {
-            console.error("Error creating payment method:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+          console.error("Error creating payment method:", error.message);
+          return res.status(500).json({ error: "Internal Server Error" });
         }
-    },
+      },
 
     updatePaymentMethod: async function (req, res) {
+        console.log(res.body);
         try {
             const paymentMethodId = req.params.paymentMethodId;
             const { member_id, method_name, reference_info, is_selected } = req.body;

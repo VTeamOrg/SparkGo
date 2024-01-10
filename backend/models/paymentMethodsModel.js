@@ -16,6 +16,7 @@ const paymentMethodsModel = {
     },
 
     getPaymentMethodByMemberId: async function (memberId) {
+        console.log("model by member id: ", memberId);
         try {
             const db = await database.openDb();
             const memberPaymentMethod = await database.query(
@@ -24,16 +25,17 @@ const paymentMethodsModel = {
                 memberId
             );
             await database.closeDb(db);
-            return memberPaymentMethod[0];
+            console.log(memberPaymentMethod);
+            return memberPaymentMethod;
         } catch (error) {
             throw error;
         }
     },
 
-    createPaymentMethod: async function (req, res) {
+    createPaymentMethod: async function (member_id, method_name, reference_info, is_selected) {
+        console.log("create payment");
         try {
           const db = await database.openDb();
-          const { member_id, method_name, reference_info, is_selected } = req.body;
     
           const newPaymentMethod = await database.query(
             db,
@@ -43,13 +45,9 @@ const paymentMethodsModel = {
     
           await database.closeDb(db);
     
-          return res.status(201).json({
-            message: "Payment method created successfully",
-            data: newPaymentMethod,
-          });
+          return newPaymentMethod;
         } catch (error) {
-          console.error("Error creating payment method:", error.message);
-          return res.status(500).json({ error: "Internal Server Error" });
+          throw error; // Propagate the error to the controller
         }
       },
     
