@@ -3,31 +3,39 @@ import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signi
 import './Login.css';
 import Cookies from 'js-cookie';
 
-function Login({ setUserLoggedIn }) {
+function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [authSuccess, setAuthSuccess] = useState(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const successParam = urlParams.get('success');
-  
+    const roleParam = urlParams.get('role'); // Get the role parameter
+    const userIdParam = urlParams.get('userId'); // Get the userId parameter
+
     if (successParam === 'true') {
       setAuthSuccess(true);
       Cookies.set('userLoggedIn', 'true', { secure: true, sameSite: 'strict', expires: 1 });
       setUserLoggedIn(true);
-  
-      // Remove the 'success' parameter from the URL
+
+      // Store the role and userId in state
+      setUserRole(roleParam);
+      setUserId(userIdParam);
+      console.log("role", roleParam);
+      console.log("userIdParam", userIdParam);
+
+      // Remove the 'success', 'role', and 'userId' parameters from the URL
       const newUrl = window.location.href.split('?')[0];
       window.history.replaceState({}, document.title, newUrl);
     } else if (successParam === 'false') {
       setAuthSuccess(false);
     }
-  
+
     // Clear 'userLoggedIn' cookie when the component unmounts
     return () => {
       Cookies.remove('userLoggedIn', { secure: true, sameSite: 'strict' });
     };
-  }, [setUserLoggedIn]);
+  }, [setUserLoggedIn, setUserRole, setUserId]);
 
   const auth = async () => {
     try {

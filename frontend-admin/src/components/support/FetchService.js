@@ -21,6 +21,26 @@ export const fetchData = async (endpoint, callback) => {
   }
 };
 
+/* FETCH data for a given endpoint by ID */
+export const fetchById = async (endpoint, id) => {
+  const endpointWithId = `${endpoint}/${id}`;
+  console.log(endpointWithId);
+
+  try {
+    const response = await fetch(apiUrl(endpointWithId));
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data for endpoint ${endpoint} with ID: ${id}`);
+    }
+
+    const data = await response.json();
+    return data.data; 
+  } catch (error) {
+    console.error(`Error fetching data for endpoint ${endpoint} with ID ${id}:`, error);
+    throw error; 
+  }
+};
+
 /* CREATE data for a given endpoint */
 export const createData = async (endpoint, newData) => {
   try {

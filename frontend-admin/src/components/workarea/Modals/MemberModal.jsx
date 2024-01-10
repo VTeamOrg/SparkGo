@@ -5,13 +5,10 @@ import PropTypes from 'prop-types';
 import { fetchData, updateData, deleteData } from '../../support/FetchService';
 import { validateEmail, formatDateTime, translateUnlimited } from '../../support/Utils';
 import AddPaymentModal from './AddPaymentModal.jsx';
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { faPlus, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { PaymentMethodFields, MemberFields, PlanFields } from '../HTML/MemberModal.jsx';
 import { SearchBar, ButtonRow } from '../HTML/General';
 import ManagePlanModal from './ManagePlanModal';
 import ChangePlanModal from './ChangePlanModal';
-
 
 function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers }) { 
 
