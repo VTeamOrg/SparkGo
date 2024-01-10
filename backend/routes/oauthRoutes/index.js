@@ -4,8 +4,13 @@ const { authApiLimiter } = require("../../middleware/apiLimter.js");
 
 
 // Apply a stricter limiter to authentication routes
-const loadAuthRoutes = (app) => {
-    app.use("/v1/auth", authApiLimiter, auth);
+// const loadAuthRoutes = (app) => {
+//     app.use("/v1/auth", authApiLimiter, auth);
+//     app.use("/v1/request", request);
+//   };
+
+  const loadAuthRoutes = (app) => {
+    app.use("/v1/auth", auth);
     app.use("/v1/request", request);
   };
 
