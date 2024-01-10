@@ -6,7 +6,7 @@ const userModel = {
             const db = await database.openDb();
             const allUsers = await database.query(
                 db,
-                "SELECT * FROM v_member ORDER BY id DESC"
+                "SELECT * FROM member ORDER BY id DESC"
             );
             await database.closeDb(db);
             return allUsers;
@@ -44,17 +44,15 @@ const userModel = {
         if (!userId) {
             throw new Error("Missing user ID");
         }
-        console.log("get by id: ");
 
         try {
             const db = await database.openDb();
             const user = await database.query(
                 db,
-                "SELECT * FROM v_member WHERE id = ?;",
+                "SELECT * FROM member WHERE id = ?;",
                 userId
             );
             await database.closeDb(db);
-            console.log(user[0]);
             return user[0];
         } catch (error) {
             throw error;
@@ -155,6 +153,24 @@ const userModel = {
         } catch (error) {
             throw error;
         }    
+    },
+
+    isRepairByEmail: async function isRepairByEmail(email) {
+        if (!email) {
+            throw new Error("Missing user email");
+        }
+        try {
+            const db = await database.openDb();
+            const user = await database.query(
+                db,
+                "SELECT * FROM member WHERE email = ?;",
+                [email]
+            );
+            await database.closeDb(db);
+            return user.length > 0 && user[0].role === 'repair';
+        } catch (error) {
+            throw error;
+        }
     }
 };
 
