@@ -63,9 +63,36 @@ const subscription = {
             console.error("Error updating subscription:", error.message);
             return res.status(500).json({ error: "Internal Server Error" });
         }
-    },
-    
-    
+    },    
 };
 
-module.exports = subscription;
+const updateSubscriptionInDatabase = async (checkoutSession) => {
+    try {
+        const db = await database.openDb();
+
+        // Extract relevant information from the checkout session
+        const { subscription, customer, items } = checkoutSession;
+
+        // Assume you have a table named 'subscriptions' in your database
+        // Update the table with the relevant information
+        const updateSubscription = await database.query(
+            db,
+            "UPDATE subscriptions SET stripe_subscription_id = ?, plan_id = ?, is_active = ?, start_date = ?, end_date = ? WHERE member_id = ?",
+            [subscription, items.data[0].price.product, true, items.data[0].price.recurring.start_date, items.data[0].price.recurring.end_date, customer]
+        );
+
+        await database.closeDb(db);
+
+        console.log("Subscription updated in the database:", updateSubscription);
+
+        return updateSubscription;
+    } catch (error) {
+        console.error("Error updating subscription in the database:", error.message);
+        throw error; // Rethrow the error for handling in the calling function
+    }
+};
+
+module.exports = {
+    subscription,
+    updateSubscriptionInDatabase,
+};
