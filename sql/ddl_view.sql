@@ -24,7 +24,7 @@ ON
     rs.city_id = c.id;
 
 /* Vehicle + city / member / vehicle_type */
-CREATE VIEW v_vehicle AS
+/*CREATE VIEW v_vehicle AS
 SELECT
     v.*,
     vt.name AS type_name,
@@ -43,7 +43,7 @@ ON
 JOIN
     city AS c
 ON
-    v.city_id = c.id;
+    v.city_id = c.id; */
 
 /* receipt + member */
 CREATE VIEW v_receipt AS
@@ -65,7 +65,7 @@ FROM
 JOIN
     vehicle_type t ON r.type_id = t.id;    
 
-/* plan, temp view */
+/* plan view */
 CREATE VIEW v_plan AS 
 SELECT 
     p.*,
@@ -81,6 +81,42 @@ LEFT JOIN
 LEFT JOIN
     frequencies imf ON p.included_minutes_frequency_id = imf.id;
 
+/* Member view with plan addons */
+CREATE VIEW v_member AS
+SELECT
+    m.*,
+    pm.method_name AS payment_method,
+    pm.reference_info AS payment_reference,
+    pm.is_selected AS payment_selected,
+    ap.plan_id AS active_plan_id,
+    ap.creation_date AS active_plan_creation,
+    ap.activation_date AS active_plan_activation,
+    ap.available_minutes AS active_plan_minutes,
+    ap.available_unlocks AS active_plan_unlocks,
+    ap.is_paused AS active_plan_paused,
+    p.title AS active_plan_name,
+    p.price AS active_plan_price,
+    p.price_frequency_id AS active_plan_frequency,
+    f.name AS active_plan_frequency_name
+FROM
+    member m
+LEFT JOIN
+    payment_method pm ON m.id = pm.member_id
+LEFT JOIN
+    active_plan ap ON m.id = ap.member_id
+LEFT JOIN
+    plan p ON ap.plan_id = p.id
+LEFT JOIN
+frequencies f ON p.price_frequency_id = f.id;
 
-SHOW CREATE VIEW v_renting_station;
-SHOW CREATE VIEW v_vehicle;
+CREATE VIEW v_vehicle AS
+SELECT
+    v.*,
+    vt.name AS vehicle_type_name,
+    c.name AS city_name
+FROM
+    vehicle v
+LEFT JOIN
+    vehicle_type vt ON v.type_id = vt.id
+LEFT JOIN
+    city c ON v.city_id = c.id;

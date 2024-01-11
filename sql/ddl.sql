@@ -44,6 +44,15 @@ CREATE TABLE renting_station (
     FOREIGN KEY (city_id) REFERENCES city(id)
 );
 
+CREATE TABLE price_list (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type_id INT, 
+    list_name VARCHAR(255),
+    price_per_minute DECIMAL(10, 2),
+    price_per_unlock DECIMAL(10, 2),
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+);
+
 CREATE TABLE member (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role VARCHAR(255),
@@ -67,18 +76,9 @@ CREATE TABLE vehicle (
     id INT AUTO_INCREMENT PRIMARY KEY,
     city_id INT,
     type_id INT, 
-    rented_by INT,
+    vehicle_status VARCHAR(255),
+    name VARCHAR(255),
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (rented_by) REFERENCES member(id),
-    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
-);
-
-CREATE TABLE price_list (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    type_id INT, 
-    list_name VARCHAR(255),
-    price_per_minute DECIMAL(10, 2),
-    price_per_unlock DECIMAL(10, 2),
     FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 
@@ -100,11 +100,12 @@ CREATE TABLE plan (
 CREATE TABLE active_plan (
     plan_id INT,
     member_id INT,
-    activation_date DATE,
+    creation_date DATETIME,
+    activation_date DATETIME,
     available_minutes INT,
     available_unlocks INT,
     is_paused ENUM('Y', 'N'),
-    PRIMARY KEY (plan_id, member_id, activation_date),
+    PRIMARY KEY (plan_id, member_id),
     FOREIGN KEY (plan_id) REFERENCES plan(id),
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
@@ -116,7 +117,7 @@ CREATE TABLE receipt (
     payment_type VARCHAR(255),
     receipt_details VARCHAR(255),
     sum DECIMAL(10, 2),
-    payment_date DATE,
+    payment_date DATETIME,
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
 

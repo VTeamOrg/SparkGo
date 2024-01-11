@@ -8,6 +8,8 @@ import VehicleTypes from './workarea/VehicleTypes';
 import PriceList from './workarea/PriceList'; 
 import Plans from './workarea/Plans'; 
 import Frequencies from './workarea/Frequencies'; 
+import Members from './workarea/Members'; 
+import Vehicles from './workarea/Vehicles'; 
 import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
 
 
@@ -17,7 +19,7 @@ function WorkArea({ activeSection }) {
     /* Emit the appropriate map event based on the selected section */
     if (activeSection === 'myAccount' || activeSection === 'vehicleTypes'
     || activeSection === 'priceList' || activeSection === 'plans'
-    || activeSection === 'frequencies') {
+    || activeSection === 'frequencies' || activeSection === 'members') {
       emitDisableMapEvent(); 
     } else {
       emitEnableMapEvent(); 
@@ -39,15 +41,15 @@ function WorkArea({ activeSection }) {
         case 'vehicleTypes':
           return <VehicleTypes />; 
         case 'vehicles':
-          return <div>Vehicles Content</div>;
+          return <Vehicles />;
         case 'priceList':
           return <PriceList />; 
         case 'plans':
           return <Plans />;     
         case 'frequencies':
           return <Frequencies />;             
-        case 'customers':
-          return <div>Customers Content</div>;
+        case 'members':
+          return <Members />;
         default:
           return null;
       }

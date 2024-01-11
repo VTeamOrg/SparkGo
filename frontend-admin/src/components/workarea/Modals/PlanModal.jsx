@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import './Modal.css';
+import '../CSS/Modal.css';
 import { fetchData, updateData, deleteData  } from '../../support/FetchService';
 
 /**

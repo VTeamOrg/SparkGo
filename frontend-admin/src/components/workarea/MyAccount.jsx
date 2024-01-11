@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './WorkArea.css';
+import './CSS/WorkArea.css';
 
 /**
  * MyAccount component for displaying and editing account information.

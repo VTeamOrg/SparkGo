@@ -19,17 +19,15 @@ app.options("*", cors());
 app.disable("x-powered-by");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true })); 
 
-const port = process.env.NODE_ENV === "test" ? 1337 : 3000; // Use port 1337 for testing
+const port = 3000; // Use port 1337 for testing
 
 app.get("/", (req, res) => {
     res.json({
         data: "Hello World!",
     });
 });
-
-
 
 loadHttpRoutes(app);
 loadWebsocket(wss);
