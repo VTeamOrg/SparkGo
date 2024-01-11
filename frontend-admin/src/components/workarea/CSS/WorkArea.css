@@ -69,3 +69,9 @@
     cursor: not-allowed; 
     pointer-events: none; 
   }
+
+  .refill-form {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+  }

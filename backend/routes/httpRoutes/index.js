@@ -13,22 +13,6 @@ const vehicleTypes = require("./vehicleTypes.js");
 const { generalApiLimiter } = require("../../middleware/apiLimter.js");
 
 
-// Function to load HTTP routes with rate limiters
-// const loadHttpRoutes = (app) => {
-//   app.use("/v1/users", generalApiLimiter, users);
-//   app.use("/v1/stations", generalApiLimiter, stations);
-//   app.use("/v1/vehicles", generalApiLimiter, vehicles);
-//   app.use("/v1/cities", generalApiLimiter, cities);
-//   app.use("/v1/subscription", generalApiLimiter, subscription);
-//   app.use("/v1/paymentMethods", generalApiLimiter, paymentMethods);
-//   app.use("/v1/activePlan", generalApiLimiter, activePlan);
-//   app.use("/v1/frequencies", generalApiLimiter, frequencies);
-//   app.use("/v1/plans", generalApiLimiter, plans);
-//   app.use("/v1/priceList", generalApiLimiter, priceList);
-//   app.use("/v1/receipts", generalApiLimiter, receipts);
-//   app.use("/v1/vehicleTypes", generalApiLimiter, vehicleTypes);
-// };
-
 // Function to load HTTP routes without rate limiters
 const loadHttpRoutes = (app) => {
   app.use("/v1/users", users);

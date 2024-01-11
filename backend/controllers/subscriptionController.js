@@ -27,6 +27,19 @@ const subscriptionController = {
         }
     },
 
+    
+    updateSubscription: async function (req, res) {
+        try {
+            // Implement the updateSubscription logic here
+            // You can extract data from req.body or req.params as needed
+            // Call the appropriate method from subscriptionModel to update the subscription
+            // Return the response accordingly
+        } catch (error) {
+            console.error("Error updating subscription:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
     // updateSubscriptionByMemberId: async function (req, res) {
     //     try {
     //         const memberId = req.params.memberId;
