@@ -61,6 +61,25 @@ const users = {
         }
     },
 
+
+    getUserByEmail: async function (userId) {
+        try {
+            const db = await database.openDb();
+            const user = await database.query(
+                db,
+                "SELECT * FROM member WHERE email = ?",
+                userId
+            );
+
+            await database.closeDb(db);
+
+            return user[0];
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            throw new Error("Internal Server Error");
+        }
+    },
+
     updateUser: async function (
         userId,
         role,

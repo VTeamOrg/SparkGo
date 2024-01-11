@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
-//import EditVehicleModal from './EditVehicleModal'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faCheck, faTimes  } from '@fortawesome/free-solid-svg-icons';
-import { SearchBar, ButtonRow } from './HTML/General';
+import { SearchBar } from './HTML/General';
 import AddVehicleModal from './Modals/AddVehicleModal';
 import EditVehicleModal from './Modals/EditVehicleModal';
 
@@ -148,20 +147,3 @@ function Vehicles() {
 }
 
 export default Vehicles;
-
-
-/*      <AddVehicleModal
-        isOpen={showAddVehicleModal}
-        onRequestClose={() => setShowAddVehicleModal(false)}
-        onSave={handleSaveVehicle}
-      />
-
-
-      {editingVehicle && (
-        <EditVehicleModal
-          isOpen={showEditVehicleModal}
-          onRequestClose={() => setShowEditVehicleModal(false)}
-          onSave={handleUpdateVehicle}
-          vehicle={editingVehicle}
-        />
-      )} */

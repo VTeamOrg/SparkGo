@@ -8,27 +8,33 @@ import MapView from './components/MapView';
 function App() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  const handleLogin = () => {
-    setUserLoggedIn(true);
-  };
+  useEffect(() => {
+    // Check if the user is already logged in based on the presence of a JWT token
+/*    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      setUserLoggedIn(true);
+    } */
+  }, []);
 
   return (
     <div className="App">
       {userLoggedIn ? (
         <div className="app-container">
           <div className="navbar">
-            <Navbar setActiveSection={setActiveSection} />
+            <Navbar setActiveSection={setActiveSection} userRole={userRole} />
           </div>
           <div className="content">
-            <WorkArea activeSection={activeSection} />
+            <WorkArea activeSection={activeSection} userId={userId} />
           </div>
           <div className="mapview">
             <MapView />
           </div>
         </div>
       ) : (
-        <Login setUserLoggedIn={handleLogin} />
+        <Login setUserLoggedIn={setUserLoggedIn} setUserRole={setUserRole} setUserId={setUserId} />
       )}
     </div>
   );

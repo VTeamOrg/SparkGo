@@ -45,13 +45,24 @@ const activePlan = {
         try {
             const db = await database.openDb();
             const { plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused } = req.body;
-
+    
+            // Convert date strings to 'YYYY-MM-DD hh:mm:ss' format
+            const creationDate = new Date(creation_date);
+            const formattedCreationDate = creationDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+    
+            const activationDate = new Date(activation_date);
+            const formattedActivationDate = activationDate.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+    
             const newActivePlan = await database.query(
                 db,
-                "INSERT INTO active_plan (plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused) VALUES (?, ?, ?, ?, ?, ?)",
-                [plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused]
+                `
+                INSERT INTO active_plan 
+                (plan_id, member_id, creation_date, activation_date, available_minutes, available_unlocks, is_paused) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                `,
+                [plan_id, member_id, formattedCreationDate, formattedActivationDate, available_minutes, available_unlocks, is_paused]
             );
-
+    
             await database.closeDb(db);
 
             return res.status(201).json({
@@ -62,10 +73,10 @@ const activePlan = {
             console.error("Error creating Active Plan:", error.message);
             return res.status(500).json({ error: "Internal Server Error" });
         }
-    },
+    },    
+
 
     updateActivePlan: async function (req, res) {
-        console.log("update active plan");
         try {
           const db = await database.openDb();
           const activePlanId = req.params.activePlanId;

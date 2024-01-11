@@ -13,9 +13,10 @@ import Vehicles from './workarea/Vehicles';
 import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
 
 
-function WorkArea({ activeSection }) {
+function WorkArea({ activeSection, userId }) {
   useEffect(() => {
     console.log("active: ", activeSection);
+    console.log("in workarea userId: ", userId);
     /* Emit the appropriate map event based on the selected section */
     if (activeSection === 'myAccount' || activeSection === 'vehicleTypes'
     || activeSection === 'priceList' || activeSection === 'plans'
@@ -29,7 +30,7 @@ function WorkArea({ activeSection }) {
     const renderContent = () => {
       switch (activeSection) {
         case 'myAccount':
-          return <MyAccount />;
+          return <MyAccount userId={userId} />;
         case 'rideHistory':
           return <RideHistory />;
         case 'receipts':
