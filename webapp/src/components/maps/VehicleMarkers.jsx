@@ -2,35 +2,14 @@ import { Marker } from "react-map-gl";
 import useSupercluster from "use-supercluster";
 import { PiScooterFill } from "react-icons/pi";
 import VehicleMsgContainer from "./VehicleMsgContainer";
-import { useSignal, useSignalEffect } from "@preact/signals-react";
+import { useSignal } from "@preact/signals-react";
 import { loadedVehicles, msgBoxData } from "../../GStore";
-import { useEffect, useMemo, useState  } from "react";
 
-const VehicleMarkers = ({ mapRef, viewport }) => {
-    const [vehicleCoordinates, setVehicleCoordinates] = useState([]);
-
-    const createPoints = (vehicles) => {
-        return vehicles.map(createPoint);
-    }
-
-    const createPoint = (item) => {
-        const { lon, lat } = item;
-
-        return {
-            type: 'Feature',
-            properties: { cluster: false, item },
-            geometry: {
-                type: 'Point',
-                coordinates: [lon, lat],
-            },
-        }
-    }
-
-    const vehicles = useMemo(() => createPoints(loadedVehicles.value), [loadedVehicles.value]);
+const VehicleMarkers = ({ mapRef, viewport, points }) => {
 
     const clickedVehicle = useSignal(null);
     const { clusters, supercluster } = useSupercluster({
-        points: vehicleCoordinates,
+        points: points,
         bounds: mapRef.value ? mapRef.value.getMap().getBounds().toArray().flat() : null,
         zoom: viewport.value.zoom ?? 12,
         options: { radius: 75, maxZoom: 15 },
@@ -42,44 +21,6 @@ const VehicleMarkers = ({ mapRef, viewport }) => {
         clickedVehicle.value = vehicle.item.id;
         msgBoxData.value = { timeout: null, content: <VehicleMsgContainer vehicleId={vehicle.item.id} batteryLevel={vehicle.item.battery} cost={3.00} unlockFee={2.00} currency="sek" />, onClose: () => clickedVehicle.value = null };
     }
-
-    useEffect(() => {
-        const animation = window.requestAnimationFrame(() => {
-            const updatedCoordinates = vehicles.map((vehicle) => {
-                const currVehicle = vehicle;
-                const newLon = parseFloat(currVehicle.lon);
-                const newLat = parseFloat(currVehicle.lat);
-    
-                if (!newLon || !newLat) return vehicle;
-    
-                const currentLon = parseFloat(vehicle.lon) || newLon;
-                const currentLat = parseFloat(vehicle.lat) || newLat;
-    
-                const interpolatedLon = currentLon + (newLon - currentLon) * 0.5;
-                const interpolatedLat = currentLat + (newLat - currentLat) * 0.5;
-
-                const point = {
-                    type: 'Feature',
-                    properties: {
-                        cluster: false,
-                        id: vehicle.id,
-                        battery: vehicle.battery,
-                        currentSpeed: vehicle.currentSpeed,
-                        maxSpeed: vehicle.maxSpeed
-                    },
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [interpolatedLon, interpolatedLat],
-                    },
-                };
-    
-                return point;
-            });
-            setVehicleCoordinates(updatedCoordinates);
-        });
-    
-        return () => window.cancelAnimationFrame(animation);
-    }, [vehicles]);
 
     return (
         <>

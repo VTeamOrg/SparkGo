@@ -37,7 +37,7 @@ const vehicles = {
             const subscription = await SubscriptionModel.getSubscriptionByMemberId(userId);
 
             if (await checkRentConditions(subscription, user, priceList)) {
-                connectedVehicle.vehicleData.rentedBy = userId;
+                connectedVehicle.data.rentedBy = userId;
                 connectedVehicle.rentedBy = userId;
 
                 // log the rent of vehicle
@@ -62,6 +62,11 @@ const vehicles = {
             // Retrieve connected vehicle based on WebSocket
             const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
             const { vehicleId, rentedBy } = data;
+
+            if (!vehicleId || !rentedBy) {
+                return ws.send(JSON.stringify({ action: "warning", message: "Missing vehicleId or rentedBy" }));
+            }
+
             const user = await UserModel.getUserById(rentedBy);
             const vehicleData = await vehiclesModel.getVehicleById(vehicleId);
             const priceList = await PriceListModel.getPriceListItemById(vehicleData.type_id);
@@ -126,13 +131,13 @@ const vehicles = {
         const { vehicleId, rentedBy } = data;
 
         // Check if the vehicle is rented by the specified user
-        if (connectedVehicle.vehicleData.rentedBy !== rentedBy) {
+        if (connectedVehicle.rentedBy !== rentedBy) {
             return ws.send(JSON.stringify({ action: "warning", message: "Vehicle not rented by this user" }));
         }
 
         // Log the return of vehicle and reset rentedBy property
         connectedVehicle.userUsageLog.push({ type: "return", timestamp: Date.now() });
-        connectedVehicle.vehicleData.rentedBy = -1;
+        connectedVehicle.data.rentedBy = -1;
         connectedVehicle.rentedBy = -1;
         
         sendVehicleUpdates(connectedVehicle, "vehicleReturned");
@@ -153,11 +158,11 @@ const vehicles = {
 
         const vehicleData = { vehicleId, lat, lon, battery, maxSpeed, currentSpeed, isStarted, rentedBy };
 
-        if (objectsEqual(connectedVehicle.vehicleData, vehicleData)) {
+        if (objectsEqual(connectedVehicle.data, vehicleData)) {
             return;
         }
 
-        connectedVehicle.vehicleData = vehicleData;
+        connectedVehicle.data = vehicleData;
 
         sendVehicleUpdates(connectedVehicle, "regularUpdate");
     },
@@ -168,7 +173,7 @@ function sendVehicleUpdates(vehicle, message) {
     const admins = connectedAdmins.get();
     const users = connectedUsers.get();
     const { rentedBy } = vehicle;
-    const { lat, lon, battery } = vehicle.vehicleData;
+    const { lat, lon, battery } = vehicle.data;
     const notAvailable = battery < 20 || rentedBy !== -1;
     // forUser ensures that the vehicle is not rented and the battery level is above 20%
     const forUser = rentedBy === -1 && battery >= 20 || message === "vehicleRented";
@@ -181,14 +186,14 @@ function sendVehicleUpdates(vehicle, message) {
         // Check if the distance is less than or equal to the required distance
         const isInRequiredDistance = distance <= process.env.DISTANCE_BITWEEN_USER_AND_VEHICLES;
         if (isInRequiredDistance) {
-            user.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.vehicleData, message }));
+            user.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.data, message }));
         }
     });
 
     // Send vehicle status update to connected admins
     admins.forEach(admin => {
         if (admin.ws.readyState === WebSocket.OPEN) {
-            admin.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.vehicleData, message }));
+            admin.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.data, message }));
         }
     });
 }
@@ -199,8 +204,6 @@ async function handleCreditUpdate(vehicleId, connectedVehicle) {
         const { ws } = connectedVehicle;
 
         const vehicleData = await vehiclesModel.getVehicleById(vehicleId);
-        // const connectedVehicleData = connectedVehicle.vehicleData;
-        // const vehicleData = { ...vehicleDataDb, ...connectedVehicleData };
 
         const priceList = await PriceListModel.getPriceListItemById(vehicleData.type_id);
         const user = await UserModel.getUserById(vehicleData.rentedBy);
@@ -210,7 +213,7 @@ async function handleCreditUpdate(vehicleId, connectedVehicle) {
         const { price_per_minute } = priceList;
 
         if (!user || !subscription) {
-            handleError(ws, "User or subscription not found");
+            sendError(ws, "User or subscription not found");
             clearAndUpdateInterval(connectedVehicle);
             return;
         }
@@ -302,3 +305,4 @@ function sendError(ws, message) {
 
 // Export the vehicles object
 module.exports = vehicles;
+module.exports.sendVehicleUpdates = sendVehicleUpdates;

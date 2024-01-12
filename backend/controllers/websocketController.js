@@ -76,9 +76,30 @@ const handleMessage = (ws, message) => {
 const handleClose = (connectionId, deviceType) => {
     // Remove the client from the list of connected clients
     if (deviceType === 'vehicle') {
+        const vehicle = connectedVehicles.get()?.find(vehicle => vehicle.id === connectionId);
         // Remove the client from the list of connected clients
         connectedVehicles.remove(connectionId);
+
+        // sned message to admins and users that vehicle is offline
+        connectedAdmins.get()?.forEach(admin => {
+            user.ws.send(JSON.stringify({action: 'vehicleUpdate', data: vehicle.data , message: 'vehicleRemoved'}));
+        });
+        connectedUsers.get()?.forEach(user => {
+            user.ws.send(JSON.stringify({action: 'vehicleUpdate', data: vehicle.data , message: 'vehicleRemoved'}));
+        });
         console.info('(Vehicle) WebSocket connection closed and removed from store. \n Vehicles count: ', connectedVehicles.get()?.length);
+    }
+
+    if (deviceType === 'user') {
+        // Remove the client from the list of connected clients
+        connectedUsers.remove(connectionId);
+
+        // send message to admins that user is offline
+        connectedAdmins.get()?.forEach(admin => {
+            admin.ws.send(JSON.stringify({action: 'userUpdate', data: user.data , message: 'userRemoved'}));
+        });
+
+        console.info('(User) WebSocket connection closed and removed from store. \n Users count: ', connectedUsers.get()?.length);
     }
 };
 

@@ -10,7 +10,7 @@ import VehicleMarkers from "./VehicleMarkers";
 import { computed, useSignal, useSignalEffect } from "@preact/signals-react";
 import { curr_theme, loadedVehicles, msgBoxData } from "../../GStore";
 import useWebSocket, { ReadyState } from "react-use-websocket"
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 /**
  * Represents a map component with features like geolocation, area markers, and vehicle markers.
  * @returns {JSX.Element} - Returns the JSX for the MapBox component.
@@ -28,12 +28,31 @@ const MapBox = () => {
     zoom: 12,
   });
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    import.meta.env.VITE_WS_URL + "?type=user&id={self.vehicle_id}",
+    import.meta.env.VITE_WS_URL + "?type=user&id={user_id}",
     {
       share: false,
       shouldReconnect: () => true,
     },
   )
+
+  const createPoints = (vehicles) => {
+    return vehicles.map(createPoint);
+  }
+
+  const createPoint = (item) => {
+    const { lon, lat } = item;
+
+    return {
+      type: 'Feature',
+      properties: { cluster: false, item },
+      geometry: {
+        type: 'Point',
+        coordinates: [lon, lat],
+      },
+    }
+  }
+
+  const vehicles = useMemo(() => createPoints(loadedVehicles.value), [loadedVehicles.value]);
 
   const REMOVE_VEHICLE_MESSAGES = ["vehicleRented", "vehicleRemoved"];
 
@@ -167,7 +186,7 @@ const MapBox = () => {
           />
         </Source>
 
-        <VehicleMarkers mapRef={mapRef} viewport={viewport} />
+        <VehicleMarkers mapRef={mapRef} viewport={viewport} points={vehicles} />
 
 
       </>
