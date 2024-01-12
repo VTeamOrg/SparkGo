@@ -1,6 +1,6 @@
 const database = require("../db/database.js");
 
-const activePlan = {
+const activePlanModel = {
     getAllActivePlans: async function (req, res) {
         try {
             const db = await database.openDb();
@@ -140,4 +140,4 @@ const activePlan = {
     },
 };
 
-module.exports = activePlan;
+module.exports = activePlanModel;
