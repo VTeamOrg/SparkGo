@@ -7,7 +7,7 @@ const stripeController = {
             mode: 'subscription',
             line_items: [
               {
-                price: 'price_1OUVhgErt9JzUGzKViVbb3i4',
+                price: 'price_1OXUjqErt9JzUGzKLQ50gyXn',
                 quantity: 1,
               },
             ],
@@ -21,7 +21,7 @@ const stripeController = {
       const checkout_session = await stripe.checkout.sessions.retrieve(session_id)
       console.log(checkout_session)
       // res.json({status:'success'})
-      await subscriptionModule.updateSubscriptionInDatabase(checkout_session);
+      await subscriptionModule.createActivePlan(checkout_session);
       res.writeHead(302, {
           'Location': process.env.WEBAPP_URL
         });

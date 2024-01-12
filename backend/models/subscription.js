@@ -66,33 +66,53 @@ const subscription = {
     },    
 };
 
-const updateSubscriptionInDatabase = async (checkoutSession) => {
+const createActivePlan = async (checkoutSession) => {
     try {
         const db = await database.openDb();
 
         // Extract relevant information from the checkout session
-        const { subscription, customer, items } = checkoutSession;
+        const { subscription, customer } = checkoutSession;
+        console.log(checkoutSession);
 
-        // Assume you have a table named 'subscriptions' in your database
-        // Update the table with the relevant information
-        const updateSubscription = await database.query(
+        // Check if there is an existing active plan for the member
+        const existingActivePlan = await database.query(
             db,
-            "UPDATE subscriptions SET stripe_subscription_id = ?, plan_id = ?, is_active = ?, start_date = ?, end_date = ? WHERE member_id = ?",
-            [subscription, items.data[0].price.product, true, items.data[0].price.recurring.start_date, items.data[0].price.recurring.end_date, customer]
+            "SELECT * FROM active_plan WHERE member_id = ? AND is_active = ?",
+            [customer, true]
+        );
+
+        if (existingActivePlan.length > 0) {
+            // If an active plan exists, deactivate it
+            const deactivateExistingPlan = await database.query(
+                db,
+                "UPDATE active_plan SET is_active = ? WHERE member_id = ? AND is_active = ?",
+                [false, customer, true]
+            );
+
+            console.log("Existing active plan deactivated:", deactivateExistingPlan);
+        }
+
+        // Create a new active plan in the database
+        const currentDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+        const createNewActivePlan = await database.query(
+            db,
+            "INSERT INTO active_plan (member_id, stripe_subscription_id, is_active, creation_date, activation_date) VALUES (?, ?, ?, ?, ?)",
+            [customer, subscription, true, currentDate, currentDate]
         );
 
         await database.closeDb(db);
 
-        console.log("Subscription updated in the database:", updateSubscription);
+        console.log("New active plan created in the database:", createNewActivePlan);
 
-        return updateSubscription;
+        return createNewActivePlan;
     } catch (error) {
-        console.error("Error updating subscription in the database:", error.message);
+        console.error("Error updating/creating subscription in the database:", error.message);
         throw error; // Rethrow the error for handling in the calling function
     }
 };
 
+
 module.exports = {
     subscription,
-    updateSubscriptionInDatabase,
+    createActivePlan,
 };
