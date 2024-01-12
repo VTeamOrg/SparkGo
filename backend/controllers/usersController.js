@@ -51,7 +51,7 @@ const usersController = {
             const user = await userModel.getUserById(userId);
 
             return res.json({
-                data: user,
+                data: [user],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);

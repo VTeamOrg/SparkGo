@@ -20,9 +20,7 @@ function wsUrlParser(wsUrlString) {
 const loadWebsocket = (wss) => {
     wss.on('connection', (ws, req) => {
         const params = wsUrlParser(req.url);
-        console.log(params);
         const type = params.type;
-        console.log('params', params);
         const id = parseInt(params.id);
         websocketController.handleConnection(ws, req, id, type);
 

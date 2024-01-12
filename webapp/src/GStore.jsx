@@ -12,3 +12,4 @@ export const msgBoxData = signal({
 
 export const curr_theme = signal(null);
 
+export const loadedVehicles = signal([]);

@@ -6,18 +6,18 @@ import charginStationSVG from "../../assets/charging_station.svg";
 import noParkingSVG from "../../assets/no_parking.svg";
 import slowZoneSVG from "../../assets/slow_zone.svg";
 import AreaMsgContainer from "./AreaMsgContainer";
-import generateScooters from "../../../testData/generateScooters";
 import VehicleMarkers from "./VehicleMarkers";
-import { computed, useSignal } from "@preact/signals-react";
-import { curr_theme, msgBoxData } from "../../GStore";
-
+import { computed, useSignal, useSignalEffect } from "@preact/signals-react";
+import { curr_theme, loadedVehicles, msgBoxData } from "../../GStore";
+import useWebSocket, { ReadyState } from "react-use-websocket"
+import { useEffect, useMemo } from "react";
 /**
  * Represents a map component with features like geolocation, area markers, and vehicle markers.
  * @returns {JSX.Element} - Returns the JSX for the MapBox component.
  */
 
 const MapBox = () => {
-  const mapStyle = computed(()=> curr_theme.value === "dark" ? "mapbox://styles/mapbox/navigation-night-v1" : "mapbox://styles/mapbox/navigation-day-v1");
+  const mapStyle = computed(() => curr_theme.value === "dark" ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11");
   const mapRef = useSignal(null);
   const geoControlRef = useSignal(null);
   const viewport = useSignal({
@@ -27,8 +27,60 @@ const MapBox = () => {
     longitude: 0,
     zoom: 12,
   });
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    import.meta.env.VITE_WS_URL + "?type=user&id={user_id}",
+    {
+      share: false,
+      shouldReconnect: () => true,
+    },
+  )
 
-  const scooters = useSignal(generateScooters(5000, 15.5869, 56.1612));
+  const createPoints = (vehicles) => {
+    return vehicles.map(createPoint);
+  }
+
+  const createPoint = (item) => {
+    const { lon, lat } = item;
+
+    return {
+      type: 'Feature',
+      properties: { cluster: false, item },
+      geometry: {
+        type: 'Point',
+        coordinates: [lon, lat],
+      },
+    }
+  }
+
+  const vehicles = useMemo(() => createPoints(loadedVehicles.value), [loadedVehicles.value]);
+
+  const REMOVE_VEHICLE_MESSAGES = ["vehicleRented", "vehicleRemoved"];
+
+  useEffect(() => {
+    const { action, data, message } = lastJsonMessage || {};
+    if (!lastJsonMessage || action !== "vehicleUpdate") return;
+
+    const { vehicleId, battery, currentSpeed, maxSpeed, lon, lat } = data;
+    const updatedVehicleData = {
+      id: vehicleId,
+      battery,
+      currentSpeed,
+      maxSpeed,
+      lon: parseFloat(lon),
+      lat: parseFloat(lat),
+    };
+
+    const updatedLoadedVehicles = loadedVehicles.value.filter(vehicle => vehicle.id !== vehicleId);
+
+    if (REMOVE_VEHICLE_MESSAGES.includes(message)) {
+      loadedVehicles.value = updatedLoadedVehicles;
+    }
+
+    if (message === "regularUpdate") {
+      loadedVehicles.value = [...updatedLoadedVehicles, updatedVehicleData];
+    }
+  }, [lastJsonMessage]);
+
 
   /**
  * Handles the click event for different map features and displays corresponding information.
@@ -80,8 +132,10 @@ const MapBox = () => {
    * Handles the change in user location and logs a message.
    * @returns {void}
    */
-  const handleLocationChange = () => {
-    console.log("User moved");
+  const handleLocationChange = (coords) => {
+    console.log("-------------------->", coords.latitude, coords.longitude);
+    // send message to server
+    sendJsonMessage({ action: "updateLocation", data: { longitude: coords.longitude, latitude: coords.latitude } });
   }
 
   return (
@@ -109,7 +163,7 @@ const MapBox = () => {
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
           showUserLocation={true}
-          onGeolocate={handleLocationChange}
+          onGeolocate={(data) => handleLocationChange(data.coords)}
         />
 
         <Source id="allowedCities" type="geojson" data={CitiesGeoJson}>
@@ -132,7 +186,7 @@ const MapBox = () => {
           />
         </Source>
 
-        <VehicleMarkers mapRef={mapRef} scooters={scooters} viewport={viewport} />
+        <VehicleMarkers mapRef={mapRef} viewport={viewport} points={vehicles} />
 
 
       </>
