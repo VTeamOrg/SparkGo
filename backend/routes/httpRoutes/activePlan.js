@@ -6,7 +6,7 @@ const activePlanModel = require("../../models/activePlanModel.js");
 router.get("/", (req, res) => activePlanModel.getAllActivePlans(req, res));
 router.get("/:activePlanId", (req, res) => activePlanModel.getActivePlanById(req, res));
 
-router.post("/", (req, res) => activePlanModel.createActivePlan(req, res));
+router.post("/create", (req, res) => activePlanModel.createActivePlan(req, res));
 
 router.put("/:activePlanId", (req, res) => activePlanModel.updateActivePlan(req, res));
 

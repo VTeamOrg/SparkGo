@@ -7,7 +7,7 @@ const stripeController = {
             mode: 'subscription',
             line_items: [
               {
-                price: 'price_1OXUjqErt9JzUGzKLQ50gyXn',
+                price: priceId,
                 quantity: 1,
               },
             ],
