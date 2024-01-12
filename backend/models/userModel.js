@@ -24,14 +24,16 @@ const userModel = {
                 name,
                 personal_number,
                 address,
-                wallet,
+                wallet
             } = userData;
+
+            console.log('Received userData:', userData);
 
             const newUser = await database.query(
                 db,
                 "INSERT INTO member (role, email, name, personal_number, address, wallet) VALUES (?, ?, ?, ?, ?, ?)",
-                [role, email, name, personal_number, address, wallet]
-            );
+                [role, email, name, personal_number, address, wallet] 
+              );
 
             await database.closeDb(db);
             return newUser;
@@ -168,6 +170,22 @@ const userModel = {
             );
             await database.closeDb(db);
             return user.length > 0 && user[0].role === 'repair';
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    addToWallet: async function addToWallet(userId, refillAmount) {
+        console.log("UserModel addtowallet ", userId, refillAmount);
+        try {
+            const db = await database.openDb();
+            const result = await database.query(
+                db,
+                "CALL AddToWallet(?, ?)",
+                [userId, refillAmount]
+            );
+            await database.closeDb(db);
+            return result;
         } catch (error) {
             throw error;
         }

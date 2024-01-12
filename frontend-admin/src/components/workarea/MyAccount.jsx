@@ -9,8 +9,9 @@ import { SearchBar, ButtonRow } from './HTML/General';
 import ManagePlanModal from './Modals/ManagePlanModal';
 import ChangePlanModal from './Modals/ChangePlanModal';
 import { createCheckoutSession } from '../support/Stripe';
+import RefillWalletModal from './Modals/RefillWalletModal';
 
-function MyAccount({ userId }) { 
+function MyAccount({ userId, userRole }) { 
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedMember, setEditedMember] = useState({});
@@ -22,7 +23,7 @@ function MyAccount({ userId }) {
   const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
   const [isChangePlanModalOpen, setIsChangePlanModalOpen] = useState(false);
   const [isPaymentMethodChanged, setIsPaymentMethodChanged] = useState(false);
-  const [refillAmount, setRefillAmount] = useState(100);
+  const [isRefillWalletModalOpen, setIsRefillWalletModalOpen] = useState(false);
 
   const refreshMembers = () => {
     fetchData(`users/${userId}`, (userData) => {
@@ -53,6 +54,14 @@ function MyAccount({ userId }) {
   useEffect(() => {
     refreshMembers();
   }, [userId]);
+
+  const openRefillWalletModal = () => {
+    setIsRefillWalletModalOpen(true);
+  };
+
+  const closeRefillWalletModal = () => {
+    setIsRefillWalletModalOpen(false);
+  };
 
   const openManagePlanModal = () => {
     setIsManagePlanModalOpen(true);
@@ -188,34 +197,6 @@ function MyAccount({ userId }) {
     }
   };
 
-  const handleRefillWallet = async (event) => {
-    event.preventDefault();
-
-    try {
-      // Create a checkout session when the button is clicked
-      const session = await createCheckoutSession({
-        userId,
-        amount: refillAmount,
-        mode: 'subscription', // Set mode to 'payment'
-        success_url: 'http://localhost:5173?stripe=success', // Set success URL
-        cancel_url: 'http://localhost:5173?stripe=cancel', // Set cancel URL
-      });
-
-      // Redirect to the Stripe checkout page
-      window.location.href = session.url;
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      // Handle the error as needed
-    }
-  };
-
-  const handleRefillAmountChange = (event) => {
-    const newAmount = parseInt(event.target.value, 10);
-    if (!isNaN(newAmount) && newAmount >= 0) {
-      setRefillAmount(newAmount);
-    }
-  };
-
   const onRequestClose = () => {
     setIsEditing(false);
   };
@@ -297,19 +278,17 @@ function MyAccount({ userId }) {
         />
       )}
 
-      {/* Refill Wallet form */}
-      <form className="refill-form" onSubmit={handleRefillWallet}>
-        <label htmlFor="refillAmount">SEK:</label>
-        <input
-          type="number"
-          id="refillAmount"
-          value={refillAmount}
-          onChange={handleRefillAmountChange}
-          min="0"
-          step="1"
+      {/* Refill Wallet button */}
+      <button onClick={openRefillWalletModal}>Refill Wallet</button>
+
+      {/* Refill Wallet Modal */}
+      {isRefillWalletModalOpen && (
+        <RefillWalletModal
+          isOpen={isRefillWalletModalOpen}
+          onRequestClose={closeRefillWalletModal}
+          userId={userId} 
         />
-        <button type="submit">Refill Wallet</button>
-      </form>
+      )}
     </div>
 
 

@@ -56,7 +56,7 @@ CREATE TABLE price_list (
 CREATE TABLE member (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role VARCHAR(255),
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     name VARCHAR(255),
     personal_number VARCHAR(255),
     address VARCHAR(255),
@@ -120,6 +120,30 @@ CREATE TABLE receipt (
     payment_date DATETIME,
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
+
+DELIMITER //
+
+CREATE PROCEDURE AddToWallet(
+    IN memberId INT,
+    IN refillAmount DECIMAL(10, 2)
+)
+BEGIN
+    DECLARE currentWallet DECIMAL(10, 2);
+    
+    -- Get the current wallet balance for the member
+    SELECT wallet INTO currentWallet FROM member WHERE id = memberId;
+
+    -- Calculate the new wallet balance
+    SET currentWallet = currentWallet + refillAmount;
+
+    -- Update the member's wallet balance
+    UPDATE member SET wallet = currentWallet WHERE id = memberId;
+    
+    -- Optionally, log this transaction 
+    
+END //
+
+DELIMITER ;
 
 
 /*create table scooter (

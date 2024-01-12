@@ -137,6 +137,31 @@ const usersController = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },
+
+    addToWallet: async (req, res) => {
+        console.log("UserController addtowallet");
+        try {
+            const userId = req.params.id;
+            const refillAmount = req.body.refillAmount;
+
+            if (!userId || !refillAmount) {
+                return res.status(400).json({ error: "Missing userId or refillAmount" });
+            }
+
+            const result = await userModel.addToWallet(userId, refillAmount);
+
+            if (result && result.affectedRows === 1) {
+                return res.status(200).json({ message: "Funds added to wallet successfully" });
+            } else {
+                return res.status(400).json({ error: "Failed to add funds to wallet" });
+            }
+        } catch (error) {
+            console.error("Error adding funds to wallet:", error);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+
 };
 
 module.exports = usersController;

@@ -49,10 +49,6 @@ router.get('/', async function (req, res, next) {
         // Redirect with success URL parameter, role, and user ID
         res.redirect(303, `http://127.0.0.1:5173/?success=true&role=user&userId=${user.id}`);
       }
-    } else {
-      console.log('User not found');
-      // Redirect with success URL parameter and role as 'guest'
-      res.redirect(303, 'http://127.0.0.1:5173/?success=true&role=guest');
     }
   } catch (err) {
     console.log('Error logging in with OAuth2 user', err);

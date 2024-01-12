@@ -19,4 +19,6 @@ router.delete("/:id", usersController.deleteUser);
 
 router.get("/isAdminByEmail/:email", usersController.isAdminByEmail);
 
+router.post("/:id/wallet", usersController.addToWallet);
+
 module.exports = router;

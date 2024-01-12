@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
 import './Login.css';
 import Cookies from 'js-cookie';
+import { refillWallet } from './components/support/Utils';
 
 function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,8 +11,8 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const successParam = urlParams.get('success');
-    const roleParam = urlParams.get('role'); // Get the role parameter
-    const userIdParam = urlParams.get('userId'); // Get the userId parameter
+    const roleParam = urlParams.get('role');
+    const userIdParam = urlParams.get('userId');
 
     if (successParam === 'true') {
       setAuthSuccess(true);
@@ -29,6 +30,25 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
       window.history.replaceState({}, document.title, newUrl);
     } else if (successParam === 'false') {
       setAuthSuccess(false);
+    }
+
+    // Check if the URL contains the 'stripe' parameter
+    if (window.location.search.includes('stripe=success_wallet_refilled')) {
+      // Get the 'refilledAmount' parameter from the URL
+      const refilledAmount = urlParams.get('amount');
+      const userId = urlParams.get('userId');
+
+      // Call the refillWallet function with userId and refilledAmount
+      refillWallet(userId, refilledAmount)
+        .then(() => {
+          // Close the window or handle the success as needed
+          console.log("test");
+//          window.close();
+        })
+        .catch((error) => {
+          console.error('Error refilling wallet:', error);
+          // Handle the error as needed
+        });
     }
 
     // Clear 'userLoggedIn' cookie when the component unmounts
