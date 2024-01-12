@@ -1,19 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
-import { createData, fetchData } from '../../support/FetchService';
+import { fetchData } from '../../support/FetchService';
+import AddVehicle from '../HTML/AddVehicle';
 
+/**
+ * A modal component for adding a new vehicle.
+ *
+ * @param {Object} props - The component's props.
+ * @param {boolean} props.isOpen - Whether the modal is open.
+ * @param {Function} props.onRequestClose - Callback to close the modal.
+ * @param {Function} props.onSave - Callback to save the new vehicle.
+ */
 function AddVehicleModal({ isOpen, onRequestClose, onSave }) {
-  const [newVehicle, setNewVehicle] = useState({
+  /**
+   * Initial values for the new vehicle form.
+   */
+  const initialNewVehicle = {
     city_id: '',
     type_id: '',
     name: '',
-    status: 1, 
-  });
+    status: 1,
+  };
 
+  /**
+   * State to manage the new vehicle form data.
+   */
+  const [newVehicle, setNewVehicle] = useState(initialNewVehicle);
+
+  /**
+   * State to store vehicle types fetched from the API.
+   */
   const [vehicleTypes, setVehicleTypes] = useState([]);
+
+  /**
+   * State to store cities fetched from the API.
+   */
   const [cities, setCities] = useState([]);
 
+  /**
+   * Fetch vehicle types and cities from the API on component mount.
+   */
   useEffect(() => {
     fetchData('vehicleTypes', (data) => {
       setVehicleTypes(data);
@@ -23,70 +50,26 @@ function AddVehicleModal({ isOpen, onRequestClose, onSave }) {
     });
   }, []);
 
+  /**
+   * Handles the addition of a new vehicle.
+   * Calls the onSave callback with the new vehicle data, resets the form, and closes the modal.
+   */
   const handleAddVehicle = () => {
-    // Ensure that 'status' is always 1
-    const newVehicleWithStatus = { ...newVehicle, status: 1 };
-
-    createData('vehicles', newVehicleWithStatus)
-      .then(() => {
-        onSave(newVehicleWithStatus);
-        onRequestClose();
-      })
-      .catch((error) => {
-        console.error('Error adding vehicle:', error);
-      });
+    onSave(newVehicle);
+    setNewVehicle(initialNewVehicle);
+    onRequestClose();
   };
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="add-vehicle-modal">
-      <h2>Add Vehicle</h2>
-      <div>
-        <label>City:</label>
-        <select
-          value={newVehicle.city_id}
-          onChange={(e) => setNewVehicle({ ...newVehicle, city_id: e.target.value })}
-          required
-        >
-          <option value="" disabled>
-            Select City
-          </option>
-          {cities.map((city) => (
-            <option key={city.id} value={city.id}>
-              {city.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Vehicle Type:</label>
-        <select
-          value={newVehicle.type_id}
-          onChange={(e) => setNewVehicle({ ...newVehicle, type_id: e.target.value })}
-          required
-        >
-          <option value="" disabled>
-            Select Vehicle Type
-          </option>
-          {vehicleTypes.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Name:</label>
-        <input
-          type="text"
-          value={newVehicle.name}
-          onChange={(e) => setNewVehicle({ ...newVehicle, name: e.target.value })}
-          required
-        />
-      </div>
-      <div>
-        <button onClick={handleAddVehicle}>Add Vehicle</button>
-        <button onClick={onRequestClose}>Cancel</button>
-      </div>
+      <AddVehicle
+        newVehicle={newVehicle}
+        setNewVehicle={setNewVehicle}
+        vehicleTypes={vehicleTypes}
+        cities={cities}
+        handleAddVehicle={handleAddVehicle}
+        onRequestClose={onRequestClose}
+      />
     </Modal>
   );
 }

@@ -1,15 +1,38 @@
 const websocketController = require('../../controllers/websocketController');
 
-module.exports = (wss) => {
-    wss.on('connection', (ws) => {
-        websocketController.handleConnection(ws);
+function wsUrlParser(wsUrlString) {
+    const urlParts = wsUrlString.split("?");
+    const params = {};
+  
+    if (urlParts.length > 1) {
+      const queryString = urlParts[1];
+      const queryParams = new URLSearchParams(queryString);
+  
+      for (const [param, value] of queryParams) {
+        const paramName = param.startsWith('/') ? param.slice(1) : param;
+        params[paramName] = value;
+      }
+    }
+  
+    return params;
+  }
+
+const loadWebsocket = (wss) => {
+    wss.on('connection', (ws, req) => {
+        const params = wsUrlParser(req.url);
+        const type = params.type;
+        const id = parseInt(params.id);
+        websocketController.handleConnection(ws, req, id, type);
 
         ws.on('message', (message) => {
             websocketController.handleMessage(ws, message);
         });
 
         ws.on('close', () => {
-            websocketController.handleClose(ws);
+            websocketController.handleClose(id, type);
         });
     });
 };
+
+
+module.exports = loadWebsocket;

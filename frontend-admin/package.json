@@ -13,6 +13,9 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "axios": "^1.6.5",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^2.4.0",
     "papaparse": "^5.4.1",
@@ -20,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
+    "react-router-dom": "^6.21.1",
     "react-vite": "^0.0.5"
   },
   "devDependencies": {

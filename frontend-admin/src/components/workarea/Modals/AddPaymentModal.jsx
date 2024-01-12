@@ -2,19 +2,26 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import PropTypes from 'prop-types';
-import { fetchData, createData } from '../../support/FetchService';
+import { createData } from '../../support/FetchService';
+import AddPaymentMethod from '../HTML/AddPaymentMethod';
 
+/**
+ * AddPaymentModal component displays a modal for adding payment methods for a member.
+ *
+ * @param {Object} props - The component's props.
+ * @param {boolean} props.isOpen - Indicates whether the modal is open.
+ * @param {Function} props.onRequestClose - Callback function to close the modal.
+ * @param {number} props.memberId - The ID of the member for whom the payment method is being added.
+ * @param {string} props.memberName - The name of the member for whom the payment method is being added.
+ * @param {Function} props.onSave - Callback function to save the payment method.
+ */
 function AddPaymentModal({ isOpen, onRequestClose, memberId, memberName, onSave }) {
-  const [paymentMethods, setPaymentMethods] = useState([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [referenceInfo, setReferenceInfo] = useState('');
 
-  useEffect(() => {
-    fetchData('paymentMethods', (data) => {
-      setPaymentMethods(data);
-    });
-  }, []);
-
+  /**
+   * Handles saving the payment method for the member.
+   */
   const handleSave = () => {
     if (selectedPaymentMethod === '' || referenceInfo === '') {
       alert('Please select a payment method and provide reference info.');
@@ -39,41 +46,24 @@ function AddPaymentModal({ isOpen, onRequestClose, memberId, memberName, onSave 
       });
   };  
 
-
   return (
     <Modal
-    isOpen={isOpen}
-    onRequestClose={onRequestClose}
-    className="modal"
-    overlayClassName="modal-overlay"
-  >
-    <div className={`modal ${isOpen ? 'open' : ''}`}>
-      <div className="modal-content">
-        <h2>Add Payment Method for member: {memberId} - {memberName}</h2>
-        <div>
-          <label>Payment Method (e.g. VISA, KLARNA):</label>
-          <input
-            type="text"
-            value={selectedPaymentMethod}
-            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Reference Info:</label>
-          <input
-            type="text"
-            value={referenceInfo}
-            onChange={(e) => setReferenceInfo(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <button onClick={handleSave}>Save</button>
-          <button onClick={onRequestClose}>Cancel</button>
-        </div>
-      </div>
-    </div>
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      className="modal"
+      overlayClassName="modal-overlay"
+    >
+      <AddPaymentMethod
+        isOpen={isOpen}
+        onRequestClose={onRequestClose}
+        memberId={memberId}
+        memberName={memberName}
+        selectedPaymentMethod={selectedPaymentMethod}
+        referenceInfo={referenceInfo}
+        setSelectedPaymentMethod={setSelectedPaymentMethod}
+        setReferenceInfo={setReferenceInfo}
+        handleSave={handleSave}
+      />
     </Modal>
   );
 }
@@ -82,6 +72,7 @@ AddPaymentModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
   memberId: PropTypes.number.isRequired,
+  memberName: PropTypes.string.isRequired,
   onSave: PropTypes.func.isRequired,
 };
 

@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const receiptModule = require("../../models/receipts.js");
+
+const receiptController = require("../../controllers/receiptController.js");
 
 // GET all receipts
-router.get("/", (req, res) => receiptModule.getAllReceipt(req, res));
+router.get("/", receiptController.getAllReceipts);
 
 // GET receipt by ID
-router.get("/:id", (req, res) => receiptModule.getReceiptById(req, res));
+router.get("/:id", receiptController.getReceiptById);
 
 // GET receipts by member ID
-router.get("/memberid/:member_id", (req, res) => receiptModule.getReceiptByMemberId(req, res));
+router.get("/memberid/:member_id", receiptController.getReceiptByMemberId);
 
 // POST generate receipt
-router.post("/", (req, res) => receiptModule.generateReceipt(req, res));
+router.post("/", receiptController.generateReceipt);
 
 module.exports = router;

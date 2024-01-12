@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const freqModule = require("../../models/frequencies.js");
+const freqModule = require("../../controllers/frequenciesController.js");
 
 // GET all freqs
 router.get("/", (req, res) => freqModule.getAllFrequencies(req, res));

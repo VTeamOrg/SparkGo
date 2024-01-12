@@ -14,17 +14,19 @@ import { fetchData, updateData, deleteData } from '../../support/FetchService';
  * @param {function} props.onSave - Function to save the edited active plan.
  * @returns {JSX.Element} The ManagePlanModal component JSX.
  */
-function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
+function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave, fromMyAccount }) {
   const [editedActivePlan, setEditedActivePlan] = useState({ ...activePlan });
 
+  const isEditable = !fromMyAccount;
+  const fieldClassName = `read-only-field ${!isEditable ? 'disabled' : ''}`;
+
+  console.log(isEditable);
   /**
    * Handles the submission of the edited active plan.
    */
   const handleSubmit = (e) => {
     e.preventDefault();
-  
-    console.log("editedActivePlan:", editedActivePlan);
-  
+    
     const {
       active_plan_id,
       id,
@@ -41,8 +43,6 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
     } else {
       activation_date = new Date(); 
     }
-
-    console.log(activation_date);
   
     const updatedPlan = {
       plan_id: active_plan_id,
@@ -80,7 +80,7 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
               type="text"
               value={editedActivePlan.active_plan_id}
               readOnly
-              className="read-only-field"
+              className={fieldClassName}
             />
           </div>
 
@@ -90,7 +90,7 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
               type="text"
               value={editedActivePlan.active_plan_name}
               readOnly
-              className="read-only-field"
+              className={fieldClassName}
             />
           </div>
 
@@ -100,7 +100,7 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
               type="text"
               value={formatDateTime(editedActivePlan.active_plan_creation)}
               readOnly
-              className="read-only-field"
+              className={fieldClassName}
             />
           </div>
 
@@ -109,19 +109,21 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
             <input
               type="text"
               value={
-                editedActivePlan.active_plan_paused === "N"
+                editedActivePlan.active_plan_paused === 'N'
                   ? formatDateTime(
                       editedActivePlan.active_plan_activation || new Date()
                     )
-                  : ""
+                  : ''
               }
               onChange={(e) =>
+                isEditable &&
                 setEditedActivePlan({
                   ...editedActivePlan,
                   active_plan_activation: e.target.value,
                 })
               }
-              required={editedActivePlan.active_plan_paused === "N"}
+              required={editedActivePlan.active_plan_paused === 'N' && isEditable}
+              className={fieldClassName}
             />
           </div>
 
@@ -131,12 +133,14 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
               type="text"
               value={editedActivePlan.active_plan_minutes}
               onChange={(e) =>
+                isEditable &&
                 setEditedActivePlan({
                   ...editedActivePlan,
                   active_plan_minutes: e.target.value,
                 })
               }
-              required
+              required={isEditable}
+              className={fieldClassName}
             />
           </div>
 
@@ -146,43 +150,52 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
               type="text"
               value={editedActivePlan.active_plan_unlocks}
               onChange={(e) =>
+                isEditable &&
                 setEditedActivePlan({
                   ...editedActivePlan,
                   active_plan_unlocks: e.target.value,
                 })
               }
-              required
+              required={isEditable}
+              className={fieldClassName}
             />
           </div>
 
           <div className="form-group">
             <label>Plan Paused</label>
             <div className="checkbox-container">
-            <input
-  type="checkbox"
-  checked={editedActivePlan.active_plan_paused === "Y"}
-  onClick={() => {
-    const updatedPlan = {
-      ...editedActivePlan,
-      active_plan_paused:
-        editedActivePlan.active_plan_paused === "Y" ? "N" : "Y",
-    };
+              <input
+                type="checkbox"
+                checked={editedActivePlan.active_plan_paused === 'Y'}
+                onClick={() => {
+                  if (isEditable) {
+                    const updatedPlan = {
+                      ...editedActivePlan,
+                      active_plan_paused:
+                        editedActivePlan.active_plan_paused === 'Y' ? 'N' : 'Y',
+                    };
 
-    if (editedActivePlan.active_plan_paused === "Y") {
-      updatedPlan.active_plan_activation = new Date();
-    } else {
-      updatedPlan.active_plan_activation = null;
-    }
+                    if (editedActivePlan.active_plan_paused === 'Y') {
+                      updatedPlan.active_plan_activation = new Date();
+                    } else {
+                      updatedPlan.active_plan_activation = null;
+                    }
 
-    setEditedActivePlan(updatedPlan);
-  }}
-/>
+                    setEditedActivePlan(updatedPlan);
+                  }
+                }}
+                disabled={!isEditable}
+              />
             </div>
-            </div>
+          </div>
 
           {/* Save and cancel buttons */}
           <div className="form-actions">
-            <button type="submit">Save</button>
+          {isEditable && (
+              <button type="submit">
+                Save
+              </button>
+          )}
             <button onClick={onRequestClose}>Cancel</button>
           </div>
         </form>

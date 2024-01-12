@@ -1,26 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const paymentModule = require("../../models/paymentMethods.js");
+
+const paymentMethodsController = require("../../controllers/paymentMethodsController.js");
 
 // GET all payment methods
-router.get("/", (req, res) => paymentModule.getPaymentMethod(req, res));
+router.get("/", paymentMethodsController.getPaymentMethod);
 
-// GET payment methods by member ID
-router.get("/memberid/:memberId", (req, res) =>
-  paymentModule.getPaymentMethodByMemberId(req, res)
-);
+// GET payment method by member ID
+router.get("/memberid/:memberId", paymentMethodsController.getPaymentMethodByMemberId);
 
 // POST a new payment method
-router.post("/", (req, res) => paymentModule.createPaymentMethod(req, res));
+router.post("/", paymentMethodsController.createPaymentMethod);
 
 // PUT (update) a payment method by ID
-router.put("/:paymentMethodId", (req, res) =>
-  paymentModule.updatePaymentMethod(req, res)
-);
+router.put("/:paymentMethodId", paymentMethodsController.updatePaymentMethod);
 
 // DELETE a payment method by ID
-router.delete("/:paymentMethodId", (req, res) =>
-  paymentModule.deletePaymentMethod(req, res)
-);
+router.delete("/:paymentMethodId", paymentMethodsController.deletePaymentMethod);
 
 module.exports = router;

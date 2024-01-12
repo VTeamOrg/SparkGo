@@ -1,4 +1,6 @@
+
 use sparkgo;
+
 
 -- initial drops
 drop trigger if exists log_scooter_insert;
@@ -84,7 +86,6 @@ CREATE TABLE vehicle (
 
 CREATE TABLE plan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    stripe_plan_id VARCHAR(255),
     title VARCHAR(255),
     description TEXT,
     price DECIMAL(10, 2),
@@ -102,7 +103,7 @@ CREATE TABLE active_plan (
     plan_id INT,
     member_id INT,
     stripe_subscription_id VARCHAR(255),
-    creation_date DATETIME,
+    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
     activation_date DATETIME,
     available_minutes INT,
     available_unlocks INT,
@@ -175,6 +176,5 @@ delimiter ; */
 
 show tables;
 show DATABASES;
-select * from subscription;
 select * from member;
 select * from plan;

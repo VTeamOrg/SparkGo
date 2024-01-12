@@ -1,6 +1,19 @@
 {
   "dependencies": {
+<<<<<<< HEAD
     "node-fetch": "^3.3.2",
     "stripe": "^14.10.0"
+=======
+    "axios": "^1.6.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+>>>>>>> 6e79ebfb1aa658866c4508fe94b00d6440739e33
   }
 }

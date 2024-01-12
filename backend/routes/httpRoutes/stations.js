@@ -1,21 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-let stationsModule;
+const stationsController = require("../../controllers/stationsController.js");
 
-stationsModule = require("../../models/stations.js");
+router.get("/", stationsController.getAllStations);
+router.get("/:stationId", stationsController.getStationById);
 
-router.get("/", (req, res) => stationsModule.getAllStations(req, res));
-router.get("/:stationId", (req, res) =>
-    stationsModule.getStationById(req, res)
-);
+router.post("/", stationsController.createStation);
 
-router.post("/", (req, res) => stationsModule.createStation(req, res));
+router.put("/:stationId", stationsController.updateStation);
 
-router.put("/:stationId", (req, res) => stationsModule.updateStation(req, res));
-
-router.delete("/:stationId", (req, res) =>
-    stationsModule.deleteStation(req, res)
-);
+router.delete("/:stationId", stationsController.deleteStation);
 
 module.exports = router;

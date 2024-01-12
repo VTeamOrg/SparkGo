@@ -4,26 +4,49 @@ const vehicles = require("./vehicles.js");
 const cities = require("./cities.js");
 const subscription = require("./subscription.js");
 const paymentMethods = require("./paymentMethods.js");
+
 const activePlan = require("./activePlan.js");
 const frequencies = require("./frequencies.js");
 const plans = require("./plans.js");
 const priceList = require("./priceList.js");
 const receipts = require("./receipts.js");
 const vehicleTypes = require("./vehicleTypes.js");
+const { generalApiLimiter } = require("../../middleware/apiLimter.js");
+
+
+const coords = require("./coords.js");
 
 const loadHttpRoutes = (app) => {
-  app.use("/users", users);
-  app.use("/stations", stations);
-  app.use("/vehicles", vehicles);
-  app.use("/cities", cities);
-  app.use("/subscription", subscription);
-  app.use("/paymentMethods", paymentMethods);
-  app.use("/activePlan", activePlan);
-  app.use("/frequencies", frequencies);
-  app.use("/plans", plans);
-  app.use("/priceList", priceList);
-  app.use("/receipts", receipts);
-  app.use("/vehicleTypes", vehicleTypes);
-};
+    app.use("/v1/users", users);
+    app.use("/v1/stations", stations);
+    app.use("/v1/vehicles", vehicles);
+    app.use("/v1/cities", cities);
+    app.use("/v1/subscription", subscription);
+    app.use("/v1/paymentMethods", paymentMethods);
+    app.use("/v1/plans", plans);
+    app.use("/v1/pricelist", priceList);
+    app.use("/v1/receipts", receipts);
+    app.use("/v1/vehicleTypes", vehicleTypes);
+    app.use("/v1/coords", coords);
+
+    app.use("/v1/activePlan", activePlan);
+    app.use("/v1/frequencies", frequencies);
+}
+
+// Function to load HTTP routes with rate limiters
+// const loadHttpRoutes = (app) => {
+//   app.use("/v1/users", generalApiLimiter, users);
+//   app.use("/v1/stations", generalApiLimiter, stations);
+//   app.use("/v1/vehicles", generalApiLimiter, vehicles);
+//   app.use("/v1/cities", generalApiLimiter, cities);
+//   app.use("/v1/subscription", generalApiLimiter, subscription);
+//   app.use("/v1/paymentMethods", generalApiLimiter, paymentMethods);
+//   app.use("/v1/activePlan", generalApiLimiter, activePlan);
+//   app.use("/v1/frequencies", generalApiLimiter, frequencies);
+//   app.use("/v1/plans", generalApiLimiter, plans);
+//   app.use("/v1/priceList", generalApiLimiter, priceList);
+//   app.use("/v1/receipts", generalApiLimiter, receipts);
+//   app.use("/v1/vehicleTypes", generalApiLimiter, vehicleTypes);
+// };
 
 module.exports = loadHttpRoutes;

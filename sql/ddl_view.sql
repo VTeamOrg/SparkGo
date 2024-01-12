@@ -1,3 +1,4 @@
+use sparkgo;
 /* VIEW build */
 /* Run after ddl */
 
@@ -9,6 +10,7 @@ drop view if exists v_vehicle;
 drop view if exists v_receipt;
 drop view if exists v_price_list;
 drop view if exists v_plan;
+drop view if exists v_member;
 
 /* Renting station + city */
 CREATE VIEW v_renting_station AS

@@ -14,7 +14,6 @@ function PaymentMethodFields({
   return (
     <>
       {/* PAYMENT METHOD TABLE */}
-      <div className="divider"></div>
       {paymentMethods.length > 0 && (
         <table className="payment-table">
           <thead>
@@ -76,103 +75,137 @@ function MemberFields({
   isEditing,
   handleFieldChange,
   emailError,
+  isFromMyAccount,
 }) {
   return (
     <>
-{/* MEMBER FIELDS */}
-<div className="row">
-      <div>
-        <label>Member ID:</label>
-        <span>{editedMember.id}</span>
-      </div>
-      <div>
-        <label>Role:</label>
-        {isEditing ? (
-          <select
-            value={editedMember.role}
-            onChange={(e) => handleFieldChange('role', e.target.value)}
-            required
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        ) : (
-          <span>{editedMember.role}</span>
-        )}
-      </div>
-
-      </div>
-      <div>
-        <label>Email:</label>
-        {isEditing ? (
-          <>
-            <input
-              type="email"
-              value={editedMember.email}
-              onChange={(e) => handleFieldChange('email', e.target.value)}
-              required
-            />
-            <span className="error">{emailError}</span>
-          </>
-        ) : (
-          <span>{editedMember.email}</span>
-        )}
-      </div>
-      <div>
-        <label>Name:</label>
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedMember.name}
-            onChange={(e) => handleFieldChange('name', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.name}</span>
-        )}
-      </div>
-      <div>
-        <label>Personal Number:</label>
-        {isEditing ? (
-          <input
-            type="text"
-            value={editedMember.personal_number}
-            onChange={(e) => handleFieldChange('personal_number', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.personal_number}</span>
-        )}
-      </div>
-      <div>
-        <label>Wallet SEK:</label>
-        {isEditing ? (
-            <input
-            type="number"
-            value={editedMember.wallet}
-            onChange={(e) => handleFieldChange('wallet', e.target.value)}
-            required
-            />
-        ) : (
-            <span>{editedMember.wallet}</span>
-        )}
-        </div>
-      <div>
-        <label>Address:</label>
-        {isEditing ? (
-          <textarea
-            className="full-width-address"
-            value={editedMember.address}
-            onChange={(e) => handleFieldChange('address', e.target.value)}
-            required
-          />
-        ) : (
-          <span>{editedMember.address}</span>
-        )}
+      {/* MEMBER FIELDS */}
+      <div className="member-fields">
+        <table>
+          <tbody>
+            <tr>
+              <td className="label-cell">
+                <label>Member ID:</label>
+              </td>
+              <td className="value-cell">
+                <span>{editedMember.id}</span>
+              </td>
+              <td className="label-cell">
+                <label>Role:</label>
+              </td>
+              <td className="value-cell">
+                {isEditing ? (
+                  <select
+                    value={editedMember.role}
+                    onChange={(e) => handleFieldChange('role', e.target.value)}
+                    required
+                    disabled={!isEditing || isFromMyAccount}
+                  >
+                    <option value="user" disabled={isFromMyAccount}>User</option>
+                    <option value="admin" disabled={isFromMyAccount}>Admin</option>
+                  </select>
+                ) : (
+                  <span>{editedMember.role}</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Email:</label>
+              </td>
+              <td className="value-cell">
+                {isEditing ? (
+                  <>
+                    <input
+                      type="email"
+                      value={editedMember.email}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
+                      required
+                      disabled={isFromMyAccount}
+                    />
+                    <span className="error">{emailError}</span>
+                  </>
+                ) : (
+                  <span>{editedMember.email}</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Name:</label>
+              </td>
+              <td className="value-cell">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedMember.name}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                    required
+                  />
+                ) : (
+                  <span>{editedMember.name}</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Personal Number:</label>
+              </td>
+              <td className="value-cell">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedMember.personal_number}
+                    onChange={(e) => handleFieldChange('personal_number', e.target.value)}
+                    required
+                  />
+                ) : (
+                  <span>{editedMember.personal_number}</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Wallet SEK:</label>
+              </td>
+              <td className="value-cell">
+                {isEditing ? (
+                  <input
+                    type="number"
+                    value={editedMember.wallet}
+                    onChange={(e) => handleFieldChange('wallet', e.target.value)}
+                    required
+                    disabled={isFromMyAccount}
+                  />
+                ) : (
+                  <span>{editedMember.wallet}</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className="label-cell">
+                <label>Address:</label>
+              </td>
+              <td className="value-cell" colSpan="3">
+                {isEditing ? (
+                  <textarea
+                    className="full-width-address"
+                    value={editedMember.address}
+                    onChange={(e) => handleFieldChange('address', e.target.value)}
+                    required
+                  />
+                ) : (
+                  <span>{editedMember.address}</span>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </>
   );
 }
+
 
 function PlanFields({
   editedMember,
@@ -187,7 +220,6 @@ function PlanFields({
   return (
     <>
       {/* PLAN FIELDS */}
-      <div className="divider"></div>
       <table className="custom-table">
         <tbody>
           <tr>
