@@ -26,10 +26,12 @@ create database sparkgo;
 -- välj vilken databas du vill använda
 use sparkgo;
 
--- procedures
-source procedure.sql
+
 
 -- uses
 source ddl.sql
 source ddl_view.sql
 source insert.sql
+
+-- procedures
+source procedure.sql

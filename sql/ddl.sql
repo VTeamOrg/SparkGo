@@ -86,7 +86,7 @@ CREATE TABLE vehicle (
 
 CREATE TABLE plan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    stripe_subscription_id VARCHAR(255),
+    stripe_plan_id VARCHAR(255),
     title VARCHAR(255),
     description TEXT,
     price DECIMAL(10, 2),
@@ -109,7 +109,7 @@ CREATE TABLE active_plan (
     available_minutes INT,
     available_unlocks INT,
     is_paused ENUM('Y', 'N'),
-    PRIMARY KEY (plan_id, member_id),
+    PRIMARY KEY (member_id),
     FOREIGN KEY (plan_id) REFERENCES plan(id),
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
@@ -175,3 +175,4 @@ end//
 
 delimiter ; */
 
+SELECT * FROM frequencies;
