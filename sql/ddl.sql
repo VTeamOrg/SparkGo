@@ -86,6 +86,7 @@ CREATE TABLE vehicle (
 
 CREATE TABLE plan (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    stripe_subscription_id VARCHAR(255),
     title VARCHAR(255),
     description TEXT,
     price DECIMAL(10, 2),
@@ -174,7 +175,3 @@ end//
 
 delimiter ; */
 
-show tables;
-show DATABASES;
-select * from member;
-select * from plan;

@@ -29,6 +29,21 @@ const plansModel = {
             throw error;
         }
     },
+    
+    getPlanIdByStripeId: async function (planId) {
+        try {
+            const db = await database.openDb();
+            const plan = await database.query(
+                db,
+                "SELECT id FROM plan WHERE stripe_plan_id = ?",
+                planId
+            );
+            await database.closeDb(db);
+            return plan[0].id;
+        } catch (error) {
+            throw error;
+        }
+    },
 
     createPlan: async function (planData) {
         try {
