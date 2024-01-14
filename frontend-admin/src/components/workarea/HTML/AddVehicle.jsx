@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const AddVehicle = ({
   newVehicle,
@@ -67,5 +67,14 @@ const AddVehicle = ({
     </div>
   );
 };
+
+AddVehicle.propTypes = {
+    newVehicle: PropTypes.object.isRequired,
+    setNewVehicle: PropTypes.func.isRequired,
+    vehicleTypes: PropTypes.array.isRequired,
+    cities: PropTypes.array.isRequired,
+    handleAddVehicle: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
 
 export default AddVehicle;

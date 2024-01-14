@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import '../CSS/Modal.css';
 
 function AddMemberModalContent({ newMember, setNewMember, emailError, setEmailError, onRequestClose, handleAddMember }) {
@@ -66,5 +66,14 @@ function AddMemberModalContent({ newMember, setNewMember, emailError, setEmailEr
     </>
   );
 }
+
+AddMemberModalContent.propTypes = {
+  newMember: PropTypes.object.isRequired,
+  setNewMember: PropTypes.func.isRequired,
+  emailError: PropTypes.string.isRequired,
+  setEmailError: PropTypes.func.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  handleAddMember: PropTypes.func.isRequired,
+};
 
 export default AddMemberModalContent;

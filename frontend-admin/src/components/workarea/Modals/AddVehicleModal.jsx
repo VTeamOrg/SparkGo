@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { fetchData } from '../../support/FetchService';
 import AddVehicle from '../HTML/AddVehicle';
+import PropTypes from 'prop-types';
 
 /**
  * A modal component for adding a new vehicle.
@@ -58,6 +59,12 @@ function AddVehicleModal({ isOpen, onRequestClose, onSave }) {
     onSave(newVehicle);
     setNewVehicle(initialNewVehicle);
     onRequestClose();
+  };
+
+  AddVehicleModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
   };
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const AddStationFields = ({
   selectedCity,
@@ -59,5 +59,17 @@ const AddStationFields = ({
     </div>
   );
 };
+
+AddStationFields.propTypes = {
+    selectedCity: PropTypes.string.isRequired,
+    setSelectedCity: PropTypes.func.isRequired,
+    stationName: PropTypes.string.isRequired,
+    setStationName: PropTypes.func.isRequired,
+    latitude: PropTypes.string.isRequired,
+    setLatitude: PropTypes.func.isRequired,
+    longitude: PropTypes.string.isRequired,
+    setLongitude: PropTypes.func.isRequired,
+    cities: PropTypes.array.isRequired,
+  };
 
 export default AddStationFields;

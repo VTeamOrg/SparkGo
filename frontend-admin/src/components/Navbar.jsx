@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import './Navbar.css';
 
 function Navbar({ setActiveSection, userRole }) {
@@ -48,5 +48,9 @@ function Navbar({ setActiveSection, userRole }) {
   );
 }
 
+Navbar.propTypes = {
+  setActiveSection: PropTypes.func.isRequired,
+  userRole: PropTypes.string.isRequired,
+};
 
 export default Navbar;

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { formatDateTime } from '../../support/Utils';
-import { fetchData, updateData, deleteData } from '../../support/FetchService';
+import { updateData } from '../../support/FetchService';
+import PropTypes from 'prop-types';
 
 /**
  * ManagePlanModal component for editing an active plan.
@@ -20,7 +21,6 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave, fromMyAcc
   const isEditable = !fromMyAccount;
   const fieldClassName = `read-only-field ${!isEditable ? 'disabled' : ''}`;
 
-  console.log(isEditable);
   /**
    * Handles the submission of the edited active plan.
    */
@@ -62,6 +62,14 @@ function ManagePlanModal({ isOpen, onRequestClose, activePlan, onSave, fromMyAcc
       .catch((error) => {
         console.error("Error updating active plan:", error);
       });
+  };
+
+  ManagePlanModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    activePlan: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    fromMyAccount: PropTypes.bool.isRequired,
   };
 
   return (

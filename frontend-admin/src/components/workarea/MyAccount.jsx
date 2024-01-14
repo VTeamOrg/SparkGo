@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './CSS/WorkArea.css';
 import { fetchData, updateData, deleteData } from '../support/FetchService';
-import { validateEmail, formatDateTime, translateUnlimited } from '../support/Utils';
+import { validateEmail } from '../support/Utils';
 import AddPaymentModal from './Modals/AddPaymentModal.jsx';
 import { PaymentMethodFields, MemberFields, PlanFields } from './HTML/MemberModal.jsx';
-import { SearchBar, ButtonRow } from './HTML/General';
+import { ButtonRow } from './HTML/General';
 import ManagePlanModal from './Modals/ManagePlanModal';
 import ChangePlanModal from './Modals/ChangePlanModal';
 import { createCheckoutSession } from '../support/Stripe';
@@ -16,7 +16,6 @@ function MyAccount({ userId }) {
   const [editedMember, setEditedMember] = useState({});
   const [emailError, setEmailError] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); 
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
   const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
   const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
@@ -24,7 +23,7 @@ function MyAccount({ userId }) {
   const [isPaymentMethodChanged, setIsPaymentMethodChanged] = useState(false);
   const [refillAmount, setRefillAmount] = useState(100);
 
-  const refreshMembers = () => {
+  const refreshMembers = useCallback(() => {
     fetchData(`users/${userId}`, (userData) => {
       setEditedMember(userData);
     });
@@ -47,12 +46,12 @@ function MyAccount({ userId }) {
         console.error('Invalid payment data format: paymentData is not an array');
       }
     });
-  };
+  }, [userId]);
   
 
   useEffect(() => {
     refreshMembers();
-  }, [userId]);
+  }, [userId, refreshMembers]);
 
   const openManagePlanModal = () => {
     setIsManagePlanModalOpen(true);
@@ -62,11 +61,11 @@ function MyAccount({ userId }) {
     setIsManagePlanModalOpen(false);
   };  
 
-  const editedActivePlan = (editedPlan) => {
+  const editedActivePlan = () => {
     refreshMembers();
   };
 
-  const editedChangedPlan = (editedPlan) => {
+  const editedChangedPlan = () => {
     refreshMembers();
     };
 
@@ -101,7 +100,6 @@ function MyAccount({ userId }) {
   };
 
   const handlePaymentMethodChange = (selectedMethod, index) => {
-    setSelectedPaymentMethod(selectedMethod);
     setSelectedPaymentMethodIndex(index);
 
     const updatedPaymentMethods = [...paymentMethods];
@@ -175,7 +173,7 @@ function MyAccount({ userId }) {
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this member?')) {
-      deleteData('users', member.id)
+      deleteData('users', userId)
         .then(() => {
           onRequestClose();
           if (refreshMembers) {
@@ -246,11 +244,6 @@ function MyAccount({ userId }) {
       {/* Render PlanFields component */}
       <PlanFields
         editedMember={editedMember}
-        isEditing={isEditing}
-        handleFieldChange={handleFieldChange}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        onRequestClose={() => closeManagePlanModal()}
         openManagePlanModal={openManagePlanModal}
         openChangePlanModal={openChangePlanModal}
       />

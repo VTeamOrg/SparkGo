@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
 import './Login.css';
 import Cookies from 'js-cookie';
+import PropTypes from 'prop-types';
 
 function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -91,5 +92,11 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
     </div>
   );
 }
+
+Login.propTypes = {
+  setUserLoggedIn: PropTypes.func.isRequired,
+  setUserRole: PropTypes.func.isRequired,
+  setUserId: PropTypes.func.isRequired,
+};
 
 export default Login;

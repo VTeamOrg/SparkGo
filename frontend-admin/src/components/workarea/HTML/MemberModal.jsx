@@ -1,7 +1,8 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPlus,faCheck, faListAlt,faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { formatDateTime, translateUnlimited } from '../../support/Utils';
+
+import PropTypes from 'prop-types';
 
 function PaymentMethodFields({
   paymentMethods,
@@ -69,6 +70,15 @@ function PaymentMethodFields({
   );
   
 }
+
+PaymentMethodFields.propTypes = {
+  paymentMethods: PropTypes.array.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+  selectedPaymentMethodIndex: PropTypes.number.isRequired,
+  handlePaymentMethodChange: PropTypes.func.isRequired,
+  handleDeletePaymentMethod: PropTypes.func.isRequired,
+  openAddPaymentModal: PropTypes.func.isRequired,
+};
 
 function MemberFields({
   editedMember,
@@ -206,14 +216,17 @@ function MemberFields({
   );
 }
 
+MemberFields.propTypes = {
+  editedMember: PropTypes.object.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  emailError: PropTypes.string.isRequired,
+  isFromMyAccount: PropTypes.bool.isRequired,
+};
+
 
 function PlanFields({
   editedMember,
-  isEditing,
-  handleFieldChange,
-  handleEdit,
-  handleDelete,
-  onRequestClose,
   openManagePlanModal,
   openChangePlanModal
 }) {
@@ -308,6 +321,16 @@ function PlanFields({
   
 }
 
+PlanFields.propTypes = {
+  editedMember: PropTypes.object.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+  handleFieldChange: PropTypes.func.isRequired,
+  handleEdit: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  openManagePlanModal: PropTypes.func.isRequired,
+  openChangePlanModal: PropTypes.func.isRequired,
+};
 
 export { PaymentMethodFields, MemberFields, PlanFields };
 

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchData } from '../../support/FetchService';
 import AddStationFields from '../HTML/AddStation'; 
+import PropTypes from 'prop-types';
 
 /**
  * AddStationModal component for adding a new station.
@@ -92,6 +93,12 @@ const AddStationModal = ({ isOpen, onRequestClose, onSave }) => {
     });
 
     return null;
+  };
+
+  AddStationModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
   };
 
     /* JSX to render modal */

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
@@ -8,7 +8,6 @@ function MapView() {
   const mapRef = useRef(null);
   const citiesCoordinates = useRef(new Map());
   const [markers, setMarkers] = useState([]);
-  const [mapDisabled, setMapDisabled] = useState(false);
   const [mapEnabled, setMapEnabled] = useState(true);
 
   useEffect(() => {

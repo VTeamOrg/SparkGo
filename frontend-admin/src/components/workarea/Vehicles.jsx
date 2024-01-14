@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
