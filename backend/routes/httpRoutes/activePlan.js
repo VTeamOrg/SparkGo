@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const activePlanModule = require("../../models/activePlan.js");
+const activePlanController = require("../../controllers/activePlanController");
 
 /* GET routes */
-router.get("/", (req, res) => activePlanModule.getAllActivePlans(req, res));
-router.get("/:activePlanId", (req, res) => activePlanModule.getActivePlanById(req, res));
+router.get("/", (req, res) => activePlanController.getAllActivePlans(req, res));
+router.get("/:activePlanId", (req, res) => activePlanController.getActivePlanById(req, res));
 
-router.post("/", (req, res) => activePlanModule.createActivePlan(req, res));
+router.post("/", (req, res) => activePlanController.createActivePlan(req, res));
 
-router.put("/:activePlanId", (req, res) => activePlanModule.updateActivePlan(req, res));
+router.put("/:activePlanId", (req, res) => activePlanController.updateActivePlan(req, res));
 
-router.delete("/:activePlanId", (req, res) => activePlanModule.deleteActivePlan(req, res));
+router.delete("/:activePlanId", (req, res) => activePlanController.deleteActivePlan(req, res));
 
 module.exports = router;

@@ -6,6 +6,7 @@ const app = require('../../app');
 describe('WebSocket Connection', () => {
     let ws;
     let server;
+    const wsUrl = 'ws://localhost:3000';
 
     before((done) => {
         server = app.appServer;
@@ -13,13 +14,13 @@ describe('WebSocket Connection', () => {
         // Start the server only if it's not already listening
         if (!server.listening) {
             server.listen(1337, () => {
-                ws = new WebSocket('ws://localhost:1337'); // Change the URL as needed
+                ws = new WebSocket(wsUrl); // Change the URL as needed
                 ws.on('open', () => {
                     done();
                 });
             });
         } else {
-            ws = new WebSocket('ws://localhost:1337');
+            ws = new WebSocket(wsUrl);
             ws.on('open', () => {
                 done();
             });
@@ -36,6 +37,10 @@ describe('WebSocket Connection', () => {
         }
     });
 
+    it('should connect to WebSocket server', (done) => {
+        expect(ws.readyState).to.equal(WebSocket.OPEN);
+        done();
+    });
     it('should connect to WebSocket server', (done) => {
         expect(ws.readyState).to.equal(WebSocket.OPEN);
         done();

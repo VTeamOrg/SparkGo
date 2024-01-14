@@ -4,34 +4,40 @@ import websockets
 import multiprocessing
 import json
 import logging
+from async_manager import AsyncManager  # Import the AsyncManager class
+
 
 
 class Vehicle:
-    def __init__(self, vehicle_id, battery, bounds, lat, lng):
+    def __init__(self, vehicle_id, battery, bounds, lat, lon):
         self.vehicle_id = vehicle_id
         self.battery = battery
         self.bounds = bounds
         self.lat = lat
-        self.lng = lng
+        self.lon = lon
         self.max_speed = multiprocessing.Value('i', 60)
         self.is_started = multiprocessing.Value('i', 0)
         self.rented_by = multiprocessing.Value('i', -1)
         self.current_speed = multiprocessing.Value('i', 0)
         self.websocket = None
 
+        self.async_manager = AsyncManager(self)  # Create an instance of AsyncManager
+
     # Activate the vehicle
-    async def activate(self):
-        await self.connect_websocket()
-        asyncio.create_task(self.run_vehicle_status())
-        asyncio.create_task(self.process_websocket_messages())
-        asyncio.create_task(self.calculate_speed())
-        asyncio.create_task(self.decrease_battery())
-        asyncio.create_task(self.reconnect_websocket())
+    async def activate(self, websocket = None, run_tasks = True):
+        if websocket is not None:
+            self.websocket = websocket
+        else:
+            await self.connect_websocket()
+
+        if run_tasks:
+            # await self.async_manager.activate_vehicle()  # Activate tasks through AsyncManager
+            asyncio.create_task(self.async_manager.activate_vehicle())
 
     # Run the vehicle status
     async def run_vehicle_status(self):
         while True:
-            await self.send_message("updateVehicleStatus")
+            await self.send_message("vehicleStatus")
             await asyncio.sleep(5)
 
 
@@ -67,7 +73,7 @@ class Vehicle:
                 "action": action,
                 "vehicleId": self.vehicle_id,
                 "lat": self.lat,
-                "lng": self.lng,
+                "lon": self.lon,
                 "battery": self.battery.value,
                 "maxSpeed": self.max_speed.value,
                 "isStarted": self.is_started.value,
@@ -97,6 +103,56 @@ class Vehicle:
         except Exception as e:
             logging.error(f"Unexpected error in receiving message: {e}")
     
+    def update_vehicle_data(self, response):
+        # response = json.loads(response)
+        action = response.get("action")
+        if action:
+            actions_mapping = {
+                "startVehicle": self._handle_start_vehicle,
+                "stopVehicle": self._handle_stop_vehicle,
+                "returnVehicle": self._handle_return_vehicle,
+                "rentVehicle": self._handle_rent_vehicle,
+                "maxSpeed": self._handle_max_speed,
+                "warning": self._handle_warning,
+                "error": self._handle_error
+            }
+
+            handler = actions_mapping.get(action)
+            if handler:
+                handler(response)
+            else:
+                print(f"Action '{action}' not recognized.")
+        else:
+            print("No action specified in the response.")
+    
+    def _handle_start_vehicle(self, response):
+        self.is_started.value = 1
+        print(f"Vehicle {self.vehicle_id} started by user {self.rented_by.value}.\n {response['message']}")
+
+    def _handle_stop_vehicle(self, response):
+        self.is_started.value = 0
+        self.current_speed.value = 0
+        print(f"Vehicle {self.vehicle_id} stopped by user {self.rented_by.value}.\n {response['message']}")
+
+    def _handle_return_vehicle(self, response):
+        print(f"Vehicle {self.vehicle_id} returned by user {self.rented_by.value}.\n {response['message']}")
+        self.rented_by.value = -1
+
+    def _handle_rent_vehicle(self, response):
+        self.rented_by.value = response.get("rentedBy")
+        print(f"Vehicle {self.vehicle_id} rented by user {self.rented_by.value}.\n {response['message']}")
+
+    def _handle_max_speed(self, response):
+        self.max_speed.value = response.get("maxSpeed")
+        print(f"Vehicle {self.vehicle_id} max speed updated.\n {response['message']}")
+
+    def _handle_warning(self, response):
+        print(f"Vehicle {self.vehicle_id} warning.\n {response['message']}")
+
+    def _handle_error(self, response):
+        print(f"Vehicle {self.vehicle_id} error.\n {response['message']}")
+
+
     # a method to always listen to the websocket server responses and update the vehicle status
     async def process_websocket_messages(self):
         while True:
@@ -107,30 +163,7 @@ class Vehicle:
                 if not response["action"]:
                     continue
                 
-                if response["action"] == "startVehicle":
-                        self.is_started.value = 1
-                        print(f"Vehicle {self.vehicle_id} started by user {self.rented_by.value}.\n {response['message']}")
-                elif response["action"] == "stopVehicle":
-                    self.is_started.value = 0
-                    self.current_speed.value = 0
-                    print(f"Vehicle {self.vehicle_id} stopped by user {self.rented_by.value}.\n {response['message']}")
-                elif response["action"] == "returnVehicle":
-                    self.rented_by.value = -1
-                    print(f"Vehicle {self.vehicle_id} returned by user {self.rented_by.value}.\n {response['message']}")
-                
-                elif response["action"] == "rentVehicle":
-                    self.rented_by.value = response["rentedBy"]
-                    print(f"Vehicle {self.vehicle_id} rented by user {self.rented_by.value}.\n {response['message']}")
-                
-                elif response["action"] == "maxSpeed":
-                    self.max_speed.value = response["maxSpeed"]
-                    print(f"Vehicle {self.vehicle_id} max speed updated.\n {response['message']}")
-                
-                elif response["action"] == "warning":
-                    print(f"Vehicle {self.vehicle_id} warning.\n {response['message']}")
-
-                elif response["action"] == "error":
-                    print(f"Vehicle {self.vehicle_id} error.\n {response['message']}")
+                self.update_vehicle_data(response)
 
 
             await asyncio.sleep(5)
@@ -144,9 +177,9 @@ class Vehicle:
             }
             await self.send_message(action, payload)
             return True
-        else:
-            print(f"Vehicle {self.vehicle_id} is already rented.")
-            return False
+
+        print(f"Vehicle {self.vehicle_id} is already rented.")
+        return False
 
     # Return the vehicle
     async def return_vehicle(self, user_id):
@@ -154,9 +187,9 @@ class Vehicle:
             action = "returnVehicle"
             await self.send_message(action)
             return True
-        else:
-            print(f"Vehicle {self.vehicle_id} can't be returned. Not rented by user {user_id}.")
-            return False
+
+        print(f"Vehicle {self.vehicle_id} can't be returned. Not rented by user {user_id}.")
+        return False
 
     # Start the vehicle
     async def start_vehicle(self, user_id):
@@ -164,9 +197,9 @@ class Vehicle:
             action = "startVehicle"
             await self.send_message(action)
             return True
-        else:
-            print(f"Vehicle {self.vehicle_id} can't be started by user {user_id}.")
-            return False
+
+        print(f"Vehicle {self.vehicle_id} can't be started by user {user_id}.")
+        return False
 
     # Stop the vehicle
     async def stop_vehicle(self):
@@ -174,8 +207,8 @@ class Vehicle:
             action = "stopVehicle"
             await self.send_message(action)
             return True
-        else:
-            return False
+
+        return False
 
     # Calculate the speed of the vehicle
     async def calculate_speed(self):

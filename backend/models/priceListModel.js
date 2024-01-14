@@ -20,7 +20,7 @@ const priceListModel = {
             const db = await database.openDb();
             const priceListItem = await database.query(
                 db,
-                "SELECT * FROM v_price_list WHERE id = ?",
+                "SELECT * FROM v_price_list WHERE id = ?;",
                 itemId
             );
             await database.closeDb(db);

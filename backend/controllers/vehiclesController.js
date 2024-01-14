@@ -3,18 +3,11 @@ const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
 const vehiclesController = {
     getAllVehicles: async function (req, res) {
-        const activeVehicles = connectedVehicles.get().map(vehicle => parseInt(vehicle.id));
         try {
             const allVehicles = await vehiclesModel.getAllVehicles();
-            const modifiedVehicles = allVehicles.map(vehicle => {
-                return {
-                    ...vehicle,
-                    status: activeVehicles.includes(vehicle.id) ? 'active' : 'inactive'
-                }
-            });
 
             return res.json({
-                data: modifiedVehicles ?? [],
+                data: allVehicles ?? [],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
@@ -27,8 +20,30 @@ const vehiclesController = {
             const vehicleId = req.params.vehicleId;
             const vehicle = await vehiclesModel.getVehicleById(vehicleId);
 
+            return res.json({data: [vehicle] ?? []});
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    getActiveVehicles: async function (req, res) {
+        const { forClient } = req.query;
+
+        try {
+            const activeVehicles = await vehiclesModel.getActiveVehicles();
+
+            if (forClient) {
+                // for client will exclude vehicles that is rented and vehicles that have a low battery
+                const result = activeVehicles.filter(vehicle => vehicle.rentedBy === -1 && vehicle.battery > 20);
+                return res.json({
+                    data: result ?? [],
+                });
+
+            }
+
             return res.json({
-                data: vehicle,
+                data: activeVehicles ?? [],
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
