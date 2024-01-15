@@ -5,6 +5,7 @@ dotenv.config();
 const { OAuth2Client } = require('google-auth-library');
 const fetch = require('node-fetch');
 const userModel = require("../../models/userModel.js"); 
+const { createUserIfNotExists, checkAdminStatus } = require("../../middleware/authMiddleware.js"); // Update the path as needed
 
 async function getUserData(access_token) {
   const response = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
@@ -36,31 +37,10 @@ router.get('/', async function (req, res, next) {
     const userData = await getUserData(oAuth2Client.credentials.access_token);
     console.log('User Email:', userData.email);
 
-    const user = await userModel.getUserByEmail(userData.email);
-    if (!user) {
-      // If user does not exist, create a new user
-      const newUser = await userModel.createUser({
-        role: 'user', // Set the default role
-        email: userData.email,
-        name: userData.name || '', // Set the name from Google OAuth
-        personal_number: null, // Set other fields to null or default values
-        address: null,
-        wallet: 0
-      });
-
-      console.log("New User Created:", newUser);
-
-      // Fetch and log all users
-      const allUsers = await userModel.getAllUsers();
-      console.log("All Users:", allUsers);
-
-      user = newUser;
-
-      
-    }
+    const user = await createUserIfNotExists(userData);
 
     // Check if the user is an admin
-    const isAdmin = await userModel.isAdminByEmail(userData.email);
+    const isAdmin = await checkAdminStatus(userData.email);
 
     if (isAdmin) {
       console.log('User is an admin');

@@ -3,7 +3,6 @@ name: Backend CI/CD
 on:
     push:
         branches:
-            - feature/backend/apitests
             - dev
             - master
 
