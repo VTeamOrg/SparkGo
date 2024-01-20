@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-
+const adminOnlyAccess = require('../../middleware/adminOnlyAccess.js');
 let usersController = require("../../controllers/usersController.js");
 
-router.get("/", usersController.getAllUsers);
+router.get("/", adminOnlyAccess, usersController.getAllUsers);
 
 router.get("/email/:email", usersController.getUserByEmail);
 

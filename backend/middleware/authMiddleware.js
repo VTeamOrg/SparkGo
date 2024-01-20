@@ -20,12 +20,8 @@ async function createUserIfNotExists(userData) {
   return user;
 }
 
-async function checkAdminStatus(email) {
-  const isAdmin = await userModel.isAdminByEmail(email);
-  return isAdmin;
-}
+
 
 module.exports = {
   createUserIfNotExists,
-  checkAdminStatus,
 };

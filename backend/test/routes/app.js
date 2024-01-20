@@ -38,15 +38,27 @@ describe("Server Connection Behavior", () => {
             });
     });
 
-    // Test Case 3: Test a GET request to an endpoint from the "users" route
-    it("should handle a GET request and return a 200 status code for an endpoint from the 'users' route", (done) => {
-        chai.request(app)
-            .get("/v1/users")
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
+        // Test Case: Access as Admin
+        it("should allow an admin user to access the /users route", (done) => {
+            chai.request(app)
+                .get("/v1/users")
+                .set('Cookie', 'userRole=admin') // Mocking an 'admin' role cookie
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    done();
+                });
+        });
+    
+        // Test Case: Access as Non-Admin
+        it("should deny access to a non-admin user on the /users route", (done) => {
+            chai.request(app)
+                .get("/v1/users")
+                .set('Cookie', 'userRole=user') // Mocking a 'user' role cookie
+                .end((err, res) => {
+                    expect(res).to.have.status(403); // Assuming 403 Forbidden for unauthorized access
+                    done();
+                });
+        });
 
     // Test Case 4: Test an endpoint from the "vehicles" route
     it("should return a 200 status code when accessing an endpoint from the 'vehicles' route", (done) => {

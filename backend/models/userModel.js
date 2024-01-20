@@ -118,11 +118,12 @@ const userModel = {
         }
     },
 
+        // Generic function to get user by email
     getUserByEmail: async function getUserByEmail(email) {
         if (!email) {
             throw new Error("Missing user email");
         }
-    
+        
         try {
             const db = await database.openDb();
             const user = await database.query(
@@ -137,40 +138,20 @@ const userModel = {
         }
     },
 
+    // Function to check user role
+    isUserRole: async function isUserRole(email, role) {
+        const user = await this.getUserByEmail(email);
+        return user && user.role === role;
+    },
+
+    // Use isUserRole function to check for specific roles
     isAdminByEmail: async function isAdminByEmail(email) {
-        if (!email) {
-            throw new Error("Missing user email");
-        }
-        try {
-            const db = await database.openDb();
-            const user = await database.query(
-                db,
-                "SELECT * FROM member WHERE email = ?;",
-                [email]
-            );
-            await database.closeDb(db);
-            return user.length > 0 && user[0].role === 'admin';
-        } catch (error) {
-            throw error;
-        }    
+        console.log("Admin:",email);
+        return this.isUserRole(email, 'admin');
     },
 
     isRepairByEmail: async function isRepairByEmail(email) {
-        if (!email) {
-            throw new Error("Missing user email");
-        }
-        try {
-            const db = await database.openDb();
-            const user = await database.query(
-                db,
-                "SELECT * FROM member WHERE email = ?;",
-                [email]
-            );
-            await database.closeDb(db);
-            return user.length > 0 && user[0].role === 'repair';
-        } catch (error) {
-            throw error;
-        }
+        return this.isUserRole(email, 'repair');
     }
 };
 

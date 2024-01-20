@@ -2,11 +2,19 @@ import PropTypes from 'prop-types';
 import './Navbar.css';
 
 function Navbar({ setActiveSection, userRole }) {
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Send a request to the backend to clear cookies
+    await fetch('http://localhost:3000/v1/logout', {
+      method: 'GET',
+      credentials: 'include', // Important to include credentials
+    });
+
+    // Clear local storage or any client-side state
     localStorage.removeItem('userLoggedIn');
     localStorage.removeItem('userEmail');
-    /* Reload the page to go back to the beginning */
-    window.location.reload();
+
+    // Redirect to the login page or home page
+    window.location.href = 'http://localhost:5173/';
   };
 
   const handleLinkClick = (section) => {

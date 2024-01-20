@@ -4,6 +4,8 @@ const express = require("express");
 const http = require('http');
 const cors = require("cors");
 const websocket = require('ws');
+var cookieParser = require('cookie-parser');
+
 const loadHttpRoutes = require("./routes/httpRoutes");
 const loadWebsocket = require('./routes/websocketRoutes');
 const loadAuthRoutes = require('./routes/oauthRoutes');
@@ -13,8 +15,8 @@ const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-    methods: 'GET,POST',
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'localhost:5173'],
+    methods: 'GET,POST,UPDATE,PUT,DELETE',
     allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization', 'credentials'],
     credentials: true,
     optionsSuccessStatus: 200
@@ -24,12 +26,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-// Request logging middleware
-app.use((req, res, next) => {
-    console.log('Request URL:', req.url);
-    console.log('Request Headers:', req.headers);
-    next();
-});
 
 app.disable("x-powered-by");
 
@@ -44,6 +40,7 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use(cookieParser());
 loadAuthRoutes(app);
 loadHttpRoutes(app);
 loadWebsocket(wss);
