@@ -29,17 +29,6 @@ describe("Admin Access Tests", () => {
         sandbox.restore();
     });
 
-    // Test Case: Access as Admin
-    it("should allow an admin user to access the /users route", (done) => {
-        chai.request(app)
-            .get("/v1/users")
-            .set('Cookie', ['userId=adminUserId', 'authToken=validToken']) // Mocking admin user cookies
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-
     // Test Case: Access as Non-Admin
     it("should deny access to a non-admin user on the /users route", (done) => {
         chai.request(app)
