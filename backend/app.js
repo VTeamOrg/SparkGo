@@ -40,7 +40,8 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use(cookieParser());
+app.use(cookieParser( process.env.SESSION_SECRET));
+
 loadAuthRoutes(app);
 loadHttpRoutes(app);
 loadWebsocket(wss);

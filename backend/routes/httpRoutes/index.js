@@ -12,6 +12,7 @@ const receipts = require("./receipts.js");
 const vehicleTypes = require("./vehicleTypes.js");
 const coords = require("./coords.js");
 const logout = require("./logout.js");
+const validateSession = require("./validateSession.js");
 const { generalApiLimiter } = require("../../middleware/apiLimter.js");
 
 
@@ -30,6 +31,7 @@ const loadHttpRoutes = (app) => {
     app.use("/v1/activePlan", activePlan);
     app.use("/v1/frequencies", frequencies);
     app.use("/v1/logout", logout);
+    app.use("/v1/validate-session", validateSession);
 }
 
 // Function to load HTTP routes with rate limiters

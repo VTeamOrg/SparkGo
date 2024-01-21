@@ -6,7 +6,6 @@ router.get('/', (req, res) => {
     res.clearCookie('authToken', { path: '/v1' });
     res.clearCookie('userRole', { path: '/v1' });
     res.clearCookie('userId', { path: '/v1' });
-
     res.clearCookie('authToken', { path: '/' });
     res.clearCookie('userRole', { path: '/' });
     res.clearCookie('userId', { path: '/' });

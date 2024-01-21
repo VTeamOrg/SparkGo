@@ -1,19 +1,36 @@
-
+const tokenModel = require("../models/tokenModel.js");
+const userModel = require("../models/userModel.js");
 
 // adminOnlyAccess.js
-const adminOnlyAccess = (req, res, next) => {
-  // Assume the user's role is stored in a cookie named 'userRole'
-  const userRole = req.cookies.userRole;
-  console.log('userRole from cookie:', req.cookies.userRole);
+const adminOnlyAccess = async (req, res, next) => {
+  try {
+      const userId = req.cookies.userId;
+      const authToken = req.cookies.authToken;
 
+      const isValidToken = await tokenModel.validateAuthTokenAndUserId(authToken, userId);
+      if (!isValidToken) {
+          return res.status(403).json({ message: 'Invalid session or token expired' });
+      }
 
-  if (userRole !== 'admin') {
-    // If the user is not an admin, return a 403 Forbidden response
-    return res.status(403).json({ message: 'Access forbidden. Admins only.' });
+      // Retrieve user email or role based on userId
+      const user = await userModel.getUserById(userId);
+      if (!user) {
+          return res.status(403).json({ message: 'User not found' });
+      }
+
+      // Check if the user has an admin role
+      if (user.role !== 'admin') {
+          return res.status(403).json({ message: 'Access denied. Admins only.' });
+      }
+
+      // Optionally, add userRole to request object for use in subsequent routes
+      req.userRole = user.role;
+
+      next();
+  } catch (error) {
+      console.error('Session validation error:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
   }
-
-  // If the user is an admin, proceed to the next middleware/route handler
-  next();
 };
 
 module.exports = adminOnlyAccess;

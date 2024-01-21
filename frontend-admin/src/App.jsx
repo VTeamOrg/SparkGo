@@ -13,8 +13,6 @@ function App() {
   const [userId, setUserId] = useState(null);
 
 
-  console.log('All cookies:', document.cookie);
-  
   
   useEffect(() => {
     const loggedInStatus = Cookies.get('userLoggedIn');

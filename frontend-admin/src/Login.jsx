@@ -9,21 +9,32 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const userId = Cookies.get('userId', { secure: false });
-    const userRole = Cookies.get('userRole', { secure: false });
-
-    if (userId && userRole === 'admin') {
-      setUserLoggedIn(true);
-      setUserRole(userRole);
-      setUserId(userId);
-    } else {
-      setUserLoggedIn(false);
-      // Optionally, redirect non-admin users or show an error message
-    }
-
-    // Clear cookies when the component unmounts
+    const validateSession = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/v1/validate-session', {
+          credentials: 'include', // Ensures cookies are sent with the request
+        });
+        const data = await response.json();
+  
+        if (data.userLoggedIn) {
+          setUserLoggedIn(true);
+          setUserRole(data.userRole);
+          setUserId(data.userId);
+        } else {
+          setUserLoggedIn(false);
+          // Optionally, redirect non-logged-in users or show an error message
+        }
+      } catch (error) {
+        console.error('Error during session validation:', error);
+        setUserLoggedIn(false);
+        // Handle the error
+      }
+    };
+  
+    validateSession();
+  
     return () => {
-      Cookies.remove('userId', { secure: true, sameSite: 'strict' });
+      // Clear client-side cookies if needed
     };
   }, [setUserLoggedIn, setUserRole, setUserId]);
 
