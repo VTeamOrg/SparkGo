@@ -78,8 +78,9 @@ CREATE TABLE vehicle (
     type_id INT, 
     vehicle_status VARCHAR(255),
     name VARCHAR(255),
+    station_id INT,
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id)
 );
 
 CREATE TABLE plan (

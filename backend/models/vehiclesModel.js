@@ -34,7 +34,8 @@ const vehiclesModel = {
                         rentedBy: connectedVehicle.rentedBy,
                         city_name: vehicle.city_name,
                         name: vehicle.name,
-                        type_name: vehicle.vehicle_type_name
+                        type_name: vehicle.vehicle_type_name,
+                        station_id: vehicle.station_id
                     }
                 }
 
@@ -51,7 +52,8 @@ const vehiclesModel = {
                     rentedBy: null,
                     city_name: vehicle.city_name,
                     name: vehicle.name,
-                    type_name: vehicle.vehicle_type_name
+                    type_name: vehicle.vehicle_type_name,
+                    station_id: vehicle.station_id
                 }
             });
 
@@ -96,7 +98,8 @@ const vehiclesModel = {
                         rentedBy: connectedVehicle.rentedBy,
                         city_name: vehicle.city_name,
                         name: vehicle.name,
-                        type_name: vehicle.vehicle_type_name
+                        type_name: vehicle.vehicle_type_name,
+                        station_id: vehicle.station_id,
                     }
                 }
 
@@ -113,7 +116,8 @@ const vehiclesModel = {
                     rentedBy: null,
                     city_name: vehicle.city_name,
                     name: vehicle.name,
-                    type_name: vehicle.vehicle_type_name
+                    type_name: vehicle.vehicle_type_name,
+                    station_id: vehicle.station_id,
                 }
             });
 
@@ -153,7 +157,8 @@ const vehiclesModel = {
                     rentedBy: connectedVehicle.rentedBy,
                     city_name: vehicle.city_name,
                     name: vehicle.name,
-                    type_name: vehicle.vehicle_type_name
+                    type_name: vehicle.vehicle_type_name,
+                    station_id: vehicle.station_id
                 }
             }
 
@@ -170,7 +175,8 @@ const vehiclesModel = {
                 rentedBy: null,
                 city_name: vehicle.city_name,
                 name: vehicle.name,
-                type_name: vehicle.vehicle_type_name
+                type_name: vehicle.vehicle_type_name,
+                station_id: vehicle.station_id
             }
         } catch (error) {
             throw error;
