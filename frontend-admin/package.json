@@ -25,6 +25,8 @@
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.21.1",
+    "react-svg-to-image": "^3.0.0",
+    "react-use-websocket": "^4.5.0",
     "react-vite": "^0.0.5"
   },
   "devDependencies": {

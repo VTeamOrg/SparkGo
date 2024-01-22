@@ -136,8 +136,6 @@ function MyAccount({ userId }) {
             reference_info: method.reference_info,
             is_selected: method.is_selected === 'Y' ? 'Y' : 'N',
           }));
-
-          console.log("updated data", updatedPaymentMethodData);
   
           Promise.all(
             updatedPaymentMethodData.map((methodData) =>

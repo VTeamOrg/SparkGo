@@ -4,8 +4,6 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
-  console.log("Fetching ", endpoint);
-
   try {
     const response = await fetch(apiUrl(endpoint), {
       credentials: 'include', // Include cookies with the request
@@ -15,7 +13,6 @@ export const fetchData = async (endpoint, callback) => {
       throw new Error(`Failed to fetch data for endpoint: ${endpoint}`);
     }
     const data = await response.json();
-    console.log(data.data);
 
     if (typeof callback === 'function') {
       callback(data.data);
@@ -70,6 +67,7 @@ export const createData = async (endpoint, newData) => {
 
 /* UPDATE data for a given endpoint */
 export const updateData = async (endpoint, itemId, updatedData) => {
+  console.log(endpoint);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'PUT',
@@ -94,7 +92,6 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {
-  console.log("in delete, ", endpoint, " ", itemId);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'DELETE',
@@ -110,3 +107,4 @@ export const deleteData = async (endpoint, itemId) => {
     throw new Error(`Error deleting data for endpoint ${endpoint}: ${error.message}`);
   }
 };
+

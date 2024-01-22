@@ -64,6 +64,69 @@ const vehiclesModel = {
         }
     },
 
+    getVehiclesByStationId: async function (stationId) {
+        try {
+            const db = await database.openDb();
+            const getAllVehicles = await database.query(
+                db,
+                "SELECT * FROM v_vehicle WHERE station_id = ? ORDER BY id DESC",
+                [stationId]
+            );
+    
+            await database.closeDb(db);
+    
+            // Check and ensure the result is an array or convert if needed
+            const vehiclesArray = Array.isArray(getAllVehicles)
+                ? getAllVehicles // If it's already an array, use it as is
+                : (getAllVehicles ? [getAllVehicles] : []); // Convert to array or use an empty array if null/undefined
+    
+            const result = vehiclesArray.map(vehicle => {
+                const connectedVehicle = connectedVehicles.get().find(connectedVehicle => connectedVehicle.id === vehicle.id);
+    
+                if (connectedVehicle) {
+                    return {
+                        id: vehicle.id,
+                        city_id: vehicle.city_id,
+                        type_id: vehicle.type_id,
+                        status: 'active',
+                        position: {lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon},
+                        battery: connectedVehicle.data?.battery ?? null,
+                        currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
+                        maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
+                        isStarted: connectedVehicle.data?.isStarted ?? null,
+                        rentedBy: connectedVehicle.rentedBy,
+                        city_name: vehicle.city_name,
+                        name: vehicle.name,
+                        type_name: vehicle.vehicle_type_name,
+                        station_id: vehicle.station_id
+                    };
+                }
+    
+                return {
+                    id: vehicle.id,
+                    city_id: vehicle.city_id,
+                    type_id: vehicle.type_id,
+                    status: 'inactive',
+                    position: [null, null],
+                    battery: null,
+                    currentSpeed: null,
+                    maxSpeed: null,
+                    isStarted: null,
+                    rentedBy: null,
+                    city_name: vehicle.city_name,
+                    name: vehicle.name,
+                    type_name: vehicle.vehicle_type_name,
+                    station_id: vehicle.station_id
+                };
+            });
+    
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    },
+    
+
     getActiveVehicles: async function () {
         try {
             const db = await database.openDb();
@@ -202,21 +265,21 @@ const vehiclesModel = {
 
     // i dont think we need this, we have to be more specific on what we want to update
     // i think it's better to make a function for each update we want to do
-    updateVehicle: async function (vehicleId, city_id, type_id, rented_by) {
+    updateVehicle: async function (vehicleId, city_id, type_id, vehicle_status, name, station_id) {
         try {
             const db = await database.openDb();
             const updatedVehicle = await database.query(
                 db,
-                "UPDATE vehicle SET city_id = ?, type_id = ?, rented_by = ? WHERE id = ?",
-                [city_id, type_id, rented_by, vehicleId]
+                "UPDATE vehicle SET city_id = ?, type_id = ?, vehicle_status = ?, name = ?, station_id = ? WHERE id = ?",
+                [city_id, type_id, vehicle_status, name, station_id, vehicleId]
             );
-
+    
             await database.closeDb(db);
             return updatedVehicle;
         } catch (error) {
             throw error;
         }
-    },
+    },  
 
     rentVehicle: async function (vehicleId, rentedBy) {
         try {

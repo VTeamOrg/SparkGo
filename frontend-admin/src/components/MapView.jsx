@@ -3,12 +3,17 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
 import './MapView.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChargingStation } from '@fortawesome/free-solid-svg-icons';
+import ReactDOMServer from 'react-dom/server';
+
 
 function MapView() {
   const mapRef = useRef(null);
   const citiesCoordinates = useRef(new Map());
   const [markers, setMarkers] = useState([]);
   const [mapEnabled, setMapEnabled] = useState(true);
+  
 
   useEffect(() => {
     const handleDisableMap = () => {
@@ -63,8 +68,21 @@ function MapView() {
     function handleStationsDataLoaded(event) {
       const markersData = event.detail.map((marker, index) => {
         const { lat, lng, infoText, id } = marker;
-        return (
-          <Marker key={id || index} position={[lat, lng]}>
+
+        const iconHtml = ReactDOMServer.renderToString(
+          <FontAwesomeIcon icon={faChargingStation} />
+        );
+
+      return (
+          <Marker
+            key={id || index}
+            position={[lat, lng]}
+            icon={L.divIcon({
+              className: 'station-marker-icon',
+              html: iconHtml,
+              iconSize: [24, 24],
+            })}
+          >
             <Popup>{infoText}</Popup>
           </Marker>
         );

@@ -27,6 +27,18 @@ const vehiclesController = {
         }
     },
 
+    getVehicleByStationId: async function (req, res) {
+        try {
+            const stationId = req.params.stationId;
+            const vehicle = await vehiclesModel.getVehiclesByStationId(stationId);
+
+            return res.json({data: [vehicle] ?? []});
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
     getActiveVehicles: async function (req, res) {
         const { forClient } = req.query;
 
@@ -67,11 +79,12 @@ const vehiclesController = {
     },
 
     updateVehicle: async function (req, res) {
+        console.log("update vehicle controller");
         try {
             const vehicleId = req.params.vehicleId;
-            const { city_id, type_id, rented_by } = req.body;
-            const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, rented_by);
-
+            const { city_id, type_id, vehicle_status, name, station_id } = req.body;
+            const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
+    
             return res.json({
                 message: "Vehicle updated successfully",
                 data: updatedVehicle,

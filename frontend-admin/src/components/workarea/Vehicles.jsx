@@ -13,7 +13,8 @@ function Vehicles() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditVehicleModal, setShowEditVehicleModal] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
-
+    /* State to store station data */
+    const [stations, setStations] = useState([]);
 
   useEffect(() => {
     fetchDataUpdateState();
@@ -41,6 +42,24 @@ function Vehicles() {
     const event = new CustomEvent('vehiclesDataLoaded', { detail: formattedVehicleMarkers });
     window.dispatchEvent(event);
       console.log(data);
+    });
+
+    fetchData('stations',(stationsData) => {
+      /* Update the component's state with station data */
+      setStations(stationsData);
+
+      /* Format the data into markers */
+      const formattedMarkers = stationsData.map((station) => ({
+        lat: station.coords_lat,
+        lng: station.coords_long,
+        infoText: station.name,
+        id: station.id,
+        cityName: station.city_name,
+      }));
+
+      /* Emit an event with the formatted markers data */
+      const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
+      window.dispatchEvent(event);
     });
 
   };
