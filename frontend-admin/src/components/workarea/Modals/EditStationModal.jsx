@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { fetchData } from '../../support/FetchService';
+import PropTypes from 'prop-types';
 
 const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
   const [stationName, setStationName] = useState('');
@@ -78,6 +79,21 @@ const EditStationModal = ({ isOpen, onRequestClose, onSave, station }) => {
     });
 
     return null;
+  };
+
+  
+
+  EditStationModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    station: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      coords_lat: PropTypes.number.isRequired,
+      coords_long: PropTypes.number.isRequired,
+      city_id: PropTypes.number.isRequired,
+    }),
   };
 
   return (

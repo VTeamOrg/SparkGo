@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { createData } from '../../support/FetchService';
 import { validateEmail } from '../../support/Utils';
 import AddMemberModalContent from '../HTML/AddMember';
+import PropTypes from 'prop-types';
 
 /**
  * AddMemberModal component displays a modal for adding new members.
@@ -38,7 +39,7 @@ function AddMemberModal({ isOpen, onRequestClose, refreshMembers }) {
     setEmailError('');
 
     createData('users', newMember)
-      .then((createdMember) => {
+      .then(() => {
         onRequestClose();
 
         if (refreshMembers) {
@@ -48,6 +49,12 @@ function AddMemberModal({ isOpen, onRequestClose, refreshMembers }) {
       .catch((error) => {
         console.error('Error adding member:', error);
       });
+  };
+
+  AddMemberModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    refreshMembers: PropTypes.func.isRequired,
   };
 
   return (

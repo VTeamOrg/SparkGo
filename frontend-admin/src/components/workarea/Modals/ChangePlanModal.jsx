@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { fetchData, createData, updateData } from '../../support/FetchService';
 import '../CSS/Modal.css';
 import ChangePlan from '../HTML/ChangePlan'; 
+import PropTypes from 'prop-types';
 
 /**
  * ChangePlanModal component for changing a member's active plan.
@@ -80,6 +81,16 @@ function ChangePlanModal({ isOpen, onRequestClose, activePlan, onSave }) {
           console.error('Error creating plan:', error);
         });
     }
+  };
+
+  ChangePlanModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    activePlan: PropTypes.shape({
+      active_plan_id: PropTypes.number,
+      id: PropTypes.number.isRequired,
+    }).isRequired,
+    onSave: PropTypes.func.isRequired,
   };
 
   return (

@@ -17,8 +17,8 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
         connectedAdmins.add({id: connectionId, ws, data: {latitude: -1, longitude: -1}});
     }
 
-    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
-    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
+//    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
+//    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
 };
 
 // create seperate files for each topic ex (vehicles, cities ...)

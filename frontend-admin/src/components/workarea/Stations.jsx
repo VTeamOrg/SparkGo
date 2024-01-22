@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
 import AddStationModal from './Modals/AddStationModal'; 
 import EditStationModal from './Modals/EditStationModal'; 
+import ShowStationModal from './Modals/ShowStationModal';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt, faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * PriceList component for managing stations
@@ -19,6 +20,8 @@ function Stations() {
   /* State to show edit station modal and store the editing station */
   const [showEditStationModal, setShowEditStationModal] = useState(false);
   const [editingStation, setEditingStation] = useState(null);
+  const [showShowStationModal, setShowShowStationModal] = useState(false);
+  const [stationToShow, setStationToShow] = useState(null);
 
   /* Effect to fetch station data when the component mounts */
   useEffect(() => {
@@ -94,6 +97,18 @@ function Stations() {
     }
   };
 
+  const handleInfoStation = (stationId) => {
+    // Set the station ID to show in the modal
+    setShowShowStationModal(true);
+    setStationToShow(stationId);
+  };
+  
+  const handleCloseShowStationModal = () => {
+    // Clear the station ID and close the modal
+    setStationToShow(null);
+    setShowShowStationModal(false);
+  };
+
   /* JSX to render station data */
   return (
     <div className="api">
@@ -103,21 +118,29 @@ function Stations() {
       <table className="api-table">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Coordinates</th>
             <th>City</th>
             <th></th> 
             <th></th> 
+            <th></th>             
           </tr>
         </thead>
         <tbody>
           {stations.map((station) => (
             <tr key={station.id} className="api-row">
+              <td >{station.id}</td>
               <td >{station.name}</td>
               <td >
                 ({station.coords_lat}, {station.coords_long})
               </td>
               <td >{station.city_name}</td>
+              <td className="api-edit">
+              <button onClick={() => handleInfoStation(station.id)}>
+                <FontAwesomeIcon icon={faInfoCircle} />
+              </button>
+            </td>              
               <td className="api-edit">
                 <button onClick={() => handleEditStation(station)}>
                   <FontAwesomeIcon icon={faPencilAlt} />
@@ -149,6 +172,14 @@ function Stations() {
           station={editingStation} 
         />
       )}
+
+      {/* ShowStationModal component */}
+      <ShowStationModal
+        isOpen={showShowStationModal}
+        onRequestClose={handleCloseShowStationModal}
+        stationId={stationToShow}
+      />
+
     </div>
   );
 }

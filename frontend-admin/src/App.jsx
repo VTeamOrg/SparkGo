@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Login from './Login';
 import Navbar from './components/Navbar';
 import WorkArea from './components/WorkArea';
 import MapView from './components/MapView';
+import Cookies from 'js-cookie';
 
 function App() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -11,27 +12,27 @@ function App() {
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
 
+
+  
   useEffect(() => {
-    // Check if the user is already logged in based on the presence of a JWT token
-/*    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
+    const loggedInStatus = Cookies.get('userLoggedIn');
+    const role = Cookies.get('userRole');
+    const id = Cookies.get('userId');
+
+    if (loggedInStatus === 'true') {
       setUserLoggedIn(true);
-    } */
+      setUserRole(role);
+      setUserId(id);
+    }
   }, []);
 
   return (
     <div className="App">
       {userLoggedIn ? (
         <div className="app-container">
-          <div className="navbar">
-            <Navbar setActiveSection={setActiveSection} userRole={userRole} />
-          </div>
-          <div className="content">
-            <WorkArea activeSection={activeSection} userId={userId} />
-          </div>
-          <div className="mapview">
-            <MapView />
-          </div>
+          <Navbar setActiveSection={setActiveSection} userRole={userRole} />
+          <WorkArea activeSection={activeSection} userId={userId} />
+          <MapView />
         </div>
       ) : (
         <Login setUserLoggedIn={setUserLoggedIn} setUserRole={setUserRole} setUserId={setUserId} />

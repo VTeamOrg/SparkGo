@@ -125,6 +125,72 @@ const users = {
         }
     },
 
+    getUserByEmail: async function (email) {
+        if (!email) {
+          throw new Error("Missing user email");
+        }
+    
+        try {
+          const db = await database.openDb();
+          const user = await database.query(
+            db,
+            "SELECT * FROM member WHERE email = ?",
+            [email]
+          );
+    
+          await database.closeDb(db);
+    
+          return user.length > 0 ? user[0] : null;
+        } catch (error) {
+          console.error("Error querying database:", error.message);
+          throw new Error("Internal Server Error");
+        }
+      },
+    
+      isAdminByEmail: async function (email) {
+        if (!email) {
+          throw new Error("Missing user email");
+        }
+    
+        try {
+          const db = await database.openDb();
+          const user = await database.query(
+            db,
+            "SELECT * FROM member WHERE email = ? AND role = 'admin'",
+            [email]
+          );
+    
+          await database.closeDb(db);
+    
+          return user.length > 0;
+        } catch (error) {
+          console.error("Error querying database:", error.message);
+          throw new Error("Internal Server Error");
+        }
+      },
+    
+      isRepairByEmail: async function (email) {
+        if (!email) {
+          throw new Error("Missing user email");
+        }
+    
+        try {
+          const db = await database.openDb();
+          const user = await database.query(
+            db,
+            "SELECT * FROM member WHERE email = ? AND role = 'repair'",
+            [email]
+          );
+    
+          await database.closeDb(db);
+    
+          return user.length > 0;
+        } catch (error) {
+          console.error("Error querying database:", error.message);
+          throw new Error("Internal Server Error");
+        }
+      },
+
     deleteUser: async function (userId) {
         try {
             const db = await database.openDb();
@@ -137,6 +203,7 @@ const users = {
             console.error("Error deleting user:", error.message);
             throw new Error("Internal Server Error");
         }
+        
     },
 };
 

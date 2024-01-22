@@ -46,7 +46,6 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-SELECT * FROM member;
 
 LOAD DATA LOCAL INFILE 'csv/renting_station.csv'
 INTO TABLE renting_station
@@ -82,6 +81,19 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
+
+
+
+LOAD DATA LOCAL INFILE 'csv/parking_zone.csv'
+INTO TABLE parking_zone
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+SELECT * FROM parking_zone;
+
 
 /* mariadb --table < insert.sql */
 

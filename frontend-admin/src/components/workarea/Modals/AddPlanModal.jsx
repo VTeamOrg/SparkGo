@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { fetchData, createData } from '../../support/FetchService';
 import AddPlan from '../HTML/AddPlan';
+import PropTypes from 'prop-types';
 
 /**
  * AddPlanModal component for adding a new plan.
@@ -35,7 +36,7 @@ function AddPlanModal({ isOpen, onRequestClose, refreshPlans }) {
    */
   const handleAddPlan = () => {
     createData('plans', newPlan)
-      .then((createdPlan) => {
+      .then(() => {
         onRequestClose();
 
         if (refreshPlans) {
@@ -45,6 +46,12 @@ function AddPlanModal({ isOpen, onRequestClose, refreshPlans }) {
       .catch((error) => {
         console.error('Error adding plan:', error);
       });
+  };
+
+  AddPlanModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    refreshPlans: PropTypes.func.isRequired,
   };
 
   return (

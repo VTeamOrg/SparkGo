@@ -80,8 +80,9 @@ CREATE TABLE vehicle (
     type_id INT, 
     vehicle_status VARCHAR(255),
     name VARCHAR(255),
+    station_id INT,
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id)
 );
 
 CREATE TABLE plan (
@@ -123,6 +124,25 @@ CREATE TABLE receipt (
     sum DECIMAL(10, 2),
     payment_date DATETIME,
     FOREIGN KEY (member_id) REFERENCES member(id)
+);
+
+CREATE TABLE auth_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    auth_token VARCHAR(255),
+    expires_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES member(id)
+);
+
+
+-- New tables for e-scooter parking
+CREATE TABLE parking_zone (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city_id INT,
+    name VARCHAR(255),
+    coords_lat DECIMAL(10, 6), 
+    coords_long DECIMAL(10, 6), 
+    FOREIGN KEY (city_id) REFERENCES city(id)
 );
 
 

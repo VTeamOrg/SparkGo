@@ -93,6 +93,36 @@ describe("Server Connection Behavior", () => {
             }
         });
     });
+
+    describe("Check Admin Status by Email", () => {
+        it("should check if a user with 'admin' role exists for a given email", async () => {
+          try {
+            // Attempt to check if the user is an admin by email
+            const isAdmin = await usersModel.isAdminByEmail('testuser@example.com');
+            
+            // Assert that the isAdmin value is a boolean
+            expect(isAdmin).to.be.a('boolean');
+            // You can add more specific assertions based on your expected behavior
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+      
+      describe("Check Repair Status by Email", () => {
+        it("should check if a user with 'repair' role exists for a given email", async () => {
+          try {
+            // Attempt to check if the user is a repair role by email
+            const isRepair = await usersModel.isRepairByEmail('testuser@example.com');
+            
+            // Assert that the isRepair value is a boolean
+            expect(isRepair).to.be.a('boolean');
+            // You can add more specific assertions based on your expected behavior
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
     
     describe("Delete User by ID (DELETE)", () => {
         it("should manually delete a user by ID from the database", async () => {

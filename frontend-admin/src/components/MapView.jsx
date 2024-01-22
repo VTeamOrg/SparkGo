@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
 import './MapView.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChargingStation } from '@fortawesome/free-solid-svg-icons';
+import ReactDOMServer from 'react-dom/server';
+
 
 function MapView() {
   const mapRef = useRef(null);
   const citiesCoordinates = useRef(new Map());
   const [markers, setMarkers] = useState([]);
-  const [mapDisabled, setMapDisabled] = useState(false);
   const [mapEnabled, setMapEnabled] = useState(true);
+  
 
   useEffect(() => {
     const handleDisableMap = () => {
@@ -29,6 +33,7 @@ function MapView() {
     window.addEventListener('citiesDataLoaded', handleCitiesDataLoaded);
     window.addEventListener('disableMap', handleDisableMap);
     window.addEventListener('enableMap', handleEnableMap);
+    window.addEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
 
     function handleCitiesDataLoaded(data) {
       if (data && data.detail && Array.isArray(data.detail)) {
@@ -63,8 +68,21 @@ function MapView() {
     function handleStationsDataLoaded(event) {
       const markersData = event.detail.map((marker, index) => {
         const { lat, lng, infoText, id } = marker;
-        return (
-          <Marker key={id || index} position={[lat, lng]}>
+
+        const iconHtml = ReactDOMServer.renderToString(
+          <FontAwesomeIcon icon={faChargingStation} />
+        );
+
+      return (
+          <Marker
+            key={id || index}
+            position={[lat, lng]}
+            icon={L.divIcon({
+              className: 'station-marker-icon',
+              html: iconHtml,
+              iconSize: [24, 24],
+            })}
+          >
             <Popup>{infoText}</Popup>
           </Marker>
         );
@@ -79,12 +97,44 @@ function MapView() {
       }
     }
 
+    function handleVehiclesDataLoaded(event) {
+      const vehicleMarkers = event.detail.map((vehicle, index) => {
+        const { lat, lng, infoText, id, cityName, status, battery, currentSpeed, maxSpeed, isStarted, rentedBy } = vehicle;
+        return (
+          <Marker key={id || index} position={[lat, lng]}>
+            <Popup>
+              <div>
+                <h4>{infoText}</h4>
+                <p>City: {cityName}</p>
+                <p>Status: {status}</p>
+                <p>Battery: {battery}</p>
+                <p>Current Speed: {currentSpeed}</p>
+                <p>Max Speed: {maxSpeed}</p>
+                <p>Started: {isStarted ? 'Yes' : 'No'}</p>
+                <p>Rented By: {rentedBy === -1 ? 'Red Cross' : rentedBy}</p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      });
+    
+      setMarkers(vehicleMarkers);
+    
+      // Use mapRef to access the map instance and set the zoom level
+      // Center on the first vehicle's position and set zoom to your desired value
+      if (mapRef.current && event.detail.length > 0) {
+        const firstVehicle = event.detail[0];
+        mapRef.current.setView([firstVehicle.lat, firstVehicle.lng], 13);
+      }
+    }
+
     return () => {
       window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
       window.removeEventListener('clearMarkers', handleClearMarkers);
       window.removeEventListener('disableMap', handleDisableMap);
       window.removeEventListener('enableMap', handleEnableMap);
-      window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
+      window.removeEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
+
     };
   }, []);
 

@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { fetchData } from '../support/FetchService';
 import AddMemberModal from './Modals/AddMemberModal'; 
 import MemberModal from './Modals/MemberModal'; 
 import MembersTable from './HTML/Members'; 
-import { SearchBar, ButtonRow } from './HTML/General';
+import { SearchBar } from './HTML/General';
 
 /**
  * Component for managing and displaying members.
@@ -17,6 +15,8 @@ function Members() {
   const [isAddMemberModalOpen, setAddMemberModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isMemberModalOpen, setMemberModalOpen] = useState(false);
+
+  console.log('All cookies:', document.cookie);
 
   useEffect(() => {
     refreshMembersData();

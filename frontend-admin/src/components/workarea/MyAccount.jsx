@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './CSS/WorkArea.css';
 import { fetchData, updateData, deleteData } from '../support/FetchService';
-import { validateEmail, formatDateTime, translateUnlimited } from '../support/Utils';
+import { validateEmail } from '../support/Utils';
 import AddPaymentModal from './Modals/AddPaymentModal.jsx';
 import { PaymentMethodFields, MemberFields, PlanFields } from './HTML/MemberModal.jsx';
-import { SearchBar, ButtonRow } from './HTML/General';
+import { ButtonRow } from './HTML/General';
 import ManagePlanModal from './Modals/ManagePlanModal';
 import ChangePlanModal from './Modals/ChangePlanModal';
+import { createCheckoutSession } from '../support/Stripe';
 
 function MyAccount({ userId }) { 
 
@@ -15,17 +16,16 @@ function MyAccount({ userId }) {
   const [editedMember, setEditedMember] = useState({});
   const [emailError, setEmailError] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); 
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
   const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
   const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
   const [isChangePlanModalOpen, setIsChangePlanModalOpen] = useState(false);
   const [isPaymentMethodChanged, setIsPaymentMethodChanged] = useState(false);
+  const [refillAmount, setRefillAmount] = useState(100);
 
-
-  const refreshMembers = () => {
+  const refreshMembers = useCallback(() => {
     fetchData(`users/${userId}`, (userData) => {
-      setEditedMember(userData);
+      setEditedMember(userData[0]);
     });
   
     fetchData(`paymentMethods/memberid/${userId}`, (paymentData) => {
@@ -46,12 +46,12 @@ function MyAccount({ userId }) {
         console.error('Invalid payment data format: paymentData is not an array');
       }
     });
-  };
+  }, [userId]);
   
 
   useEffect(() => {
     refreshMembers();
-  }, [userId]);
+  }, [userId, refreshMembers]);
 
   const openManagePlanModal = () => {
     setIsManagePlanModalOpen(true);
@@ -61,11 +61,11 @@ function MyAccount({ userId }) {
     setIsManagePlanModalOpen(false);
   };  
 
-  const editedActivePlan = (editedPlan) => {
+  const editedActivePlan = () => {
     refreshMembers();
   };
 
-  const editedChangedPlan = (editedPlan) => {
+  const editedChangedPlan = () => {
     refreshMembers();
     };
 
@@ -100,7 +100,6 @@ function MyAccount({ userId }) {
   };
 
   const handlePaymentMethodChange = (selectedMethod, index) => {
-    setSelectedPaymentMethod(selectedMethod);
     setSelectedPaymentMethodIndex(index);
 
     const updatedPaymentMethods = [...paymentMethods];
@@ -137,8 +136,6 @@ function MyAccount({ userId }) {
             reference_info: method.reference_info,
             is_selected: method.is_selected === 'Y' ? 'Y' : 'N',
           }));
-
-          console.log("updated data", updatedPaymentMethodData);
   
           Promise.all(
             updatedPaymentMethodData.map((methodData) =>
@@ -174,7 +171,7 @@ function MyAccount({ userId }) {
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this member?')) {
-      deleteData('users', member.id)
+      deleteData('users', userId)
         .then(() => {
           onRequestClose();
           if (refreshMembers) {
@@ -184,6 +181,34 @@ function MyAccount({ userId }) {
         .catch((error) => {
           console.error('Error deleting member:', error);
         });
+    }
+  };
+
+  const handleRefillWallet = async (event) => {
+    event.preventDefault();
+
+    try {
+      // Create a checkout session when the button is clicked
+      const session = await createCheckoutSession({
+        userId,
+        amount: refillAmount,
+        mode: 'subscription', // Set mode to 'payment'
+        success_url: 'http://localhost:5173?stripe=success', // Set success URL
+        cancel_url: 'http://localhost:5173?stripe=cancel', // Set cancel URL
+      });
+
+      // Redirect to the Stripe checkout page
+      window.location.href = session.url;
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      // Handle the error as needed
+    }
+  };
+
+  const handleRefillAmountChange = (event) => {
+    const newAmount = parseInt(event.target.value, 10);
+    if (!isNaN(newAmount) && newAmount >= 0) {
+      setRefillAmount(newAmount);
     }
   };
 
@@ -217,11 +242,6 @@ function MyAccount({ userId }) {
       {/* Render PlanFields component */}
       <PlanFields
         editedMember={editedMember}
-        isEditing={isEditing}
-        handleFieldChange={handleFieldChange}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        onRequestClose={() => closeManagePlanModal()}
         openManagePlanModal={openManagePlanModal}
         openChangePlanModal={openChangePlanModal}
       />
@@ -267,7 +287,24 @@ function MyAccount({ userId }) {
           fromMyAccount={true}
         />
       )}
+
+      {/* Refill Wallet form */}
+      <form className="refill-form" onSubmit={handleRefillWallet}>
+        <label htmlFor="refillAmount">SEK:</label>
+        <input
+          type="number"
+          id="refillAmount"
+          value={refillAmount}
+          onChange={handleRefillAmountChange}
+          min="0"
+          step="1"
+        />
+        <button type="submit">Refill Wallet</button>
+      </form>
     </div>
+
+
+
   );
   
 }

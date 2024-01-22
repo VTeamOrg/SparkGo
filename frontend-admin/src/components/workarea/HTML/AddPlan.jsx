@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 function AddPlan({
   newPlan,
@@ -101,5 +101,13 @@ function AddPlan({
     </>
   );
 }
+
+AddPlan.propTypes = {
+    newPlan: PropTypes.object.isRequired,
+    setNewPlan: PropTypes.func.isRequired,
+    frequencies: PropTypes.array.isRequired,
+    handleAddPlan: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
 
 export default AddPlan;

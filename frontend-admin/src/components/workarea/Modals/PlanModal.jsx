@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { fetchData, updateData, deleteData  } from '../../support/FetchService';
+import PropTypes from 'prop-types';
 
 /**
  * PlanModal component for viewing and editing plan details.
@@ -93,7 +94,15 @@ function PlanModal({ isOpen, onRequestClose, plan, refreshPlans }) {
         });
     }
   };
-  
+
+    /* Prop type validations */
+    PlanModal.propTypes = {
+      isOpen: PropTypes.bool.isRequired,
+      onRequestClose: PropTypes.func.isRequired,
+      plan: PropTypes.object.isRequired,
+      refreshPlans: PropTypes.func.isRequired,
+    };
+
       /* JSX to render data */
     return (
       <Modal

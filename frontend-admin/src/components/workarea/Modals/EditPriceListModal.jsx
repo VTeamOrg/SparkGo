@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { fetchData } from '../../support/FetchService';
-import EditPriceList from '../HTML/EditPriceList'; // Import the EditPriceList component
+import EditPriceList from '../HTML/EditPriceList';
+import PropTypes from 'prop-types';
 
 /**
  * EditPriceListModal component for editing a price list item.
@@ -50,6 +51,19 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
 
     onSave(editedPriceItem);
     onRequestClose();
+  };
+
+  EditPriceListModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    priceItem: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      type_id: PropTypes.number.isRequired,
+      list_name: PropTypes.string.isRequired,
+      price_per_minute: PropTypes.string.isRequired,
+      price_per_unlock: PropTypes.string.isRequired,
+    }).isRequired,
+    onSave: PropTypes.func.isRequired,
   };
 
   return (

@@ -1,6 +1,6 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types'; 
 
 function SearchBar({ searchTerm, setSearchTerm }) {
   return (
@@ -15,6 +15,11 @@ function SearchBar({ searchTerm, setSearchTerm }) {
     </div>
   );
 }
+
+SearchBar.propTypes = {
+  searchTerm: PropTypes.string.isRequired, 
+  setSearchTerm: PropTypes.func.isRequired, 
+};
 
 function ButtonRow({
     isEditing,
@@ -40,5 +45,13 @@ function ButtonRow({
       </div>
     );
   }
+
+  ButtonRow.propTypes = {
+    isEditing: PropTypes.bool.isRequired,
+    handleEdit: PropTypes.func.isRequired,
+    setIsEditing: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
   
 export { ButtonRow, SearchBar } ;

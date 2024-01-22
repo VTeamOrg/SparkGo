@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './CSS/Data.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faSearch  } from '@fortawesome/free-solid-svg-icons';
@@ -50,7 +50,7 @@ const [editedCityName, setEditedCityName] = useState('');
  *
  * @param {Array} data - The data received from the API containing city information.
  */
-  const fetchDataAndUpdateState = (data) => {
+  const fetchDataAndUpdateState = useCallback((data) => {
     /* Sort cities alphabetically */
     data.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -66,7 +66,7 @@ const [editedCityName, setEditedCityName] = useState('');
       typeof city.name === 'string' && city.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCities(filtered);
-  };
+  }, [searchTerm]);
 
   /**
    * Effect to load the list of cities from a database and filter 
@@ -75,7 +75,7 @@ const [editedCityName, setEditedCityName] = useState('');
    */
   useEffect(() => {
     fetchData('cities', fetchDataAndUpdateState);
-  }, [searchTerm]);
+  }, [searchTerm, fetchDataAndUpdateState]);
   
   /**
    * Handles adding a new city.
@@ -141,9 +141,8 @@ const [editedCityName, setEditedCityName] = useState('');
   /**
    * Handles changes in the edited city name input field.
    * @param {Object} e - The event object.
-   * @param {number} cityId - The ID of the city being edited.
    */
-  const handleEditChange = (e, cityId) => {
+  const handleEditChange = (e) => {
     setEditedCityName(e.target.value);
   };
  
@@ -154,7 +153,6 @@ const [editedCityName, setEditedCityName] = useState('');
    */
   const handleSaveEdit = async (e, cityId) => {
     e.preventDefault();
-    const updatedCity = cities.find((city) => city.id === cityId);
 
     try {
       const success = await updateData('cities', cityId, {

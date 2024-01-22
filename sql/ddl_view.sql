@@ -11,6 +11,7 @@ drop view if exists v_receipt;
 drop view if exists v_price_list;
 drop view if exists v_plan;
 drop view if exists v_member;
+drop view if exists v_parking_zone;
 
 /* Renting station + city */
 CREATE VIEW v_renting_station AS
@@ -23,6 +24,18 @@ JOIN
     city AS c
 ON
     rs.city_id = c.id;
+
+
+CREATE VIEW v_parking_zone AS
+SELECT
+    pz.*,
+    c.name AS city_name
+FROM
+    parking_zone AS pz
+JOIN
+    city AS c
+ON
+    pz.city_id = c.id;
 
 /* Vehicle + city / member / vehicle_type */
 /*CREATE VIEW v_vehicle AS

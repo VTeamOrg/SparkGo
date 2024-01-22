@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import MyAccount from './workarea/MyAccount'; 
 import RideHistory from './workarea/RideHistory'; 
 import Receipts from './workarea/Receipts'; 
@@ -11,7 +11,7 @@ import Frequencies from './workarea/Frequencies';
 import Members from './workarea/Members'; 
 import Vehicles from './workarea/Vehicles'; 
 import { emitEnableMapEvent, emitDisableMapEvent } from './support/MapUtils';
-
+import PropTypes from 'prop-types';
 
 function WorkArea({ activeSection, userId }) {
   useEffect(() => {
@@ -25,7 +25,7 @@ function WorkArea({ activeSection, userId }) {
     } else {
       emitEnableMapEvent(); 
     }
-  }, [activeSection]);
+  }, [activeSection, userId]);
 
     const renderContent = () => {
       switch (activeSection) {
@@ -62,5 +62,10 @@ function WorkArea({ activeSection, userId }) {
       </div>
     );
   }
+
+  WorkArea.propTypes = {
+    activeSection: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
+  };
 
 export default WorkArea;
