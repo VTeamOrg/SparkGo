@@ -130,6 +130,17 @@ CREATE TABLE auth_tokens (
 );
 
 
+-- New tables for e-scooter parking
+CREATE TABLE parking_zone (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city_id INT,
+    name VARCHAR(255),
+    coords_lat DECIMAL(10, 6), 
+    coords_long DECIMAL(10, 6), 
+    FOREIGN KEY (city_id) REFERENCES city(id)
+);
+
+
 /*create table scooter (
     id int primary key,
     country varchar(255),
