@@ -10,7 +10,7 @@ const adminOnlyAccess = async (req, res, next) => {
       const isValidToken = await tokenModel.validateAuthTokenAndUserId(authToken, userId);
       if (!isValidToken) {
           return res.status(403).json({ message: 'Invalid session or token expired' });
-      }
+     d }
 
       // Retrieve user email or role based on userId
       const user = await userModel.getUserById(userId);
