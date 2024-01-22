@@ -41,11 +41,12 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
     try {
       setIsLoading(true);
       const response = await fetch('http://localhost:3000/v1/request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // Correct placement of the credentials option
+    });
       const data = await response.json();
 
       if (data.url) {

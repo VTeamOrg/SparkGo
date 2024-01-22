@@ -57,9 +57,50 @@ END //
 
 DELIMITER ;
 
+--
+-- Payment receipt
+--
+
+DROP PROCEDURE IF EXISTS insert_receipt;
+DELIMITER ;;
+CREATE PROCEDURE insert_receipt
+(
+	IN p_member_id INT,
+    IN p_payment_details VARCHAR(255),
+    IN p_payment_type VARCHAR(255),
+    IN p_receipt_details VARCHAR(255),
+    IN p_sum DECIMAL(10, 2),
+    IN p_payment_date DATETIME
+)
+BEGIN
+    INSERT INTO receipt 
+    (
+        member_id,
+        payment_details,
+        payment_type,
+        receipt_details,
+        sum,
+        payment_date
+    )
+    VALUES 
+    (
+        p_member_id,
+        p_payment_details,
+        p_payment_type,
+        p_receipt_details,
+        p_sum,
+        p_payment_date
+    );
+END;
+;;
+DELIMITER ;
 
 
+
+
+CALL insert_receipt(2, 'test2', 'card', 'subscription', 89, now());
 call create_active_plan(1, 1, 'stripe', now());
 SELECT * FROM plan;
 SELECT * FROM member;
 SELECT * FROM active_plan;
+SELECT * FROM receipt;

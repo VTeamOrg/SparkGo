@@ -100,7 +100,30 @@ const userModel = {
         } catch (error) {
           throw error;
         }
-      },
+    },
+
+    fillWallet: async function updateUser(userId, amount) {
+        if (!userId) {
+          throw new Error("Missing user ID");
+        }
+        if (parseInt(amount) === NaN) return false;
+        try {
+          const db = await database.openDb();
+
+          const updateQuery = `UPDATE member SET wallet = wallet + ${parseInt(amount)} WHERE id = ?`;
+      
+          const updatedUser = await database.query(
+            db,
+            updateQuery,
+            userId
+          );
+      
+          await database.closeDb(db);
+          return true;
+        } catch (error) {
+          throw error;
+        }
+    },
       
 
     deleteUser: async function deleteUser(userId) {

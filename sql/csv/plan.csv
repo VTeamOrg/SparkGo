@@ -2,3 +2,4 @@ id,stripe_plan_id,title,description,price,price_frequency_id,included_unlocks,in
 1,price_1OXUiAErt9JzUGzKCljYsth4,Monthly Premium,Enjoy premium benefits with a monthly plan.,59.99,3,20,3,600,3
 2,price_1OXUiuErt9JzUGzKsNJZ1ToA,Weekly Unlimited,Unlimited rides for a week.,29.99,2,-1,2,-1,2
 3,price_1OXUjqErt9JzUGzKLQ50gyXn,Monthly Unlimited,Unlimited rides for a month.,89.99,3,-1,3,-1,3
+4,price_1OZc6eErt9JzUGzKn5hWRoNQ,OneTime,Free option of amount.,
