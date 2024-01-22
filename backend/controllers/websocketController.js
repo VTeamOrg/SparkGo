@@ -24,7 +24,7 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
 // create seperate files for each topic ex (vehicles, cities ...)
 
 const handleMessage = (ws, message) => {
-    // console.log('Received message:', message.toString());
+//     console.log('Received message:', message.toString());
     // check if valid json 
     const msg = JSON.parse(message.toString()) || {action: null};
 
@@ -52,6 +52,9 @@ const handleMessage = (ws, message) => {
                     break;
                 case 'vehicleStatus':
                     vehicleFunctions.vehicleStatus(ws, msg);
+                    break;
+                case "moveVehicle":
+                    vehicleFunctions.moveVehicle(ws, msg);
                     break;
                 default:
                     break;

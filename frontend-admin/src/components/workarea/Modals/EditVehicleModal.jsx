@@ -36,6 +36,7 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
   useEffect(() => {
     fetchData('stations',(stationsData) => {
+      console.log(stationsData);
       setStations(stationsData);
     });
 
@@ -154,25 +155,51 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
     setSelectedCoordinates([e.latlng.lat, e.latlng.lng]);
   };
 
+  const handleStationSelection = (stationId) => {
+    // Find the selected station using stationId
+    const selectedStation = stations.find((station) => station.id === parseInt(stationId));
+  
+    if (selectedStation) {
+      // Update latitude and longitude fields with the selected station's coordinates
+      setLatitude(selectedStation.coords_lat.toFixed(6));
+      setLongitude(selectedStation.coords_long.toFixed(6));
+  
+      // Update selectedCoordinates state with the selected station's coordinates
+      setSelectedCoordinates([selectedStation.coords_lat, selectedStation.coords_long]);
+  
+      // Update the editedVehicle state with the new coordinates
+      setEditedVehicle({
+        ...editedVehicle,
+        position: {
+          lat: selectedStation.coords_lat,
+          lon: selectedStation.coords_long,
+        },
+      });
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="edit-vehicle-modal">
       <h2>Edit Vehicle</h2>
-      
+
       <div>
-      <label>Station:</label>
-        <select
-          value={editedVehicle.station_id}
-          onChange={(e) => setEditedVehicle({ ...editedVehicle, station_id: e.target.value })}
-          required
-        >
-          <option value="">Select a station</option> 
-          {stations.map((station) => (
-            <option key={station.id} value={station.id}>
-              {station.name}
-            </option>
-          ))}
-        </select>
-    </div>
+  <label>Station:</label>
+  <select
+    value={editedVehicle.station_id}
+    onChange={(e) => {
+      setEditedVehicle({ ...editedVehicle, station_id: e.target.value });
+      handleStationSelection(e.target.value); 
+    }}
+    required
+  >
+    <option value="">Select a station</option>
+    {stations.map((station) => (
+      <option key={station.id} value={station.id}>
+        {station.name}
+      </option>
+    ))}
+  </select>
+</div>
 
       <div>
         <label>Vehicle Type:</label>

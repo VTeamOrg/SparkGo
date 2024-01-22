@@ -58,7 +58,7 @@ const vehicles = {
 
     // Method to move a vehicle to a set of coordinates
     moveVehicle: async (ws, data) => {
-        console.log("move vehicle");
+        console.log("route move vehicle");
         try {
             const { vehicleId, lat, lon } = data;
 
@@ -69,14 +69,9 @@ const vehicles = {
 
             const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
 
-            // Check if the vehicle is rented and rented by the user making the request
-            if (connectedVehicle.rentedBy === -1 || connectedVehicle.rentedBy !== data.rentedBy) {
-                return sendWarning(ws, "Vehicle is not rented by the user or not rented at all");
-            }
-
             // Update the vehicle's coordinates
-            connectedVehicle.data.lat = lat;
-            connectedVehicle.data.lon = lon;
+            connectedVehicle.data['lat'] = lat;
+            connectedVehicle.data['lon'] = lon;
 
             // Send a success message or any necessary updates to the WebSocket clients
             sendVehicleUpdates(connectedVehicle, "vehicleMoved");
