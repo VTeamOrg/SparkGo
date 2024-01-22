@@ -6,7 +6,7 @@ const userModel = {
             const db = await database.openDb();
             const allUsers = await database.query(
                 db,
-                "SELECT * FROM member ORDER BY id DESC"
+                "SELECT * FROM v_member ORDER BY id DESC"
             );
             await database.closeDb(db);
             return allUsers;
@@ -49,7 +49,7 @@ const userModel = {
             const db = await database.openDb();
             const user = await database.query(
                 db,
-                "SELECT * FROM member WHERE id = ?;",
+                "SELECT * FROM v_member WHERE id = ?;",
                 userId
             );
             await database.closeDb(db);
@@ -146,7 +146,6 @@ const userModel = {
 
     // Use isUserRole function to check for specific roles
     isAdminByEmail: async function isAdminByEmail(email) {
-        console.log("Admin:",email);
         return this.isUserRole(email, 'admin');
     },
 

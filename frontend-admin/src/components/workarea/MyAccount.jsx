@@ -25,7 +25,7 @@ function MyAccount({ userId }) {
 
   const refreshMembers = useCallback(() => {
     fetchData(`users/${userId}`, (userData) => {
-      setEditedMember(userData);
+      setEditedMember(userData[0]);
     });
   
     fetchData(`paymentMethods/memberid/${userId}`, (paymentData) => {

@@ -28,6 +28,7 @@ function MapView() {
     window.addEventListener('citiesDataLoaded', handleCitiesDataLoaded);
     window.addEventListener('disableMap', handleDisableMap);
     window.addEventListener('enableMap', handleEnableMap);
+    window.addEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
 
     function handleCitiesDataLoaded(data) {
       if (data && data.detail && Array.isArray(data.detail)) {
@@ -78,12 +79,44 @@ function MapView() {
       }
     }
 
+    function handleVehiclesDataLoaded(event) {
+      const vehicleMarkers = event.detail.map((vehicle, index) => {
+        const { lat, lng, infoText, id, cityName, status, battery, currentSpeed, maxSpeed, isStarted, rentedBy } = vehicle;
+        return (
+          <Marker key={id || index} position={[lat, lng]}>
+            <Popup>
+              <div>
+                <h4>{infoText}</h4>
+                <p>City: {cityName}</p>
+                <p>Status: {status}</p>
+                <p>Battery: {battery}</p>
+                <p>Current Speed: {currentSpeed}</p>
+                <p>Max Speed: {maxSpeed}</p>
+                <p>Started: {isStarted ? 'Yes' : 'No'}</p>
+                <p>Rented By: {rentedBy === -1 ? 'Red Cross' : rentedBy}</p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      });
+    
+      setMarkers(vehicleMarkers);
+    
+      // Use mapRef to access the map instance and set the zoom level
+      // Center on the first vehicle's position and set zoom to your desired value
+      if (mapRef.current && event.detail.length > 0) {
+        const firstVehicle = event.detail[0];
+        mapRef.current.setView([firstVehicle.lat, firstVehicle.lng], 13);
+      }
+    }
+
     return () => {
       window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
       window.removeEventListener('clearMarkers', handleClearMarkers);
       window.removeEventListener('disableMap', handleDisableMap);
       window.removeEventListener('enableMap', handleEnableMap);
-      window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
+      window.removeEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
+
     };
   }, []);
 

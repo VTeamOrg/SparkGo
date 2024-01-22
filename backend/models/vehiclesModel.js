@@ -32,6 +32,9 @@ const vehiclesModel = {
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
                         isStarted: connectedVehicle.data?.isStarted ?? null,
                         rentedBy: connectedVehicle.rentedBy,
+                        city_name: vehicle.city_name,
+                        name: vehicle.name,
+                        type_name: vehicle.vehicle_type_name
                     }
                 }
 
@@ -46,6 +49,9 @@ const vehiclesModel = {
                     maxSpeed: null,
                     isStarted: null,
                     rentedBy: null,
+                    city_name: vehicle.city_name,
+                    name: vehicle.name,
+                    type_name: vehicle.vehicle_type_name
                 }
             });
 
@@ -88,6 +94,9 @@ const vehiclesModel = {
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
                         isStarted: connectedVehicle.data?.isStarted ?? null,
                         rentedBy: connectedVehicle.rentedBy,
+                        city_name: vehicle.city_name,
+                        name: vehicle.name,
+                        type_name: vehicle.vehicle_type_name
                     }
                 }
 
@@ -102,6 +111,9 @@ const vehiclesModel = {
                     maxSpeed: null,
                     isStarted: null,
                     rentedBy: null,
+                    city_name: vehicle.city_name,
+                    name: vehicle.name,
+                    type_name: vehicle.vehicle_type_name
                 }
             });
 
@@ -139,6 +151,9 @@ const vehiclesModel = {
                     maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
                     isStarted: connectedVehicle.data?.isStarted ?? null,
                     rentedBy: connectedVehicle.rentedBy,
+                    city_name: vehicle.city_name,
+                    name: vehicle.name,
+                    type_name: vehicle.vehicle_type_name
                 }
             }
 
@@ -153,6 +168,9 @@ const vehiclesModel = {
                 maxSpeed: null,
                 isStarted: null,
                 rentedBy: null,
+                city_name: vehicle.city_name,
+                name: vehicle.name,
+                type_name: vehicle.vehicle_type_name
             }
         } catch (error) {
             throw error;
