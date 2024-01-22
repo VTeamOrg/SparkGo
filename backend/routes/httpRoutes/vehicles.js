@@ -6,6 +6,8 @@ const adminOnlyAccess = require('../../middleware/adminOnlyAccess.js');
 router.get("/", vehiclesController.getAllVehicles);
 router.get("/active", vehiclesController.getActiveVehicles);
 
+router.get("/byStation/:stationId", vehiclesController.getVehicleByStationId);
+
 router.get("/:vehicleId", vehiclesController.getVehicleById);
 
 router.post("/", adminOnlyAccess, vehiclesController.createVehicle);
