@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 function AddPriceList({
   types,
@@ -84,5 +84,15 @@ function AddPriceList({
     </div>
   );
 }
+
+AddPriceList.propTypes = {
+    types: PropTypes.array.isRequired,
+    selectedType: PropTypes.object.isRequired,
+    setSelectedType: PropTypes.func.isRequired,
+    newPriceItem: PropTypes.object.isRequired,
+    setNewPriceItem: PropTypes.func.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
 
 export default AddPriceList;

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import PropTypes from 'prop-types';
 import { fetchData, updateData, deleteData } from '../../support/FetchService';
-import { validateEmail, formatDateTime, translateUnlimited } from '../../support/Utils';
+import { validateEmail } from '../../support/Utils';
 import AddPaymentModal from './AddPaymentModal.jsx';
 import { PaymentMethodFields, MemberFields, PlanFields } from '../HTML/MemberModal.jsx';
-import { SearchBar, ButtonRow } from '../HTML/General';
+import { ButtonRow } from '../HTML/General';
 import ManagePlanModal from './ManagePlanModal';
 import ChangePlanModal from './ChangePlanModal';
 
@@ -16,13 +16,12 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   const [editedMember, setEditedMember] = useState({ ...member });
   const [emailError, setEmailError] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(''); 
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
   const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
   const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
   const [isChangePlanModalOpen, setIsChangePlanModalOpen] = useState(false);
 
-  const refreshMembersModalData = () => {
+  const refreshMembersModalData = useCallback(() => {
     const memberId = editedMember.id;
     
     if (memberId) {
@@ -44,7 +43,8 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
         setPaymentMethods(data);
       });
     }
-  };
+  }, [editedMember.id, setEditedMember, setSelectedPaymentMethodIndex, setPaymentMethods]);
+
   
   useEffect(() => {
   
@@ -53,7 +53,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     if (memberId) {
       refreshMembersModalData();
     }
-  }, [editedMember.id]);
+  }, [editedMember.id, refreshMembersModalData]);
 
   const openManagePlanModal = () => {
     setIsManagePlanModalOpen(true);
@@ -63,7 +63,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     setIsManagePlanModalOpen(false);
   };  
 
-  const editedActivePlan = (editedPlan) => {
+  const editedActivePlan = () => {
     refreshMembersModalData();
     };
 
@@ -75,7 +75,7 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
       setIsChangePlanModalOpen(false);
     };  
   
-    const editedChangedPlan = (editedPlan) => {
+    const editedChangedPlan = () => {
       refreshMembersModalData();
       };
 
@@ -102,7 +102,6 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
   };
 
   const handlePaymentMethodChange = (selectedMethod, index) => {
-    setSelectedPaymentMethod(selectedMethod);
     setSelectedPaymentMethodIndex(index);
   
     const updatedPaymentMethods = [...paymentMethods];
@@ -216,13 +215,8 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
     {/* PlanFields */}
     <PlanFields
       editedMember={editedMember}
-      isEditing={isEditing}
-      handleFieldChange={handleFieldChange}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      onRequestClose={() => closeManagePlanModal} 
-      openManagePlanModal={openManagePlanModal} 
-      openChangePlanModal={openChangePlanModal} 
+      openManagePlanModal={openManagePlanModal}
+      openChangePlanModal={openChangePlanModal}
     />
 
     {/* General Buttons */}
@@ -276,6 +270,7 @@ MemberModal.propTypes = {
   onEditMember: PropTypes.func,
   onDeleteMember: PropTypes.func,
   refreshMembers: PropTypes.func,
+  isFromMyAccount: PropTypes.bool,
 };
 
 export default MemberModal;

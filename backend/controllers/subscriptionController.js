@@ -26,27 +26,6 @@ const subscriptionController = {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },
-
-    // updateSubscriptionByMemberId: async function (req, res) {
-    //     try {
-    //         const memberId = req.params.memberId;
-    //         const { is_paused } = req.body;
-
-    //         if (is_paused === undefined) {
-    //             return res.status(400).json({ error: "Bad Request" });
-    //         }
-
-    //         const updateSubscription = await subscriptionModel.updateSubscriptionByMemberId(memberId, is_paused);
-
-    //         return res.json({
-    //             message: "Subscription updated successfully",
-    //             data: updateSubscription,
-    //         });
-    //     } catch (error) {
-    //         console.error("Error updating subscription:", error.message);
-    //         return res.status(500).json({ error: "Internal Server Error" });
-    //     }
-    // },
 };
 
 module.exports = subscriptionController;

@@ -9,12 +9,12 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
         connectedVehicles.add({ id: connectionId, ws, userUsageLog: [], updateCreditInterval: null, rentedBy: -1, data: { latitude: -1, longitude: -1, battery: -1, currentSpeed: -1, maxSpeed: -1, isStarted: false, rentedBy: -1 } });
     }
     if (deviceType === 'user') {
-        // const user = connectedUsers.get()?.find(user => user.id === connectionId);
-        // if (user) {
-        //     // if user is already connected, replace the old websocket with the new one
-        //     user.ws = ws;
-        //     return;
-        // } 
+        const user = connectedUsers.get()?.find(user => user.id === connectionId);
+        if (user) {
+            // if user is already connected, replace the old websocket with the new one
+            user.ws = ws;
+            return;
+        } 
         // if deviceType is user, add the client to the list of connected users
         connectedUsers.add({ id: connectionId, ws, rentedVehicle: -1, data: { latitude: -1, longitude: -1 } });
     }
@@ -23,8 +23,8 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
         connectedAdmins.add({ id: connectionId, ws, data: { latitude: -1, longitude: -1 } });
     }
 
-    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
-    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
+//    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
+//    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
 };
 
 // create seperate files for each topic ex (vehicles, cities ...)
@@ -45,6 +45,9 @@ const handleMessage = (ws, message) => {
             switch (msg.action) {
                 case 'vehicleStatus':
                     vehicleFunctions.vehicleStatus(ws, msg);
+                    break;
+                case "moveVehicle":
+                    vehicleFunctions.moveVehicle(ws, msg);
                     break;
                 default:
                     break;

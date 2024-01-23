@@ -1,61 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import googleButton from './assets/google_signin_buttons/web/1x/btn_google_signin_dark_pressed_web.png';
 import './Login.css';
 import Cookies from 'js-cookie';
+import PropTypes from 'prop-types';
+
 
 function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [authSuccess, setAuthSuccess] = useState(null);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const successParam = urlParams.get('success');
-    const roleParam = urlParams.get('role'); // Get the role parameter
-    const userIdParam = urlParams.get('userId'); // Get the userId parameter
-
-    if (successParam === 'true') {
-      setAuthSuccess(true);
-      Cookies.set('userLoggedIn', 'true', { secure: true, sameSite: 'strict', expires: 1 });
-      setUserLoggedIn(true);
-
-      // Store the role and userId in state
-      setUserRole(roleParam);
-      setUserId(userIdParam);
-      console.log("role", roleParam);
-      console.log("userIdParam", userIdParam);
-
-      // Remove the 'success', 'role', and 'userId' parameters from the URL
-      const newUrl = window.location.href.split('?')[0];
-      window.history.replaceState({}, document.title, newUrl);
-    } else if (successParam === 'false') {
-      setAuthSuccess(false);
-    }
-
-    // Clear 'userLoggedIn' cookie when the component unmounts
+    const validateSession = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/v1/validate-session', {
+          credentials: 'include', // Ensures cookies are sent with the request
+        });
+        const data = await response.json();
+  
+        if (data.userLoggedIn) {
+          setUserLoggedIn(true);
+          setUserRole(data.userRole);
+          setUserId(data.userId);
+        } else {
+          setUserLoggedIn(false);
+          // Optionally, redirect non-logged-in users or show an error message
+        }
+      } catch (error) {
+        console.error('Error during session validation:', error);
+        setUserLoggedIn(false);
+        // Handle the error
+      }
+    };
+  
+    validateSession();
+  
     return () => {
-      Cookies.remove('userLoggedIn', { secure: true, sameSite: 'strict' });
+      // Clear client-side cookies if needed
     };
   }, [setUserLoggedIn, setUserRole, setUserId]);
 
   const auth = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const response = await fetch('http://localhost:3000/v1/request', {
+      const response = await fetch('http://localhost:3000/v1/request?redirect=admin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
       const data = await response.json();
+
+      console.log(data)
 
       if (data.url) {
         window.location.href = data.url;
       } else {
         console.error('Authentication URL not received:', data.error);
-        setIsLoading(false);
       }
     } catch (error) {
       console.error('Error during authentication:', error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -70,7 +72,7 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
         </h2>
         <h3>Your two-wheeled adventure</h3>
         <div className="button-container">
-          {!Cookies.get('userLoggedIn') ? (
+          {!Cookies.get('userLoggedIn') && (
             <button
               onClick={auth}
               className={`blue-button button-text ${isLoading ? 'loading' : ''}`}
@@ -78,18 +80,17 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
             >
               {isLoading ? 'Loading...' : <img src={googleButton} alt="Google Sign In" />}
             </button>
-          ) : null}
-          <br />
-          {authSuccess === true && (
-            <p style={{ color: 'green' }}>Authentication successful!</p>
-          )}
-          {authSuccess === false && (
-            <p style={{ color: 'red' }}>Authentication failed. Please try again.</p>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+Login.propTypes = {
+  setUserLoggedIn: PropTypes.func.isRequired,
+  setUserRole: PropTypes.func.isRequired,
+  setUserId: PropTypes.func.isRequired,
+};
 
 export default Login;

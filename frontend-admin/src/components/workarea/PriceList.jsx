@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 import AddPriceListModal from './Modals/AddPriceListModal'; 
 import EditPriceListModal from './Modals/EditPriceListModal'; 

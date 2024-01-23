@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 function MembersTable({
   filteredMembers,
@@ -47,5 +47,10 @@ function MembersTable({
     </div>
   );
 }
+
+MembersTable.propTypes = {
+  filteredMembers: PropTypes.arrayOf(PropTypes.object).isRequired,
+  openMemberModal: PropTypes.func.isRequired,
+};
 
 export default MembersTable;

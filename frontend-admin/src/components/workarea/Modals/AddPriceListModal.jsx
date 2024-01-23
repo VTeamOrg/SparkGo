@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { fetchData } from '../../support/FetchService';
-import AddPriceList from '../HTML/AddPriceList'; // Import the HTML component
+import AddPriceList from '../HTML/AddPriceList'; 
+import PropTypes from 'prop-types';
 
 /**
  * AddPriceListModal component for adding a new price list item.
@@ -53,6 +54,12 @@ function AddPriceListModal({ isOpen, onRequestClose, onAddPriceItem }) {
 
     onAddPriceItem(newPriceItem);
     onRequestClose();
+  };
+
+  AddPriceListModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onAddPriceItem: PropTypes.func.isRequired,
   };
 
   return (

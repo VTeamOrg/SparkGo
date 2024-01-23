@@ -73,7 +73,26 @@ const subscriptionModel = {
         } catch (error) {
             throw error;
         }
-    }
+    },
+    
+    createActivePlan: async function (planId, subscriptionId, customerId) {
+        try {
+            const db = await database.openDb();
+       
+            // Create a new active plan in the database
+            const createNewActivePlan = await database.query(
+                db,
+                "CALL create_active_plan(?, ?, ?, ?)",
+                [planId, customerId, subscriptionId, new Date().toISOString().split('T')[0]]
+            );
+    
+            await database.closeDb(db);
+            return createNewActivePlan;
+        } catch (error) {
+            console.error("Error updating/creating subscription in the database:", error.message);
+            throw error; // Rethrow the error for handling in the calling function
+        }  
+    },
 };
 
 module.exports = subscriptionModel;

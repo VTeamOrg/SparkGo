@@ -4,17 +4,18 @@ const vehicles = require("./vehicles.js");
 const cities = require("./cities.js");
 const subscription = require("./subscription.js");
 const paymentMethods = require("./paymentMethods.js");
-
 const activePlan = require("./activePlan.js");
 const frequencies = require("./frequencies.js");
 const plans = require("./plans.js");
 const priceList = require("./priceList.js");
 const receipts = require("./receipts.js");
 const vehicleTypes = require("./vehicleTypes.js");
+const coords = require("./coords.js");
+const logout = require("./logout.js");
+const parkingZones = require("./parking.js");
+const validateSession = require("./validateSession.js");
 const { generalApiLimiter } = require("../../middleware/apiLimter.js");
 
-
-const coords = require("./coords.js");
 
 const loadHttpRoutes = (app) => {
     app.use("/v1/users", users);
@@ -28,9 +29,11 @@ const loadHttpRoutes = (app) => {
     app.use("/v1/receipts", receipts);
     app.use("/v1/vehicleTypes", vehicleTypes);
     app.use("/v1/coords", coords);
-
     app.use("/v1/activePlan", activePlan);
     app.use("/v1/frequencies", frequencies);
+    app.use("/v1/parkingZones", parkingZones);
+    app.use("/v1/logout", logout);
+    app.use("/v1/validate-session", validateSession);
 }
 
 // Function to load HTTP routes with rate limiters

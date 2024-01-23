@@ -56,6 +56,33 @@ const vehicles = {
         }
     },
 
+    // Method to move a vehicle to a set of coordinates
+    moveVehicle: async (ws, data) => {
+        console.log("route move vehicle");
+        try {
+            const { vehicleId, lat, lon } = data;
+
+            // Check if the required parameters are provided
+            if (!vehicleId || !lat || !lon) {
+                return sendWarning(ws, "Missing required parameters for moving the vehicle");
+            }
+
+            const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
+
+            // Update the vehicle's coordinates
+            connectedVehicle.data['lat'] = lat;
+            connectedVehicle.data['lon'] = lon;
+
+            // Send a success message or any necessary updates to the WebSocket clients
+            sendVehicleUpdates(connectedVehicle, "vehicleMoved");
+
+            return sendSuccess(ws, "Vehicle moved successfully");
+        } catch (error) {
+            console.error("Error moving vehicle:", error);
+            return sendError(ws, "Error moving vehicle.");
+        }
+    },
+
     // Method to start a rented vehicle
     startVehicle: async (ws, user) => {
         try {

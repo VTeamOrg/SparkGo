@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 function AddPaymentMethod({ isOpen, onRequestClose, memberId, memberName, selectedPaymentMethod, referenceInfo, setSelectedPaymentMethod, setReferenceInfo, handleSave }) {
   return (
@@ -32,5 +32,17 @@ function AddPaymentMethod({ isOpen, onRequestClose, memberId, memberName, select
     </div>
   );
 }
+
+AddPaymentMethod.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    memberId: PropTypes.string.isRequired,
+    memberName: PropTypes.string.isRequired,
+    selectedPaymentMethod: PropTypes.string.isRequired,
+    referenceInfo: PropTypes.string.isRequired,
+    setSelectedPaymentMethod: PropTypes.func.isRequired,
+    setReferenceInfo: PropTypes.func.isRequired,
+    handleSave: PropTypes.func.isRequired,
+  };
 
 export default AddPaymentMethod;

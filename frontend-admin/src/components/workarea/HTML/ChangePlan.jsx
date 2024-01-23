@@ -1,5 +1,5 @@
-import React from 'react';
 import { translateUnlimited } from '../../support/Utils';
+import PropTypes from 'prop-types';
 
 function ChangePlan({ selectedPlan, availablePlans, activePlan, handlePlanClick, handleSubmit, onRequestClose }) {
   return (
@@ -50,5 +50,14 @@ function ChangePlan({ selectedPlan, availablePlans, activePlan, handlePlanClick,
     </div>
   );
 }
+
+ChangePlan.propTypes = {
+    selectedPlan: PropTypes.object,
+    availablePlans: PropTypes.array.isRequired,
+    activePlan: PropTypes.object.isRequired,
+    handlePlanClick: PropTypes.func.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
 
 export default ChangePlan;

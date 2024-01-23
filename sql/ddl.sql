@@ -1,4 +1,6 @@
--- use sparkgo;
+
+use sparkgo;
+
 
 -- initial drops
 drop trigger if exists log_scooter_insert;
@@ -78,12 +80,14 @@ CREATE TABLE vehicle (
     type_id INT, 
     vehicle_status VARCHAR(255),
     name VARCHAR(255),
+    station_id INT,
     FOREIGN KEY (city_id) REFERENCES city(id),
-    FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
+    FOREIGN KEY (type_id) REFERENCES vehicle_type(id)
 );
 
 CREATE TABLE plan (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    stripe_plan_id VARCHAR(255),
     title VARCHAR(255),
     description TEXT,
     price DECIMAL(10, 2),
@@ -100,15 +104,17 @@ CREATE TABLE plan (
 CREATE TABLE active_plan (
     plan_id INT,
     member_id INT,
-    creation_date DATETIME,
+    stripe_subscription_id VARCHAR(255),
+    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
     activation_date DATETIME,
     available_minutes INT,
     available_unlocks INT,
     is_paused ENUM('Y', 'N'),
-    PRIMARY KEY (plan_id, member_id),
+    PRIMARY KEY (member_id),
     FOREIGN KEY (plan_id) REFERENCES plan(id),
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
+
 
 CREATE TABLE receipt (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -120,6 +126,27 @@ CREATE TABLE receipt (
     payment_date DATETIME,
     FOREIGN KEY (member_id) REFERENCES member(id)
 );
+
+CREATE TABLE auth_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    auth_token VARCHAR(255),
+    expires_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES member(id)
+);
+
+
+-- New tables for e-scooter parking
+CREATE TABLE parking_zone (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city_id INT,
+    name VARCHAR(255),
+    coords_lat DECIMAL(10, 6), 
+    coords_long DECIMAL(10, 6), 
+    FOREIGN KEY (city_id) REFERENCES city(id)
+);
+
+
 
 
 /*create table scooter (
@@ -169,4 +196,4 @@ end//
 
 delimiter ; */
 
-show tables;
+SELECT * FROM frequencies;

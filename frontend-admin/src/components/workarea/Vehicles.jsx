@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/ApiTables.css';
 import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +13,8 @@ function Vehicles() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditVehicleModal, setShowEditVehicleModal] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
-
+    /* State to store station data */
+    const [stations, setStations] = useState([]);
 
   useEffect(() => {
     fetchDataUpdateState();
@@ -22,7 +23,45 @@ function Vehicles() {
   const fetchDataUpdateState = () => {
     fetchData('vehicles', (data) => {
       setVehicles(data);
+
+      
+    const formattedVehicleMarkers = data.map((vehicle) => ({
+      lat: vehicle.position.lat,
+      lng: vehicle.position.lon,
+      infoText: vehicle.name,
+      id: vehicle.id,
+      cityName: vehicle.city_name,
+      status: vehicle.status,
+      battery: vehicle.battery,
+      currentSpeed: vehicle.currentSpeed,
+      maxSpeed: vehicle.maxSpeed,
+      isStarted: vehicle.isStarted,
+      rentedBy: vehicle.rentedBy,
+    }));
+
+    const event = new CustomEvent('vehiclesDataLoaded', { detail: formattedVehicleMarkers });
+    window.dispatchEvent(event);
+      console.log(data);
     });
+
+    fetchData('stations',(stationsData) => {
+      /* Update the component's state with station data */
+      setStations(stationsData);
+
+      /* Format the data into markers */
+      const formattedMarkers = stationsData.map((station) => ({
+        lat: station.coords_lat,
+        lng: station.coords_long,
+        infoText: station.name,
+        id: station.id,
+        cityName: station.city_name,
+      }));
+
+      /* Emit an event with the formatted markers data */
+      const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
+      window.dispatchEvent(event);
+    });
+
   };
 
   const handleEditVehicle = (vehicle) => {
@@ -93,7 +132,7 @@ function Vehicles() {
             <th>City</th>
             <th>Type</th>
             <th>Name</th>
-            <th>Status</th>
+            <th>Rented</th>
             <th></th>
             <th></th>
           </tr>
@@ -103,13 +142,13 @@ function Vehicles() {
           <tr key={vehicle.id} className="api-row">
             <td>{vehicle.id}</td>
             <td>{vehicle.city_name}</td>
-            <td>{vehicle.vehicle_type_name}</td>
+            <td>{vehicle.type_name}</td>
             <td>{vehicle.name}</td>
             <td>
-            {vehicle.vehicle_status === '1' ? (
-              <FontAwesomeIcon icon={faCheck} style={{ color: 'green' }} />
+            {vehicle.rentedBy === -1 ? (
+              <FontAwesomeIcon icon={faCheck} style={{ color: 'red' }} />
             ) : (
-              <FontAwesomeIcon icon={faTimes} style={{ color: 'red' }} />
+              <FontAwesomeIcon icon={faTimes} style={{ color: 'green' }} />
             )}
           </td>
             <td className="api-edit">

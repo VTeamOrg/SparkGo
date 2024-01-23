@@ -20,9 +20,6 @@ run
 
 sudo mariadb --table < reset.sql
 
-eller endast test databasen
-
-sudo mariadb --table < reset_test.sql
 
 # Run test
 
@@ -46,10 +43,4 @@ node app.js
 
 # Current endpoints
 
-/users and users/id
 
-/stations and stations/id
-
-/cities and cities/id
-
-/vehicles and vehicles/id

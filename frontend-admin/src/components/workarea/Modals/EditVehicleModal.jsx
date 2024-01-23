@@ -1,40 +1,99 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef  } from 'react';
 import Modal from 'react-modal';
 import '../CSS/Modal.css';
 import { updateData, fetchData } from '../../support/FetchService';
+import PropTypes from 'prop-types';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import React, { useCallback } from "react";
+import useWebSocket from 'react-use-websocket'; 
 
 function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
-    const [editedVehicle, setEditedVehicle] = useState({
+  const [editedVehicle, setEditedVehicle] = useState({
+      city_id: '',
+      type_id: '',
+      name: '',
+      status: '',
+      station_id: '',
+      position: { lat: 0, lon: 0 },
+    });
+
+    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+      `ws://localhost:3000?type=vehicle&id=${vehicle.id}`,
+      {
+        share: false,
+        shouldReconnect: () => true,
+      }
+    );
+
+  const [vehicleTypes, setVehicleTypes] = useState([]);
+  const [stations, setStations] = useState([]);
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
+
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    fetchData('stations',(stationsData) => {
+      console.log(stationsData);
+      setStations(stationsData);
+    });
+
+    fetchData('vehicleTypes',(typesData) => {
+      setVehicleTypes(typesData);
+    });
+
+    if (isOpen && vehicle) {
+      setEditedVehicle({
+        city_id: vehicle.city_id,
+        type_id: vehicle.type_id,
+        name: vehicle.name,
+        status: vehicle.status,
+        position: {
+          lat: vehicle.position.lat,
+          lon: vehicle.position.lon,
+        },
+        station_id: vehicle.station_id || '',
+      });
+      console.log(editedVehicle);
+      setLatitude(vehicle.position.lat.toFixed(6));
+      setLongitude(vehicle.position.lon.toFixed(6));
+      setSelectedCoordinates([vehicle.position.lat, vehicle.position.lon]);
+    }
+
+    if (!isOpen) {
+      setEditedVehicle({
         city_id: '',
         type_id: '',
         name: '',
-        vehicle_status: '',
+        status: '',
+        station_id: '',
+        position: { lat: 0, lon: 0 },
       });
+    }
+  }, [isOpen, vehicle]);
 
-  const [vehicleTypes, setVehicleTypes] = useState([]);
-  const [cities, setCities] = useState([]);
 
-  useEffect(() => {
-    setEditedVehicle({
-      city_id: vehicle.city_id,
-      type_id: vehicle.type_id,
-      name: vehicle.name,
-      vehicle_status: vehicle.vehicle_status,
-    });
+  const moveVehicle = useCallback(() => {
+    const moveData = {
+      action: 'moveVehicle',
+      vehicleId: vehicle.id,
+      lat: editedVehicle.position.lat,
+      lon: editedVehicle.position.lon,
+      rentedBy: -1,
+    };
 
-    fetchData('vehicleTypes', (data) => {
-      setVehicleTypes(data);
-    });
+    // Send the move vehicle request to the server
+    sendJsonMessage(moveData);
+  }, [sendJsonMessage, vehicle.id, editedVehicle]);
 
-    fetchData('cities', (data) => {
-      setCities(data);
-    });
-  }, [vehicle]);
 
   const handleEditVehicle = () => {
+    console.log(editedVehicle);
     updateData('vehicles', vehicle.id, editedVehicle)
       .then(() => {
+        moveVehicle();
         onSave(editedVehicle);
         onRequestClose();
       })
@@ -43,23 +102,105 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
       });
   };
 
+  EditVehicleModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    vehicle: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      city_id: PropTypes.number.isRequired,
+      type_id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      position: PropTypes.shape({
+        lat: PropTypes.number.isRequired,
+        lon: PropTypes.number.isRequired,
+      }).isRequired,
+    }).isRequired,
+  };
+
+
+  const DoubleClickInput = () => {
+    useMapEvents({
+      dblclick: (e) => {
+        e.originalEvent.preventDefault();
+        const { lat, lng } = e.latlng;
+        setLatitude(lat.toFixed(6));
+        setLongitude(lng.toFixed(6));
+        setSelectedCoordinates([lat, lng]);
+        setEditedVehicle({
+          ...editedVehicle,
+          position: {
+            lat: lat,
+            lon: lng,
+          },
+        });
+      },
+    });
+
+    return null;
+  };
+
+  const handleMapClick = (e) => {
+    // Update the position object in the state when the map is clicked
+    setEditedVehicle({
+      ...editedVehicle,
+      position: {
+        lat: e.latlng.lat,
+        lon: e.latlng.lng,
+      },
+    });
+    setLatitude(e.latlng.lat.toFixed(6));
+    setLongitude(e.latlng.lng.toFixed(6));
+    setSelectedCoordinates([e.latlng.lat, e.latlng.lng]);
+  };
+
+  const handleStationSelection = (stationId) => {
+    // Find the selected station using stationId
+    const selectedStation = stations.find((station) => station.id === parseInt(stationId));
+  
+    if (selectedStation) {
+      // Update latitude and longitude fields with the selected station's coordinates
+      setLatitude(selectedStation.coords_lat.toFixed(6));
+      setLongitude(selectedStation.coords_long.toFixed(6));
+  
+      // Update selectedCoordinates state with the selected station's coordinates
+      setSelectedCoordinates([selectedStation.coords_lat, selectedStation.coords_long]);
+  
+      // Update the editedVehicle state with the new coordinates
+      setEditedVehicle({
+        ...editedVehicle,
+        position: {
+          lat: selectedStation.coords_lat,
+          lon: selectedStation.coords_long,
+        },
+      });
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="edit-vehicle-modal">
       <h2>Edit Vehicle</h2>
+
       <div>
-        <label>City:</label>
-        <select
-          value={editedVehicle.city_id}
-          onChange={(e) => setEditedVehicle({ ...editedVehicle, city_id: e.target.value })}
-          required
-        >
-          {cities.map((city) => (
-            <option key={city.id} value={city.id}>
-              {city.name}
-            </option>
-          ))}
-        </select>
-      </div>
+  <label>Station:</label>
+  <select
+    value={editedVehicle.station_id}
+    onChange={(e) => {
+      setEditedVehicle({ ...editedVehicle, station_id: e.target.value });
+      handleStationSelection(e.target.value); 
+    }}
+    required
+  >
+    <option value="">Select a station</option>
+    {stations.map((station) => (
+      <option key={station.id} value={station.id}>
+        {station.name}
+      </option>
+    ))}
+  </select>
+</div>
+
       <div>
         <label>Vehicle Type:</label>
         <select
@@ -87,11 +228,50 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
         <label>Status:</label>
         <input
           type="text"
-          value={editedVehicle.vehicle_status}
-          onChange={(e) => setEditedVehicle({ ...editedVehicle, vehicle_status: e.target.value })}
-          required
+          value={editedVehicle.status}
+          onChange={(e) => setEditedVehicle({ ...editedVehicle, status: e.target.value })}
         />
       </div>
+
+            {/* Display latitude and longitude fields */}
+            <div>
+        <label>Latitude:</label>
+        <input type="text" value={latitude} readOnly />
+      </div>
+      <div>
+        <label>Longitude:</label>
+        <input type="text" value={longitude} readOnly />
+      </div>
+
+      {/* Map to display and edit the vehicle's location */}
+      <div>
+        <label>Location:</label>
+        <MapContainer
+          center={
+            selectedCoordinates
+              ? selectedCoordinates
+              : [56.1612, 15.5866] 
+          }
+          zoom={13}
+          zoomSnap={0}
+          zoomDelta={0.25}
+          style={{ height: '200px', width: '100%' }}
+          onClick={handleMapClick}
+          doubleClickZoom={false}
+          ref={mapRef}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <DoubleClickInput />
+          {selectedCoordinates && (
+            <Marker position={selectedCoordinates} />
+          )}
+        </MapContainer>
+
+      </div>
+
+
       <div>
         <button onClick={handleEditVehicle}>Save Changes</button>
         <button onClick={onRequestClose}>Cancel</button>

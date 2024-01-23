@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types'; 
 
 /**
  * EditPriceList component for the HTML portion of editing a price list item.
@@ -99,5 +99,15 @@ function EditPriceList({
     </div>
   );
 }
+
+EditPriceList.propTypes = {
+    selectedType: PropTypes.object.isRequired,
+    editedPriceItem: PropTypes.object.isRequired,
+    types: PropTypes.array.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    setSelectedType: PropTypes.func.isRequired,
+    setEditedPriceItem: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
 
 export default EditPriceList;

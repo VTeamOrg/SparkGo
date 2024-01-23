@@ -4,31 +4,43 @@ const express = require("express");
 const http = require('http');
 const cors = require("cors");
 const websocket = require('ws');
+const  cookieParser = require('cookie-parser');
+
 const loadHttpRoutes = require("./routes/httpRoutes");
 const loadWebsocket = require('./routes/websocketRoutes');
-const loadAuthRoutes = require("./routes/oauthRoutes");
-
+const loadAuthRoutes = require('./routes/oauthRoutes');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
+const corsOptions = {
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'localhost:5173'],
+    methods: 'GET,POST,UPDATE,PUT,DELETE',
+    allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization', 'credentials'],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
 
+// Use the cors middleware with your options
 app.use(cors());
-app.options("*", cors());
+
+
 
 app.disable("x-powered-by");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.NODE_ENV === "test" ? 1337 : 3000; // Use port 1337 for testing
+const port = process.env.NODE_ENV === "test" ? 1337 : 3000;
 
 app.get("/", (req, res) => {
     res.json({
         data: "Hello World!",
     });
 });
+
+app.use(cookieParser( process.env.SESSION_SECRET));
 
 loadAuthRoutes(app);
 loadHttpRoutes(app);
