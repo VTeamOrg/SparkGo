@@ -53,5 +53,36 @@ function ButtonRow({
     handleDelete: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func.isRequired,
   };
+
+  function ButtonRowShort({
+    isEditing,
+    handleEdit,
+    setIsEditing,
+    handleDelete,
+  }) {
+    return (
+      <div className="row">
+        {isEditing ? (
+          <>
+            <button onClick={handleEdit}>Save</button>
+            <button onClick={() => setIsEditing(false)}>Cancel</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => setIsEditing(true)}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  ButtonRowShort.propTypes = {
+    isEditing: PropTypes.bool.isRequired,
+    handleEdit: PropTypes.func.isRequired,
+    setIsEditing: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+  };
   
-export { ButtonRow, SearchBar } ;
+export { ButtonRow, ButtonRowShort, SearchBar } ;

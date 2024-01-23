@@ -64,9 +64,12 @@ const vehiclesController = {
 
     createVehicle: async function (req, res) {
         try {
-            const { city_id, type_id, rented_by } = req.body;
-            const newVehicle = await vehiclesModel.createVehicle(city_id, type_id, rented_by);
+            const { city_id, type_id, vehicle_status, name, station_id } = req.body;
 
+            const normalizedStationId = station_id === "" ? null : station_id;
+
+            const newVehicle = await vehiclesModel.createVehicle(city_id, type_id, vehicle_status, name, normalizedStationId);
+    
             return res.status(201).json({
                 message: "Vehicle created successfully",
                 data: newVehicle,
@@ -82,6 +85,7 @@ const vehiclesController = {
         try {
             const vehicleId = req.params.vehicleId;
             const { city_id, type_id, vehicle_status, name, station_id } = req.body;
+            console.log(station_id);
             const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
     
             return res.json({

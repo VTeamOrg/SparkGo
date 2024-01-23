@@ -33,6 +33,10 @@ function VehicleTypes() {
       .then((data) => {
         setVehicleTypes([...vehicleTypes, data]);
         setNewVehicleType('');
+
+        fetchData('vehicleTypes', (updatedData) => {
+          setVehicleTypes(updatedData);
+        });
       })
       .catch((error) => {
         console.error('Error adding vehicle type:', error);

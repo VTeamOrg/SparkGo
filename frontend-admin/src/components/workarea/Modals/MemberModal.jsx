@@ -13,20 +13,22 @@ import ChangePlanModal from './ChangePlanModal';
 function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMembers, isFromMyAccount }) { 
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedMember, setEditedMember] = useState({ ...member });
+//  const [editedMember, setEditedMember] = useState({ ...member });
+  const [editedMember, setEditedMember] = useState({});
   const [emailError, setEmailError] = useState('');
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
   const [selectedPaymentMethodIndex, setSelectedPaymentMethodIndex] = useState(-1);
   const [isManagePlanModalOpen, setIsManagePlanModalOpen] = useState(false);
   const [isChangePlanModalOpen, setIsChangePlanModalOpen] = useState(false);
+  const [isPaymentMethodChanged, setIsPaymentMethodChanged] = useState(false);
 
   const refreshMembersModalData = useCallback(() => {
-    const memberId = editedMember.id;
+    const memberId = member.id;
     
     if (memberId) {
       fetchData(`users/${memberId}`, (data) => {
-        setEditedMember(data);
+        setEditedMember(data[0]);
       });
 
       fetchData(`paymentMethods/memberid/${memberId}`, (data) => {
@@ -47,9 +49,8 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
 
   
   useEffect(() => {
-  
-    const memberId = editedMember.id;
-  
+    const memberId = member.id;
+
     if (memberId) {
       refreshMembersModalData();
     }
@@ -103,62 +104,70 @@ function MemberModal({ isOpen, onRequestClose, member, onEditMember, refreshMemb
 
   const handlePaymentMethodChange = (selectedMethod, index) => {
     setSelectedPaymentMethodIndex(index);
-  
+
     const updatedPaymentMethods = [...paymentMethods];
     updatedPaymentMethods.forEach((method, i) => {
       method.is_selected = i === index ? 'Y' : 'N';
     });
-  
+
     setPaymentMethods(updatedPaymentMethods);
-  
+
     setEditedMember((prevEditedMember) => ({
       ...prevEditedMember,
       payment_method: selectedMethod,
       payment_reference: updatedPaymentMethods[index].reference_info || '',
       payment_selected: 'Y',
     }));
+    setIsPaymentMethodChanged(true); 
   };
+
   
   const handleEdit = () => {
     if (editedMember.email && !validateEmail(editedMember.email)) {
       setEmailError('Invalid email format');
       return;
     }
-  
+
     updateData('users', editedMember.id, editedMember)
       .then(() => {
+        if (isPaymentMethodChanged === true) {
 
-        const updatedPaymentMethodData = paymentMethods.map((method) => ({
-          id: method.id,
-          member_id: editedMember.id, 
-          method_name: method.method_name,
-          reference_info: method.reference_info,
-          is_selected: method.is_selected === 'Y' ? 'Y' : 'N', 
-        }));
-  
-        Promise.all(
-          updatedPaymentMethodData.map((methodData) =>
-            updateData('paymentMethods', methodData.id, methodData)
+          const updatedPaymentMethodData = paymentMethods.map((method) => ({
+            paymentMethodId: method.id,
+            member_id: editedMember.id,
+            method_name: method.method_name,
+            reference_info: method.reference_info,
+            is_selected: method.is_selected === 'Y' ? 'Y' : 'N',
+          }));
+
+          Promise.all(
+            updatedPaymentMethodData.map((methodData) =>
+              updateData('paymentMethods', methodData.paymentMethodId, methodData)
+                .then(() => {
+                  console.log(`Payment method ${methodData.paymentMethodId} updated successfully`);
+                })
+                .catch((error) => {
+                  console.error(`Error updating payment method ${methodData.paymentMethodId}:`, error);
+                })
+            )
           )
-        )
-          .then(() => {
-            if (onEditMember) {
-              onEditMember(editedMember);
-            }
-            setIsEditing(false);
-            onRequestClose();
-  
-            if (refreshMembers) {
+            .then(() => {
+              console.log("All payment methods updated successfully");
               refreshMembers();
-            }
-          })
-          .catch((error) => {
-            console.error('Error updating paymentMethod:', error);
-          });
+            })
+            .catch((error) => {
+              console.error('Error updating payment methods:', error);
+            });
+        } else {
+          refreshMembers();
+        }
       })
       .catch((error) => {
         console.error('Error updating member:', error);
       });
+
+    setIsEditing(false);
+    setIsPaymentMethodChanged(false);
   };
   
   const handleDeletePaymentMethod = (paymentMethodId) => {

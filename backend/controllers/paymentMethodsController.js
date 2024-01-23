@@ -46,11 +46,21 @@ const paymentMethodsController = {
       },
 
     updatePaymentMethod: async function (req, res) {
+        console.log("update payment");
         console.log(res.body);
+        console.log(req.body);
+
         try {
             const paymentMethodId = req.params.paymentMethodId;
             const { member_id, method_name, reference_info, is_selected } = req.body;
+
+            console.log("Payment Method ID:", paymentMethodId); 
+
+
             const updatedPaymentMethod = await paymentMethodsModel.updatePaymentMethod(paymentMethodId, member_id, method_name, reference_info, is_selected);
+            
+            console.log("Updated Payment Method:", updatedPaymentMethod); 
+
 
             if (updatedPaymentMethod && updatedPaymentMethod.affectedRows > 0) {
                 return res.json({

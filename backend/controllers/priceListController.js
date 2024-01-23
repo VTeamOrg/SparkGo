@@ -30,8 +30,13 @@ const priceListController = {
     createPriceListItem: async function (req, res) {
         try {
             const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
-            const result = await priceListModel.createPriceListItem(type_id, list_name, price_per_minute, price_per_unlock);
-
+            const result = await priceListModel.createPriceListItem({
+              type_id,
+              list_name,
+              price_per_minute,
+              price_per_unlock,
+            });
+        
             return res.json({
                 message: "Price list item created successfully",
                 insertedId: result.insertId,
@@ -46,9 +51,14 @@ const priceListController = {
         try {
             const itemId = req.params.itemId;
             const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
-
-            await priceListModel.updatePriceListItem(itemId, type_id, list_name, price_per_minute, price_per_unlock);
-
+    
+            await priceListModel.updatePriceListItem(itemId, {
+                type_id,
+                list_name,
+                price_per_minute,
+                price_per_unlock
+            });
+    
             return res.json({
                 message: "Price list item updated successfully",
             });
