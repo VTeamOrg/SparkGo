@@ -27,7 +27,6 @@ const MapBox = () => {
     longitude: 0,
     zoom: 12,
   });
-  const loadedVehicles = vehicleStore.value;
   const socket = websocketService.socket;
 
   const REMOVE_VEHICLE_MESSAGES = ["vehicleRented", "vehicleRemoved"];
@@ -38,9 +37,6 @@ const MapBox = () => {
     const onMessage = (message) => {
       const { action, data, message: msg } = JSON.parse(message.data);
       if (action !== "vehicleUpdate") return;
-
-      console.log(data);
-      
       
       const { id, typeId, battery, currentSpeed, maxSpeed, lon, lat, rentedBy } = data;
       const updatedVehicleData = {
@@ -53,8 +49,6 @@ const MapBox = () => {
         lat: parseFloat(lat),
       };
       const filteredVehicles = vehicleStore.value.filter(vehicle => vehicle.id !== id);
-
-      console.log(filteredVehicles);
       
       if (REMOVE_VEHICLE_MESSAGES.includes(msg)) {
         vehicleStore.value = [...filteredVehicles];
@@ -68,7 +62,6 @@ const MapBox = () => {
         } else {
           // remove vehicle and add updated vehicle
           console.log("vehicle updated");
-          console.log(filteredVehicles);
           vehicleStore.value = [...filteredVehicles, updatedVehicleData];
         }
 
@@ -140,9 +133,6 @@ const MapBox = () => {
    * @returns {void}
    */
   const handleLocationChange = (coords) => {
-    // console.log("-------------------->", coords.latitude, coords.longitude);
-    // send message to server
-    // sendJsonMessage({ action: "updateLocation", data: { longitude: coords.longitude, latitude: coords.latitude } });
 
     socket?.addEventListener("open", (_) => {
       socket.send(JSON.stringify({ action: "updateLocation", data: { longitude: coords.longitude, latitude: coords.latitude } }));

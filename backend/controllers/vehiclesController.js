@@ -51,14 +51,13 @@ const vehiclesController = {
                 return res.json({
                     data: result ?? [],
                 });
-
             }
 
             return res.json({
                 data: activeVehicles ?? [],
             });
         } catch (error) {
-            console.error("Error querying database:", error.message);
+            console.error("Error querying database:", error);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     },

@@ -15,6 +15,9 @@ router.get('/', async (req, res) => {
             return res.status(403).json({ message: 'User not found' });
         }
 
+
+        console.log("Validated User Role:", user.role); // Log the validated user's role
+
         // Check if the user is an admin
         if (user.role !== 'admin') {
             return res.status(403).json({ message: 'Access denied. Admins only.' });

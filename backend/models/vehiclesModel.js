@@ -159,10 +159,10 @@ const vehiclesModel = {
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
                         isStarted: connectedVehicle.data?.isStarted ?? null,
                         rentedBy: connectedVehicle.rentedBy,
-                        city_name: vehicle.city_name,
-                        name: vehicle.name,
-                        type_name: vehicle.vehicle_type_name,
-                        station_id: vehicle.station_id,
+                        city_name: dbVehicle.city_name,
+                        name: dbVehicle.name,
+                        type_name: dbVehicle.vehicle_type_name,
+                        station_id: dbVehicle.station_id,
                     }
                 }
 
@@ -177,10 +177,10 @@ const vehiclesModel = {
                     maxSpeed: null,
                     isStarted: null,
                     rentedBy: null,
-                    city_name: vehicle.city_name,
-                    name: vehicle.name,
-                    type_name: vehicle.vehicle_type_name,
-                    station_id: vehicle.station_id,
+                    city_name: dbVehicle.city_name,
+                    name: dbVehicle.name,
+                    type_name: dbVehicle.vehicle_type_name,
+                    station_id: dbVehicle.station_id,
                 }
             });
 

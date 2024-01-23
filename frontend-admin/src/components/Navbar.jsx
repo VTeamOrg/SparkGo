@@ -9,10 +9,6 @@ function Navbar({ setActiveSection, userRole }) {
       credentials: 'include', // Important to include credentials
     });
 
-    // Clear local storage or any client-side state
-    localStorage.removeItem('userLoggedIn');
-    localStorage.removeItem('userEmail');
-
     // Redirect to the login page or home page
     window.location.href = 'http://localhost:5173/';
   };

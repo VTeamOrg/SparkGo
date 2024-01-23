@@ -101,6 +101,7 @@ const handleClose = (connectionId, deviceType) => {
     if (deviceType === 'user') {
         // Remove the client from the list of connected clients
         const user = connectedUsers.get()?.find(user => user.id === connectionId);
+        if (!user) return;
         if (user.rentedVehicle === -1) {
             connectedUsers.remove(connectionId);
         }

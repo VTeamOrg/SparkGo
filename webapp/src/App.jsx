@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
 import { Route, Routes } from "react-router-dom";
 import PageNotFound from "./pages/PageNotFound";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import websocketService from "./services/websocketService";
 import { appSettingsStore, vehicleStore } from "./GStore";
+import { useEffect } from "react";
 
 const App = () => {
     const theme = localStorage.getItem("theme") ?? "light";
@@ -22,6 +22,11 @@ const App = () => {
             const res = await response.json();
 
             const data = res.data;
+
+            if (!data) {
+                console.error("Error fetching online vehicles:", res);
+                return;
+            }
 
             // create a new array with the data we need
             const sanitizedData = data.map(item => {

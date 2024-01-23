@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
     const {redirect} = req.query;
     console.log(redirect);
     res.header('Access-Control-Allow-Origin',
-    'http://localhost:5173')
+    'http://localhost:5173',)
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header('Referred-Policy','no-reffered-when-downgrade');
     

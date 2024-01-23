@@ -155,6 +155,8 @@ const userModel = {
                 [email]
             );
             await database.closeDb(db);
+
+            console.log("Fetched User:", user); // Log the user data
             return user.length > 0 ? user[0] : null;
         } catch (error) {
             throw error;

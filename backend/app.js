@@ -15,7 +15,7 @@ const server = http.createServer(app);
 const wss = new websocket.Server({ server });
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'localhost:5173'],
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'localhost:5173', 'localhost:5174', 'http://127.0.0.1:5174',],
     methods: 'GET,POST,UPDATE,PUT,DELETE',
     allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization', 'credentials'],
     credentials: true,
@@ -23,8 +23,7 @@ const corsOptions = {
 };
 
 // Use the cors middleware with your options
-app.use(cors());
-
+app.use(cors(corsOptions));
 
 
 app.disable("x-powered-by");

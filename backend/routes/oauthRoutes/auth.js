@@ -6,7 +6,7 @@ const { OAuth2Client } = require('google-auth-library');
 const fetch = require('node-fetch');
 const userModel = require("../../models/userModel.js");
 const tokenModel = require("../../models/tokenModel.js"); 
-const { createUserIfNotExists} = require("../../middleware/authMiddleware.js"); // Update the path as needed
+const { createUserIfNotExists} = require("../../middleware/createUser.js"); // Update the path as needed
 
 async function getUserData(access_token) {
   const response = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
@@ -44,8 +44,8 @@ router.get('/', async function (req, res) {
       user = await createUserIfNotExists(userData);
     } 
 
-    const isAdmin = await userModel.isAdminByEmail(user.email);
-    const isRepair = await userModel.isRepairByEmail(user.email);
+
+    console.log("User Role:", user.role); // Log the user's role
 
     const tokenExpiration = new Date();
     tokenExpiration.setHours(tokenExpiration.getHours() + 1); // Set the token to expire in 1 hour, for example
@@ -61,13 +61,6 @@ router.get('/', async function (req, res) {
       path: '/v1'
   });
   
-  res.cookie('userRole', isAdmin ? 'admin' : (isRepair ? 'repair' : 'user'), {
-      signed: true, // Sign the cookie
-      httpOnly: true, // Assuming the client-side JavaScript does not need to read the user role
-      secure: true, // Set to true in production
-      sameSite: 'strict',
-      path: '/v1'
-  });
   
   res.cookie('userId', user.id, {
       httpOnly: true, // Prevent client-side JavaScript from accessing the user ID
@@ -75,10 +68,7 @@ router.get('/', async function (req, res) {
       sameSite: 'strict',
       path: '/v1'
   });
-    
-
-    console.log('Setting userRole cookie to:', isAdmin ? 'admin' : (isRepair ? 'repair' : 'user'));
-    console.log("Setting Cookies - isAdmin:", isAdmin, "userID:", user.id, "authToken:", r.tokens.access_token);
+      
 
     const redirectTo = "http://localhost:5173/v1?success=true";
 
