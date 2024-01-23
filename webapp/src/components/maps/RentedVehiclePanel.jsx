@@ -41,6 +41,7 @@ const RentedVehiclePanel = () => {
         console.log(rideStated.value);
         if (!rideStated.value) {
             vehicleFuncs.resumeRide();
+            return;
         }
         vehicleFuncs.pauseRide();
     }

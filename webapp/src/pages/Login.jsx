@@ -7,7 +7,7 @@ const Login = () => {
         <section
             className={`bg-bg_color-2 w-full h-full`}
             style={{
-                backgroundImage: `url(${appSettingsStore.getStyle() === "dark" ? LoginBg : LoginBgLight})`,
+                backgroundImage: `url(${appSettingsStore.value.style === "dark" ? LoginBg : LoginBgLight})`,
                 backgroundSize: 'cover',
             }}
         >
