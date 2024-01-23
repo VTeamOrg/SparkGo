@@ -19,4 +19,6 @@ router.delete("/:id", usersController.deleteUser);
 
 router.get("/isAdminByEmail/:email", usersController.isAdminByEmail);
 
+router.get("/vehiclePrice/:vehicleType", usersController.getUserVehiclePrice);
+
 module.exports = router;

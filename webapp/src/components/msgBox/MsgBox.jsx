@@ -38,7 +38,7 @@ const MsgBox = () => {
     return (
         <section
             ref={ref => boxRef.value = ref}
-            className={`${msgBoxData.peek().content ? "slide-bottom" : "hidden"} bg-bg_color fixed top-4 left-2/4 py-4 pr-8 pl-4 w-[calc(100%-2rem)] -translate-x-1/2 z-[10000] rounded-lg shadow-lg`}
+            className={`${msgBoxData.peek().content ? "slide-bottom" : "hidden"} bg-bg_color-2 fixed top-4 left-2/4 py-4 pr-8 pl-4 w-[calc(100%-2rem)] -translate-x-1/2 z-[10000] rounded-lg shadow-lg`}
         >
             <IoIosClose
                 className="fixed top-2 right-2 text-2xl text-gray-600"

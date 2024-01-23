@@ -10,6 +10,40 @@ export const msgBoxData = signal({
     onClose: null
 });
 
-export const curr_theme = signal(null);
+export const appSettingsStore = signal({
+    style: "dark",
+});
+export const vehicleStore = signal([]);
 
-export const loadedVehicles = signal([]);
+export const userDataStore = signal({
+    rentedVehicle: null,
+});
+
+
+// export const vehicleStore = {
+//     add: (vehicles) => {
+//         // remove duplicates
+//         const newVehicles = vehicles.filter(vehicle => !loadedVehicles.value.some(v => v.id === vehicle.id));
+//         loadedVehicles.value = [...loadedVehicles.value, ...newVehicles];
+//     },
+//     remove: (vehicleId) => {
+//         loadedVehicles.value = loadedVehicles.value.filter(vehicle => vehicle.id !== vehicleId);
+//     },
+//     update: (vehicleId, data) => {
+//         loadedVehicles.value = loadedVehicles.value.map(vehicle => {
+//             if (vehicle.id === vehicleId) {
+//                 return { ...vehicle, ...data };
+//             }
+//             return vehicle;
+//         });
+//     },
+//     get: (vehicleId) => {
+//         return loadedVehicles.value.find(vehicle => vehicle.id === vehicleId);
+//     },
+//     getAll: () => {
+//         return loadedVehicles.value;
+//     },
+//     clear: () => {
+//         loadedVehicles.value = [];
+//     }
+// }

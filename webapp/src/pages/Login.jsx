@@ -1,14 +1,13 @@
-import { curr_theme } from "../GStore";
 import LoginBg from "../assets/login-bg.svg";
 import LoginBgLight from "../assets/login-bg-light.svg";
 import LoginBox from "../components/login/LoginBox";
-
+import { appSettingsStore } from "../GStore";
 const Login = () => {
     return (
         <section
-            className={`bg-bg_color w-full h-full`}
+            className={`bg-bg_color-2 w-full h-full`}
             style={{
-                backgroundImage: `url(${curr_theme.value === "dark" ? LoginBg : LoginBgLight})`,
+                backgroundImage: `url(${appSettingsStore.getStyle() === "dark" ? LoginBg : LoginBgLight})`,
                 backgroundSize: 'cover',
             }}
         >

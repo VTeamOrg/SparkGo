@@ -1,3 +1,5 @@
+const priceListModel = require("../models/priceListModel.js");
+const subscriptionModel = require("../models/subscriptionModel.js");
 const userModel = require("../models/userModel.js");
 
 const usersController = {
@@ -40,6 +42,42 @@ const usersController = {
         } catch (error) {
             console.error("Error creating user:", error.message);
             return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
+    getUserVehiclePrice: async function getUserVehiclePrice(req, res) {
+        // will be changed to get user id from token when auth is implemented
+        const userId = 1;
+        const vehicleType = req.params.vehicleType;
+        console.log("vehicleType ", vehicleType);
+        // checks if user have a subscription and if have free minutes or free unlocks left return free. if not return price of vehicle type
+        try {
+            const user = await userModel.getUserById(userId);
+            const subscription = await subscriptionModel.getSubscriptionByMemberId(userId);
+            const priceList = await priceListModel.getPriceListItemByTypeId(vehicleType);
+
+            if (!priceList) {
+                return res.status(404).json({ message: "Price list not found" });
+            }
+
+            const price = {
+                unlock: priceList.price_per_unlock,
+                minute: priceList.price_per_minute,
+            }
+
+            if (subscription && subscription.available_unlocks > 0) {
+                price.unlock = 0;
+            }
+
+            if (subscription && subscription.available_minutes > 0) {
+                price.minute = 0;
+            }
+
+            res.json({
+                data: price,
+            });
+        } catch (error) {
+            throw error;
         }
     },
 

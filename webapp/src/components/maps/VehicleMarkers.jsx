@@ -2,24 +2,46 @@ import { Marker } from "react-map-gl";
 import useSupercluster from "use-supercluster";
 import { PiScooterFill } from "react-icons/pi";
 import VehicleMsgContainer from "./VehicleMsgContainer";
-import { useSignal } from "@preact/signals-react";
-import { loadedVehicles, msgBoxData } from "../../GStore";
+import { msgBoxData, vehicleStore } from "../../GStore";
+import { useState } from "react";
+import { computed } from "@preact/signals-react";
 
-const VehicleMarkers = ({ mapRef, viewport, points }) => {
+const VehicleMarkers = ({ mapRef, viewport }) => {
+    const createPoints = (vehicles) => {
+        return vehicles.map(createPoint);
+    };
 
-    const clickedVehicle = useSignal(null);
+    const createPoint = (item) => {
+        const { lon, lat } = item;
+
+        return {
+            type: 'Feature',
+            properties: { cluster: false, item },
+            geometry: {
+                type: 'Point',
+                coordinates: [lon, lat],
+            },
+        }
+    }
+
+    const points = computed(() => createPoints(vehicleStore.value));
+
     const { clusters, supercluster } = useSupercluster({
-        points: points,
+        points: points.value,
         bounds: mapRef.value ? mapRef.value.getMap().getBounds().toArray().flat() : null,
         zoom: viewport.value.zoom ?? 12,
         options: { radius: 75, maxZoom: 15 },
     });
 
+    const [selectedVehicle, setSelectedVehicle] = useState(null);
+
     const handleVehicleClick = (e, vehicle) => {
         e.preventDefault();
 
-        clickedVehicle.value = vehicle.item.id;
-        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer vehicleId={vehicle.item.id} batteryLevel={vehicle.item.battery} cost={3.00} unlockFee={2.00} currency="sek" />, onClose: () => clickedVehicle.value = null };
+        console.log(vehicle.item.id);
+
+        setSelectedVehicle(vehicle.item.id);
+        msgBoxData.value = { timeout: null, content: <VehicleMsgContainer vehicleId={vehicle.item.id} batteryLevel={vehicle.item.battery} cost={3.00} unlockFee={2.00} currency="sek" />, onClose: () => setSelectedVehicle(null) };
     }
 
     return (
@@ -62,8 +84,8 @@ const VehicleMarkers = ({ mapRef, viewport, points }) => {
                             <div
                                 className="text-white bg-accent-1 rounded-full p-3 flex justify-center items-center"
                                 style={{
-                                    width: `${10 + (pointCount / loadedVehicles.value.length) * 20}px`,
-                                    height: `${10 + (pointCount / loadedVehicles.value.length) * 20}px`
+                                    width: `${10 + (pointCount / points.value.length) * 20}px`,
+                                    height: `${10 + (pointCount / points.value.length) * 20}px`
                                 }}
                             >
                                 {pointCount}
@@ -79,7 +101,7 @@ const VehicleMarkers = ({ mapRef, viewport, points }) => {
                         latitude={latitude}
                         longitude={longitude}
                     >
-                        <PiScooterFill className={`${clickedVehicle.value === cluster.properties.id && msgBoxData.value.content && "bg-blue-300 rounded-full"} text-4xl text-accent-1`} onClick={(e) => handleVehicleClick(e, cluster.properties)} />
+                        <PiScooterFill className={`${selectedVehicle == cluster.properties.item.id && msgBoxData.value.content && "bg-blue-200 rounded-full"} text-4xl text-accent-1`} onClick={(e) => handleVehicleClick(e, cluster.properties)} />
                     </Marker>
                 );
             })}

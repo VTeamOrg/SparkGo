@@ -1,6 +1,5 @@
 id,role,email,name,personal_number,address,wallet
-<<<<<<< HEAD
-1,user,user1@example.com,John Doe,1234567890,123 Main St,100
+1,user,user1@example.com,John Doe,1234567890,123 Main St,6
 2,user,user2@example.com,Jane Smith,0987654321,456 Elm St,200
 3,admin,admin1@example.com,Adam Johnson,6758493021,789 Oak St,300
 4,user,user3@example.com,Sarah Wilson,1928374650,567 Pine St,400
@@ -10,17 +9,3 @@ id,role,email,name,personal_number,address,wallet
 8,admin,admin3@example.com,Amy Garcia,3847562910,800
 9,user,user6@example.com,David Rodriguez,1234567890,876 Walnut St,900
 10,admin,admin4@example.com,Laura Martinez,9876543210,1000
-=======
-1,admin,anna.h.blixt@gmail.com,Anna Blixt,200201-1234,Gågatan 5,10.00
-2,user,anna.h.svensson@gmail.com,Anna Blixt,200202-5678,Ängsvägen 10,50.00
-3,user,fredrik.f@gmail.com,Maria Andersson,200203-9012,Boulevarden 3,75.00
-4,user,hanna.h@gmail.com,Anders Johansson,200204-3456,Lingonvägen 7,30.00
-5,user,gustav.g@gmail.com,Elsa Karlsson,200205-7890,Rosengatan 12,45.00
-6,user,lisa.l@gmail.com,Jonas Lindberg,200206-2345,Skogsvägen 9,60.00
-7,user,maja.m@gmail.com,Erik Andersson,200207-6789,Strandvägen 22,20.00
-8,user,niklas.n@gmail.com,Sara Nilsson,200208-0123,Björkvägen 8,55.00
-9,user,peter.p@gmail.com,Karin Eriksson,200209-4567,Ekstigen 14,80.00
-10,admin,admin@admin.com,Admin User,200210-8901,Adminvägen 1,100.00
-11,admin,adrian.dedorson@gmail.com,Admin User,200210-8901,Adminvägen 1,100.00
-12,repair,carlcarlsson150@gmail.com,carl carlsson,200209-4567,Ekstigen 14,80.00
->>>>>>> e247a272ca03009e9e69c3b740faba2be4fe1ab8

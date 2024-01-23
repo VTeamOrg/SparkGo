@@ -69,7 +69,7 @@ class Vehicle:
     # Send a message to the websocket
     async def send_message(self, action, payload = None):
         try:
-            payload = {
+            data = {
                 "action": action,
                 "vehicleId": self.vehicle_id,
                 "lat": self.lat,
@@ -81,7 +81,7 @@ class Vehicle:
                 "currentSpeed": self.current_speed.value,
                 "payload": payload
             }
-            await self.websocket.send(json.dumps(payload))
+            await self.websocket.send(json.dumps(data))
             logging.info(f"Sent: {json.dumps(payload)}")
         except websockets.WebSocketException as e:
             logging.error(f"WebSocket error while sending message: {e}")

@@ -11,7 +11,7 @@ const AreaMsgContainer = ({ svgIcon, title, text }) => {
     return (
         <div className="flex gap-4">
             <img src={svgIcon} alt="icon" className="w-16" />
-            <div className={`text-text_color`}>
+            <div className={`text-text_color-2`}>
                 <h1 className={`text-accent-1 text-base font-bold`}>{title}</h1>
                 <p className="text-sm">{text}</p>
             </div>

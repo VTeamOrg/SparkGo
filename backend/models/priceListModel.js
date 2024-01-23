@@ -29,6 +29,20 @@ const priceListModel = {
             throw error;
         }
     },
+    getPriceListItemByTypeId: async function (typeId) {
+        try {
+            const db = await database.openDb();
+            const priceListItem = await database.query(
+                db,
+                "SELECT * FROM v_price_list WHERE type_id = ?;",
+                typeId
+            );
+            await database.closeDb(db);
+            return priceListItem[0];
+        } catch (error) {
+            throw error;
+        }
+    },
 
     createPriceListItem: async function ({ type_id, list_name, price_per_minute, price_per_unlock }) {
         try {

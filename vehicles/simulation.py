@@ -8,6 +8,8 @@ import signal
 import logging
 from shapely.geometry import shape, Point
 
+from user import User
+
 """
     The following code is for vehicle class testing purposes
 """
@@ -64,6 +66,7 @@ async def move_towards_destination(vehicle, end_point):
 
 
 vehicles = []
+users = []
 
 
 def getServerVehicles():
@@ -104,6 +107,13 @@ def getServerUsers():
 
     return response.json()
 
+async def connectUsers():
+    server_users = getServerUsers()
+    for data in server_users["data"]:
+        user = User(data["id"])
+        await user.connectToWebsocket()
+        users.append(user)
+        asyncio.create_task(user.connectToWebsocket())
 
 async def create_vehicles():
     server_vehicles = getServerVehicles()
@@ -114,12 +124,8 @@ async def create_vehicles():
         await vehicle.activate()
 
 async def run_vehicles():
-    server_users = getServerUsers()
-    user_ids = [item['id'] for item in server_users["data"]]
-    # vehicle_ids = [item.vehicle_id for item in vehicles]
-
     def get_random_user():
-        return random.choice(user_ids)
+        return random.choice(users)
     
     def get_vehicle(user_id):
         vehicle = None
@@ -149,28 +155,29 @@ async def run_vehicles():
             return random.choice(["rent"])
     
     while True:
-        user_id = get_random_user()
-        vehicle = get_vehicle(user_id)
+        user = get_random_user()
+        vehicle = get_vehicle(user.user_id)
         
-        action = get_random_action_for_user(user_id, vehicle)
+        action = get_random_action_for_user(user.user_id, vehicle)
 
-        print("User: ", user_id, "Vehicle: ", vehicle.vehicle_id, "Action: ", action)
+        print("User: ", user.user_id, "Vehicle: ", vehicle.vehicle_id, "Action: ", action)
 
         if action == "rent":
-            await vehicle.rent_vehicle(user_id)
+            await user.rentVehicle(user.user_id)
         elif action == "return":
-            await vehicle.return_vehicle(user_id)
+            await user.returnVehicle(user.user_id)
         elif action == "start":
-            await vehicle.start_vehicle(user_id)
+            await user.startVehicle(user.user_id)
         elif action == "drive":
             # await move_towards_destination(vehicle, generate_random_point_within_polygon())
             asyncio.create_task(move_towards_destination(vehicle, generate_random_point_within_polygon()))
         elif action == "stop":
-            await vehicle.stop_vehicle()
+            await user.stopVehicle(user.user_id)
         await asyncio.sleep(5)
 
 async def main():
     try:
+        await connectUsers()
         await create_vehicles()
         await run_vehicles()
     except Exception as e:
