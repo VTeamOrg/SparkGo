@@ -34,14 +34,15 @@ const stripeController = {
         if (!selectedSubscription) {
             throw new Error("Invalid subscription selection");
         }
-        planId = selectedSubscription[0].planId
+       
+        planId = selectedSubscription.planId
         mode="subscription";
       }
       lineItems.push({
         price: planId,
         quantity: 1,
       });
-
+      console.log();
       const session = await stripe.checkout.sessions.create({
         mode,
         payment_method_types: ['card'],
@@ -52,7 +53,7 @@ const stripeController = {
       // console.log(session);
         res.json(session);
       } catch (error) {
-        console.error("Error in session:", error.message);
+        console.error("Error in session:", error);
         return res.status(500).json({ error: "Something went wrong, please try again" });
       }
     },
@@ -103,10 +104,10 @@ const stripeController = {
           userMsg = "?success=true";
           console.log("Success");
 
-    
+          console.log(checkout_session);
           const receiptData = {
             member_id: userId,
-            payment_details: checkout_session.payment_intent,
+            payment_details: subscriptionId !== null ?checkout_session.invoice: checkout_session.payment_intent,
             payment_type: "Card",
             receipt_details: checkout_session.mode,
             sum: checkout_session.amount_total / 100,

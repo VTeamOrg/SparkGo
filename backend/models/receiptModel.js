@@ -62,13 +62,14 @@ const receiptModel = {
    
     insertReceipt: async function (receiptData) {
         try {
+            console.log(receiptData);
             // console.log("Parameters:", userId, payment_details, payment_type, receipt_details, sum, payment_date);
             const db = await database.openDb();
             const receiptResult = await database.query(
                 db,
                 "CALL insert_receipt(?, ?, ?, ?, ?, ?)",
                 // "INSERT INTO receipt (member_id, payment_details, payment_type, receipt_details, sum, payment_date) VALUES (?, ?, ?, ?, ?, ?)",
-                [receiptData.userId, receiptData.payment_details, receiptData.payment_type, receiptData.receipt_details, receiptData.sum, receiptData.payment_date]
+                [receiptData.memberId, receiptData.payment_details, receiptData.payment_type, receiptData.receipt_details, receiptData.sum, receiptData.payment_date]
             );
             await database.closeDb(db);
             return receiptResult;
