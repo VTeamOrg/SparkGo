@@ -61,6 +61,7 @@ function PaymentMethodFields({
             ))}
           </tbody>
         </table>
+        
       )}
   
       <button onClick={openAddPaymentModal}>
@@ -211,6 +212,8 @@ function MemberFields({
             </tr>
           </tbody>
         </table>
+        <div className="divider"></div>
+
       </div>
     </>
   );
@@ -233,6 +236,8 @@ function PlanFields({
   return (
     <>
       {/* PLAN FIELDS */}
+      <div className="divider"></div>
+
       <table className="custom-table">
         <tbody>
           <tr>
@@ -300,8 +305,9 @@ function PlanFields({
             </td>
           </tr>
           <tr>
+            {/*
             <td>
-              <button onClick={openManagePlanModal}>
+               <button onClick={openManagePlanModal}>
                 <FontAwesomeIcon icon={faListAlt} /> Manage plan
               </button>
             </td>
@@ -310,7 +316,8 @@ function PlanFields({
                 <FontAwesomeIcon icon={faPencilAlt} /> Change plan
               </button>
             </td>
-          </tr>
+              */}
+            </tr>
         </tbody>
       </table>
       <div className="divider"></div>

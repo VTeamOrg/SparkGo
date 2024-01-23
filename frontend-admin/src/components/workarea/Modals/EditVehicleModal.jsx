@@ -36,7 +36,6 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
   useEffect(() => {
     fetchData('stations',(stationsData) => {
-      console.log(stationsData);
       setStations(stationsData);
     });
 
@@ -56,7 +55,6 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
         },
         station_id: vehicle.station_id || '',
       });
-      console.log(editedVehicle);
       setLatitude(vehicle.position.lat.toFixed(6));
       setLongitude(vehicle.position.lon.toFixed(6));
       setSelectedCoordinates([vehicle.position.lat, vehicle.position.lon]);
@@ -90,7 +88,6 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
 
   const handleEditVehicle = () => {
-    console.log(editedVehicle);
     updateData('vehicles', vehicle.id, editedVehicle)
       .then(() => {
         moveVehicle();
@@ -160,6 +157,7 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
     const selectedStation = stations.find((station) => station.id === parseInt(stationId));
   
     if (selectedStation) {
+
       // Update latitude and longitude fields with the selected station's coordinates
       setLatitude(selectedStation.coords_lat.toFixed(6));
       setLongitude(selectedStation.coords_long.toFixed(6));
@@ -174,8 +172,10 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
           lat: selectedStation.coords_lat,
           lon: selectedStation.coords_long,
         },
+        station_id: selectedStation.id.toString(), 
       });
     }
+
   };
 
   return (
@@ -183,23 +183,23 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
       <h2>Edit Vehicle</h2>
 
       <div>
-  <label>Station:</label>
-  <select
-    value={editedVehicle.station_id}
-    onChange={(e) => {
-      setEditedVehicle({ ...editedVehicle, station_id: e.target.value });
-      handleStationSelection(e.target.value); 
-    }}
-    required
-  >
-    <option value="">Select a station</option>
-    {stations.map((station) => (
-      <option key={station.id} value={station.id}>
-        {station.name}
-      </option>
-    ))}
-  </select>
-</div>
+      <label>Station:</label>
+      <select
+        value={editedVehicle.station_id}
+        onChange={(e) => {
+          setEditedVehicle({ ...editedVehicle, station_id: e.target.value });
+          handleStationSelection(e.target.value); 
+        }}
+        required
+      >
+        <option value="">Select a station</option>
+        {stations.map((station) => (
+          <option key={station.id} value={station.id}>
+            {station.name}
+          </option>
+        ))}
+      </select>
+    </div>
 
       <div>
         <label>Vehicle Type:</label>

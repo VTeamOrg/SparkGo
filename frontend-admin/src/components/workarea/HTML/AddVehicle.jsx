@@ -69,12 +69,12 @@ const AddVehicle = ({
 };
 
 AddVehicle.propTypes = {
-    newVehicle: PropTypes.object.isRequired,
-    setNewVehicle: PropTypes.func.isRequired,
-    vehicleTypes: PropTypes.array.isRequired,
-    cities: PropTypes.array.isRequired,
-    handleAddVehicle: PropTypes.func.isRequired,
-    onRequestClose: PropTypes.func.isRequired,
-  };
+  newVehicle: PropTypes.object.isRequired,
+  setNewVehicle: PropTypes.func.isRequired,
+  vehicleTypes: PropTypes.array.isRequired,
+  cities: PropTypes.array.isRequired,
+  handleAddVehicle: PropTypes.func.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+};
 
 export default AddVehicle;

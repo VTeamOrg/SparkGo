@@ -41,7 +41,6 @@ function Vehicles() {
 
     const event = new CustomEvent('vehiclesDataLoaded', { detail: formattedVehicleMarkers });
     window.dispatchEvent(event);
-      console.log(data);
     });
 
     fetchData('stations',(stationsData) => {
@@ -86,6 +85,8 @@ function Vehicles() {
 
   const handleSaveVehicle = async (newVehicle) => {
     try {
+      console.log("trying to create");
+      console.log(newVehicle);
       await createData('vehicles', newVehicle);
       fetchDataUpdateState();
     } catch (error) {

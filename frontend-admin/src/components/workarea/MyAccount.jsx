@@ -5,7 +5,7 @@ import { fetchData, updateData, deleteData } from '../support/FetchService';
 import { validateEmail } from '../support/Utils';
 import AddPaymentModal from './Modals/AddPaymentModal.jsx';
 import { PaymentMethodFields, MemberFields, PlanFields } from './HTML/MemberModal.jsx';
-import { ButtonRow } from './HTML/General';
+import { ButtonRowShort } from './HTML/General';
 import ManagePlanModal from './Modals/ManagePlanModal';
 import ChangePlanModal from './Modals/ChangePlanModal';
 import { createCheckoutSession } from '../support/Stripe';
@@ -123,39 +123,49 @@ function MyAccount({ userId }) {
       setEmailError('Invalid email format');
       return;
     }
-  
+
     updateData('users', editedMember.id, editedMember)
       .then(() => {
-
-        if (isPaymentMethodChanged  === true) {
+        if (isPaymentMethodChanged === true) {
 
           const updatedPaymentMethodData = paymentMethods.map((method) => ({
-            id: method.id,
+            paymentMethodId: method.id,
             member_id: editedMember.id,
             method_name: method.method_name,
             reference_info: method.reference_info,
             is_selected: method.is_selected === 'Y' ? 'Y' : 'N',
           }));
-  
+
           Promise.all(
             updatedPaymentMethodData.map((methodData) =>
-              updateData('paymentMethods', methodData.id, methodData)
+              updateData('paymentMethods', methodData.paymentMethodId, methodData)
+                .then(() => {
+                  console.log(`Payment method ${methodData.paymentMethodId} updated successfully`);
+                })
+                .catch((error) => {
+                  console.error(`Error updating payment method ${methodData.paymentMethodId}:`, error);
+                })
             )
           )
+            .then(() => {
+              console.log("All payment methods updated successfully");
+              refreshMembers();
+            })
             .catch((error) => {
-              console.error('Error updating paymentMethod:', error);
+              console.error('Error updating payment methods:', error);
             });
-        }
-
+        } else {
           refreshMembers();
+        }
       })
       .catch((error) => {
         console.error('Error updating member:', error);
       });
-      setIsEditing(false);
-      setIsPaymentMethodChanged(false); 
+
+    setIsEditing(false);
+    setIsPaymentMethodChanged(false);
   };
-  
+
 
   const handleDeletePaymentMethod = (paymentMethodId) => {
     if (window.confirm('Are you sure you want to delete this payment method?')) {
@@ -247,12 +257,11 @@ function MyAccount({ userId }) {
       />
   
       {/* General Buttons */}
-      <ButtonRow
+      <ButtonRowShort
         isEditing={isEditing}
         handleEdit={handleEdit}
         setIsEditing={setIsEditing}
         handleDelete={handleDelete}
-        onRequestClose={onRequestClose}
       />
   
       {/* AddPaymentModal */}
@@ -289,7 +298,7 @@ function MyAccount({ userId }) {
       )}
 
       {/* Refill Wallet form */}
-      <form className="refill-form" onSubmit={handleRefillWallet}>
+{/*       <form className="refill-form" onSubmit={handleRefillWallet}>
         <label htmlFor="refillAmount">SEK:</label>
         <input
           type="number"
@@ -301,6 +310,7 @@ function MyAccount({ userId }) {
         />
         <button type="submit">Refill Wallet</button>
       </form>
+      */}
     </div>
 
 

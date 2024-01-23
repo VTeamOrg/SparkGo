@@ -247,13 +247,13 @@ const vehiclesModel = {
     },
     
 
-    createVehicle: async function (city_id, type_id, rented_by) {
+    createVehicle: async function (city_id, type_id, vehicle_status, name, station_id) {
         try {
             const db = await database.openDb();
             const newVehicle = await database.query(
                 db,
-                "INSERT INTO vehicle (city_id, type_id, rented_by) VALUES (?, ?, ?)",
-                [city_id, type_id, rented_by]
+                "INSERT INTO vehicle (city_id, type_id, vehicle_status, name, station_id) VALUES (?, ?, ?, ?, ?)",
+                [city_id, type_id, vehicle_status, name, station_id]
             );
 
             await database.closeDb(db);

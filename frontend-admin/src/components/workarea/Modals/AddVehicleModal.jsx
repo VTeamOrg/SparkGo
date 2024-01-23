@@ -20,6 +20,7 @@ function AddVehicleModal({ isOpen, onRequestClose, onSave }) {
   const initialNewVehicle = {
     city_id: '',
     type_id: '',
+    station_id: '',
     name: '',
     status: 1,
   };
