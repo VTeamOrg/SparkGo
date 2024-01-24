@@ -4,10 +4,23 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "mocha --recursive --exit test/routes test/apiLimiter/",
+        "test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
         "watch": "nodemon app.js",
         "start": "node app.js",
         "lint": "eslint models/**/*.js controllers/**/*.js app.js testmodels/**/*.js"
+    },
+    "nyc": {
+        "reporter": ["clover", "html"],
+        "include": [
+            "models/tokenModel.js",
+            "testmodels/**/*.js",
+            "routes/httpRoutes/index.js",
+            "routes/websocketRoutes/*.js"
+        ],
+        "exclude": [
+            "test/**"
+
+        ]
     },
     "keywords": [],
     "author": "",
