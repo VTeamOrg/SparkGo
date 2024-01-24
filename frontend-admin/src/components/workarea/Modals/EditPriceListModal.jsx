@@ -24,6 +24,7 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
     list_name: priceItem.list_name,
     price_per_minute: priceItem.price_per_minute.toString(),
     price_per_unlock: priceItem.price_per_unlock.toString(),
+    discount: priceItem.discount.toString(),
   });
 
   useEffect(() => {
@@ -39,8 +40,9 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
     /* Check if price_per_minute and price_per_unlock are valid numbers */
     const pricePerMinute = parseFloat(editedPriceItem.price_per_minute);
     const pricePerUnlock = parseFloat(editedPriceItem.price_per_unlock);
+    const discount = parseFloat(editedPriceItem.discount);
 
-    if (isNaN(pricePerMinute) || isNaN(pricePerUnlock)) {
+    if (isNaN(pricePerMinute) || isNaN(pricePerUnlock) || isNaN(discount)) {
       alert('Price fields must be valid numbers.');
       return;
     }
@@ -48,6 +50,7 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
     editedPriceItem.type_id = selectedType.id;
     editedPriceItem.price_per_minute = pricePerMinute;
     editedPriceItem.price_per_unlock = pricePerUnlock;
+    editedPriceItem.discount = discount; 
 
     onSave(editedPriceItem);
     onRequestClose();
@@ -62,6 +65,7 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
       list_name: PropTypes.string.isRequired,
       price_per_minute: PropTypes.number.isRequired,
       price_per_unlock: PropTypes.number.isRequired,
+      discount: PropTypes.number.isRequired, 
     }).isRequired,
     onSave: PropTypes.func.isRequired,
   };

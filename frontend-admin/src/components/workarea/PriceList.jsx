@@ -39,9 +39,10 @@ function PriceList() {
       const updatedItem = await updateData('priceList', updatedPriceListItem.id, updatedPriceListItem);
     
       if (updatedItem) {
-        refreshData()
-  
+        refreshData()  
         setEditingPriceItem(null);
+        console.log("should reset 1");
+    
         setShowEditPriceListModal(false);
       } else {
         console.error('Error updating price item:', updatedItem);
@@ -111,6 +112,14 @@ const refreshData = () => {
   });
 };
 
+/**
+* close the edit price list modal
+ */
+const closeEditPriceListModal = () => {
+  setEditingPriceItem(null);
+  setShowEditPriceListModal(false);
+};
+
   /* JSX to render station data */
     return (
       <div className="api">
@@ -130,6 +139,7 @@ const refreshData = () => {
                 <th>Vehicle Type</th>
                 <th>Price per Minute</th>
                 <th>Price per Unlock</th>
+                <th>Station discount</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -141,6 +151,7 @@ const refreshData = () => {
                   <td>{priceItem.type_name}</td>
                   <td>{priceItem.price_per_minute}</td>
                   <td>{priceItem.price_per_unlock}</td>
+                  <td>{(priceItem.discount * 100).toFixed(2)}%</td>
                   <td className="api-edit">
                     <button onClick={() => handleEditPriceItem(priceItem)}>
                     <FontAwesomeIcon icon={faPencilAlt} />
@@ -169,11 +180,11 @@ const refreshData = () => {
         {/* EditPriceListModal component */}
         {editingPriceItem && (
           <EditPriceListModal
-          isOpen={showEditPriceListModal}
-          onRequestClose={() => setShowEditPriceListModal(false)}
-          priceItem={editingPriceItem}
-          onSave={handleSaveEdit}
-        />
+            isOpen={showEditPriceListModal}
+            onRequestClose={closeEditPriceListModal} // Use the new function here
+            priceItem={editingPriceItem}
+            onSave={handleSaveEdit}
+          />
         )}
     
       </div>

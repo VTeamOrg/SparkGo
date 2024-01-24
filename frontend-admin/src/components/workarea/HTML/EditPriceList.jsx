@@ -22,6 +22,11 @@ function EditPriceList({
   setEditedPriceItem,
   onRequestClose,
 }) {
+      const decimalToPercentage = (decimal) => {
+        if (decimal === null) return '';
+        return (decimal * 100).toFixed(2);
+      };
+
   return (
     <div className="edit-price-list-modal">
       <h3>Edit Price List</h3>
@@ -88,6 +93,28 @@ function EditPriceList({
                 price_per_unlock: e.target.value,
               })
             }
+          />
+        </div>
+
+        {/* Numeric field for discount (in percentage, positive value) */}
+        <div className="form-group">
+          <label>Discount (in percentage)</label>
+          <input
+            type="text"
+            value={
+              editedPriceItem.discount !== null
+                ? decimalToPercentage(editedPriceItem.discount)
+                : ''
+            }
+            onChange={(e) => {
+              const discountPercentage = Number(e.target.value);
+              setEditedPriceItem({
+                ...editedPriceItem,
+                discount: !isNaN(discountPercentage)
+                  ? discountPercentage / 100
+                  : editedPriceItem.discount,
+              });
+            }}
           />
         </div>
 

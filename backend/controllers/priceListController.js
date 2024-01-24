@@ -29,12 +29,13 @@ const priceListController = {
 
     createPriceListItem: async function (req, res) {
         try {
-            const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
+            const { type_id, list_name, price_per_minute, price_per_unlock, discount } = req.body;
             const result = await priceListModel.createPriceListItem({
                 type_id,
                 list_name,
                 price_per_minute,
                 price_per_unlock,
+                discount
             });
 
             return res.status(201).json({
@@ -50,13 +51,14 @@ const priceListController = {
     updatePriceListItem: async function (req, res) {
         try {
             const itemId = req.params.itemId;
-            const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
+            const { type_id, list_name, price_per_minute, price_per_unlock, discount } = req.body;
 
             await priceListModel.updatePriceListItem(itemId, {
                 type_id,
                 list_name,
                 price_per_minute,
-                price_per_unlock
+                price_per_unlock,
+                discount
             });
 
             return res.json({
