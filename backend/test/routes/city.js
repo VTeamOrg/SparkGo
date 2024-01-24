@@ -45,7 +45,7 @@ describe("Server Connection Behavior", () => {
                 throw error;
             }
         });
-    });z
+    });
 
     describe("Get City by ID (GET)", () => {
         it("should retrieve a city by ID from the database", async () => {
