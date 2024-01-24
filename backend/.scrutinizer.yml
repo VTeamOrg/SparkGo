@@ -8,6 +8,14 @@ build:
             file: 'coverage/clover.xml'  # Path to your Clover coverage report
             format: clover
 
+    source_on_workers:
+      environment:
+        nodejs: v16  # Adjust to your Node.js version
+      pre_setup:
+        - 'npm install -g source-cli'  # Install Source CLI globally
+      override:
+        - 'source-cli run'  # Run Source on Workers
+
 tools:
   external_code_coverage:
-    timeout: 2000  # Optional: Increase timeout if your tests take longer
+    timeout: 300000  # Optional: Increase timeout if your tests take longer

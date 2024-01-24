@@ -9,12 +9,12 @@ const paymentMethodsController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get payment methods: ${error.message}` });
         }
     },
 
     getPaymentMethodByMemberId: async function (req, res) {
-        console.log("get pyament by id");
+        console.log("get payment by id");
         try {
             const memberId = req.params.memberId;
             console.log("memberId ", memberId);
@@ -25,25 +25,25 @@ const paymentMethodsController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get payment methods by member ID: ${error.message}` });
         }
     },
 
     createPaymentMethod: async function (req, res) {
         try {
-          const { member_id, method_name, reference_info, is_selected } = req.body;
-          console.log("Received data:", req.body);
-          const newPaymentMethod = await paymentMethodsModel.createPaymentMethod(member_id, method_name, reference_info, is_selected);
-    
-          return res.status(201).json({
-            message: "Payment method created successfully",
-            data: newPaymentMethod,
-          });
+            const { member_id, method_name, reference_info, is_selected } = req.body;
+            console.log("Received data:", req.body);
+            const newPaymentMethod = await paymentMethodsModel.createPaymentMethod(member_id, method_name, reference_info, is_selected);
+
+            return res.status(201).json({
+                message: "Payment method created successfully",
+                data: newPaymentMethod,
+            });
         } catch (error) {
-          console.error("Error creating payment method:", error.message);
-          return res.status(500).json({ error: "Internal Server Error" });
+            console.error("Error creating payment method:", error.message);
+            return res.status(500).json({ error: `Failed to create payment method: ${error.message}` });
         }
-      },
+    },
 
     updatePaymentMethod: async function (req, res) {
         console.log("update payment");
@@ -54,13 +54,11 @@ const paymentMethodsController = {
             const paymentMethodId = req.params.paymentMethodId;
             const { member_id, method_name, reference_info, is_selected } = req.body;
 
-            console.log("Payment Method ID:", paymentMethodId); 
-
+            console.log("Payment Method ID:", paymentMethodId);
 
             const updatedPaymentMethod = await paymentMethodsModel.updatePaymentMethod(paymentMethodId, member_id, method_name, reference_info, is_selected);
-            
-            console.log("Updated Payment Method:", updatedPaymentMethod); 
 
+            console.log("Updated Payment Method:", updatedPaymentMethod);
 
             if (updatedPaymentMethod && updatedPaymentMethod.affectedRows > 0) {
                 return res.json({
@@ -73,7 +71,7 @@ const paymentMethodsController = {
             }
         } catch (error) {
             console.error("Error updating payment method:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to update payment method: ${error.message}` });
         }
     },
 
@@ -87,7 +85,7 @@ const paymentMethodsController = {
             });
         } catch (error) {
             console.error("Error deleting payment method:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to delete payment method: ${error.message}` });
         }
     },
 };
