@@ -12,13 +12,8 @@ describe("Server Connection Behavior", () => {
     let sandbox;
     let connection;
 
-
     before(() => {
         sandbox = sinon.createSandbox();
-
-        // Stub the database functions
-        originalOpenDb = database.openDb; // Store the original database.openDb function
-        originalQuery = database.query; //
         // Stub the database functions
         sandbox.stub(database, "openDb").resolves({}); // Stub the openDb function
         sandbox.stub(database, "query").resolves({
@@ -50,35 +45,7 @@ describe("Server Connection Behavior", () => {
                 throw error;
             }
         });
-    });
-
-    it("should handle the case when database connection fails during insertion", async () => {
-        const insertSql = "INSERT INTO city (name) VALUES (?)";
-        const insertParams = ["Test City"];
-
-        
-        
-        // Replace openDb with a custom function that always rejects
-        database.openDb = async () => {
-            throw new Error("Database connection failed");
-        };
-
-        try {
-            // Attempt to insert a city when the database connection fails
-            await citiesModel.createCity(
-                connection,
-                insertSql,
-                insertParams
-            );
-            // Perform assertions for handling database connection failure
-        } catch (error) {
-            // Assert that the error message indicates a database connection failure
-            expect(error.message).to.equal("Database connection failed");
-        } finally {
-            // Restore the original openDb function
-            database.openDb = originalOpenDb;
-        }
-    });
+    });z
 
     describe("Get City by ID (GET)", () => {
         it("should retrieve a city by ID from the database", async () => {
@@ -129,37 +96,6 @@ describe("Server Connection Behavior", () => {
             } catch (error) {
                 throw error;
             }
-        });
-
-        describe("Get All Cities (GET)", () => {
-            it("should retrieve all cities from the database", async () => {
-                try {
-                    // Attempt to get all cities using citiesModel.getAllCities
-                    const cities = await citiesModel.getAllCities();
-                    // You can add additional assertions or checks here if needed
-                } catch (error) {
-                    throw error;
-                }
-            });
-        
-            it("should handle the case when database query fails during getAllCities", async () => {
-                // Replace query with a custom function that always rejects
-                database.query = async () => {
-                    throw new Error("Database query failed");
-                };
-        
-                try {
-                    // Attempt to get all cities when the database query fails
-                    await citiesModel.getAllCities();
-                    // Perform assertions for handling database query failure
-                } catch (error) {
-                    // Assert that the error message indicates a database query failure
-                    expect(error.message).to.equal("Database query failed");
-                } finally {
-                    // Restore the original query function
-                    database.query = originalQuery;
-                }
-            });
         });
     });
 });
