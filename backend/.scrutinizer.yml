@@ -1,27 +1,28 @@
+# .scrutinizer.yml
+
+imports:
+    - javascript
+
+filter:
+    excluded_paths: [backend/node_modules/*]
+
 build:
-  nodes:
+    image: default-bionic
+
+    nodes:
+        my-tests:
+            environment:
+                node:
+                    version: 16  # Specify the Node.js version you want
+        analysis:
+            root_path: backend # Specify the root_path as the 'backend' directory
+            tests:
+                override:
+                    - js-scrutinizer-run
     tests:
-      override:
-        - npm install  # Install project dependencies (if needed)
-        - npm test     # Run your test command
-        - ls -R        # Debug command to list contents
-          coverage:
-            file: 'SparkGo/backend/coverage/clover.xml'  # Path to your Clover coverage report
-            format: clover
-  filter:
-    exclude:
-      - 'SparkGo/backend/node_modules/'
-      - 'SparkGo/backend/coverage/'
-      - 'SparkGo/backend/.nyc_output/'
-
-source_on_workers:
-  environment:
-    nodejs: v16  # Adjust to your Node.js version
-  pre_setup:
-    - 'npm install -g source-cli'  # Install Source CLI globally
-  override:
-    - 'source-cli run'  # Run Source on Workers
-
-tools:
-  external_code_coverage:
-    timeout: 300000  # Optional: Increase timeout if your tests take longer
+        override:
+            - command: "npm test"
+              
+              coverage:
+                  file: "backend/coverage/clover.xml"
+                  format: "clover"
