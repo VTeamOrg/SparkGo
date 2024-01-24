@@ -1,0 +1,9 @@
+build:
+  nodes:
+    coverage:
+      tests:
+        override:
+          - command: ./run-my-tests
+            coverage:
+              file: coverage/clover.xml
+              format: clover
