@@ -5,7 +5,7 @@ build:
         - npm install  # Install project dependencies (if needed)
         - npm test     # Run your test command
           coverage:
-            file: 'coverage/clover.xml'  # Path to your Clover coverage report
+            file: 'backend/coverage/clover.xml'  # Path to your Clover coverage report
             format: clover
   filter:
     exclude:
