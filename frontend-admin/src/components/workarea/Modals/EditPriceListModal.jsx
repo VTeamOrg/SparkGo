@@ -60,8 +60,8 @@ function EditPriceListModal({ isOpen, onRequestClose, priceItem, onSave }) {
       id: PropTypes.number.isRequired,
       type_id: PropTypes.number.isRequired,
       list_name: PropTypes.string.isRequired,
-      price_per_minute: PropTypes.string.isRequired,
-      price_per_unlock: PropTypes.string.isRequired,
+      price_per_minute: PropTypes.number.isRequired,
+      price_per_unlock: PropTypes.number.isRequired,
     }).isRequired,
     onSave: PropTypes.func.isRequired,
   };

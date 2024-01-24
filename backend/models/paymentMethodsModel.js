@@ -51,36 +51,38 @@ const paymentMethodsModel = {
         }
       },
     
-      updatePaymentMethod: async function (req, res) {
-        try {
-          const db = await database.openDb();
-          const paymentMethodId = req.params.paymentMethodId;
-          const { member_id, method_name, reference_info, is_selected } = req.body;
-      
-          const updatedPaymentMethod = await database.query(
-            db,
-            "UPDATE payment_method SET member_id = ?, method_name = ?, reference_info = ?, is_selected = ? WHERE id = ?",
-            [member_id, method_name, reference_info, is_selected, paymentMethodId]
-          );
-      
-          await database.closeDb(db);
-      
-          if (updatedPaymentMethod && updatedPaymentMethod.affectedRows > 0) {
-            return res.json({
-              message: "Payment method updated successfully",
-              data: updatedPaymentMethod,
-            });
-          } else {
-            console.log("No rows were updated.");
-            return res.status(404).json({ error: "Payment method not found" });
-          }
-        } catch (error) {
-          console.error("Error updating payment method:", error.message);
-          return res.status(500).json({ error: "Internal Server Error" });
-        }
-      },
-      
-    
+        updatePaymentMethod: async function (paymentMethodId, member_id, method_name, reference_info, is_selected) {
+            try {
+            const db = await database.openDb();
+        
+            console.log("Payment Method ID:", paymentMethodId);
+            console.log("Input Data:", { member_id, method_name, reference_info, is_selected });
+        
+            const updatedPaymentMethod = await database.query(
+                db,
+                "UPDATE payment_method SET member_id = ?, method_name = ?, reference_info = ?, is_selected = ? WHERE id = ?",
+                [member_id, method_name, reference_info, is_selected, paymentMethodId]
+            );
+        
+            await database.closeDb(db);
+        
+            if (updatedPaymentMethod && updatedPaymentMethod.affectedRows > 0) {
+                return {
+                message: "Payment method updated successfully",
+                data: updatedPaymentMethod,
+                };
+            } else {
+                console.log("No rows were updated.");
+                return {
+                error: "Payment method not found"
+                };
+            }
+            } catch (error) {
+            console.error("Error updating payment method:", error.message);
+            throw new Error("Internal Server Error");
+            }
+        },
+  
       deletePaymentMethod: async function (req, res) {
         try {
           const db = await database.openDb();
