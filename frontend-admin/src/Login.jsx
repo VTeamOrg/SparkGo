@@ -11,14 +11,27 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
   useEffect(() => {
     const validateSession = async () => {
       try {
-        const response = await fetch('http://localhost:3000/v1/validate-session', {
-          credentials: 'include', // Ensures cookies are sent with the request
+        let response = await fetch('http://localhost:3000/v1/validate-session', {
+          credentials: 'include',
         });
+    
+        if (!response.ok) {
+          // If the first request fails, try the second endpoint
+          response = await fetch('http://localhost:3000/v1/validate-session-user', {
+            credentials: 'include',
+          });
+    
+          if (!response.ok) {
+            // If the second request also fails
+            throw new Error(`Server responded with status: ${response.status}`);
+          }
+        }
+    
         const data = await response.json();
   
         if (data.userLoggedIn) {
           setUserLoggedIn(true);
-          setUserRole(data.userRole);
+          setUserRole(Cookies.get('userRole'));
           setUserId(data.userId);
         } else {
           setUserLoggedIn(false);

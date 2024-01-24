@@ -42,6 +42,8 @@ router.get('/', async function (req, res) {
     let user = await userModel.getUserByEmail(userData.email);
     if (!user) {
       user = await createUserIfNotExists(userData);
+
+      return res.json({ newUserCreated: true, userId: user.id, userEmail: userData.email });
     } 
 
 
@@ -67,6 +69,15 @@ router.get('/', async function (req, res) {
       secure: true, // Set to true in production
       sameSite: 'strict',
       path: '/v1'
+  });
+
+
+  // Set the role cookie
+  res.cookie('userRole', user.role, {
+    httpOnly: true, // Prevent client-side JavaScript from accessing the role
+    secure: true, // Set to true in production to ensure cookies are sent over HTTPS
+    sameSite: 'strict',
+    path: '/v1'
   });
       
 

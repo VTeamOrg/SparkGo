@@ -4,7 +4,7 @@ imports:
     - javascript
 
 filter:
-    excluded_paths: [backend/node_modules/*]
+    excluded_paths: [backend/node_modules/*, backend/node_modules/*]
 
 build:
     image: default-bionic
@@ -15,7 +15,6 @@ build:
                 node:
                     version: 16  # Specify the Node.js version you want
         analysis:
-            root_path: backend # Specify the root_path as the 'backend' directory
             tests:
                 override:
                     - js-scrutinizer-run
