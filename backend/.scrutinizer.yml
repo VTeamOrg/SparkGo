@@ -9,9 +9,9 @@ build:
             format: clover
   filter:
     exclude:
-      - 'node_modules/'
-      - 'coverage/'
-      - '.nyc_output/'
+      - 'backend/node_modules/'
+      - 'backend/coverage/'
+      - 'backend/.nyc_output/'
 
 source_on_workers:
   environment:
