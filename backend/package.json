@@ -5,7 +5,7 @@
     "main": "app.js",
 
     "scripts": {
-        "test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
+        "test": "mocha --recursive --exit test/routes test/apiLimiter/",
         "watch": "nodemon app.js",
         "start": "node app.js",
         "lint": "eslint models/**/*.js controllers/**/*.js app.js testmodels/**/*.js"
