@@ -1,0 +1,13 @@
+build:
+  nodes:
+    tests:
+      override:
+        - 
+          command: './run-my-tests'  # Replace this with your actual test command
+          coverage:
+            file: 'coverage/clover.xml'  # Path to your Clover coverage report
+            format: clover
+
+tools:
+  external_code_coverage:
+    timeout: 2000  # Optional: Increase timeout if your tests take longer
