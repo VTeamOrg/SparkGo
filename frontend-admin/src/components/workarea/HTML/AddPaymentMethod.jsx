@@ -36,7 +36,7 @@ function AddPaymentMethod({ isOpen, onRequestClose, memberId, memberName, select
 AddPaymentMethod.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
-    memberId: PropTypes.string.isRequired,
+    memberId: PropTypes.number.isRequired,
     memberName: PropTypes.string.isRequired,
     selectedPaymentMethod: PropTypes.string.isRequired,
     referenceInfo: PropTypes.string.isRequired,

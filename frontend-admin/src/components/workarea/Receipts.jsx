@@ -22,15 +22,26 @@ function formatDate(date) {
  * Receipts component for displaying a list of receipts.
  * @returns {JSX.Element} JSX representing the receipts component.
  */
-function Receipts() {
+function Receipts({ userId }) {
   const [receipts, setReceipts] = useState([]);
+  const [userRole, setUserRole] = useState('');
   const [selectedMember, setSelectedMember] = useState('');
   const [memberOptions, setMemberOptions] = useState([]);
 
   useEffect(() => {
+    fetchData(`users/${userId}`, (userData) => {
+      setUserRole(userData[0].role);
+    });
+
     fetchData('receipts', (data) => {
-      data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setReceipts(data);
+      data.sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date));
+
+      if (userRole === 'admin' && selectedMember === '') {
+        /* Admin should see no receipts until a user is selected */
+        setReceipts([]);
+      } else {
+        setReceipts(data);
+      }
 
       /* Extract unique member IDs and names from receipts */
       const uniqueMembersMap = new Map();
@@ -38,10 +49,10 @@ function Receipts() {
         uniqueMembersMap.set(receipt.member_id, receipt.member_name);
       });
       const uniqueMembers = Array.from(uniqueMembersMap).map(([id, name]) => ({ id, name }));
-      
+
       setMemberOptions(uniqueMembers);
     });
-  }, []);
+  }, [userId, userRole, selectedMember]);
 
   const handleMemberSelect = (event) => {
     const memberId = event.target.value;
@@ -52,24 +63,29 @@ function Receipts() {
     <div className="misc-history">
       <h2>Receipts</h2>
 
-      {/* Search bar with dropdown list of members */}
-      <div className="search-bar">
-        <select
-          value={selectedMember}
-          onChange={handleMemberSelect}
-        >
-          <option value="">Select Member</option>
-          {memberOptions.map((member) => (
-            <option key={member.id} value={member.id}>
-              {`${member.id} - ${member.name}`}
-            </option>
-          ))}
-        </select>
-      </div>
+      {userRole === 'admin' && (
+        /* Search bar with dropdown list of members for admin */
+        <div className="search-bar">
+          <select value={selectedMember} onChange={handleMemberSelect}>
+            <option value="">Select Member</option>
+            {memberOptions.map((member) => (
+              <option key={member.id} value={member.id}>
+                {`${member.id} - ${member.name}`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <ul>
         {receipts
-          .filter((receipt) => receipt.member_id === parseInt(selectedMember))
+          .filter((receipt) => {
+            if (userRole === 'admin') {
+              return selectedMember === '' || receipt.member_id.toString() === selectedMember;
+            } else {
+              return receipt.member_id.toString() === userId.toString();
+            }
+          })
           .map((receipt) => (
             <li key={receipt.id} className="history-entry">
               <h3 className="history-heading">{formatDate(new Date(receipt.payment_date))}</h3>

@@ -333,8 +333,8 @@ PlanFields.propTypes = {
   isEditing: PropTypes.bool.isRequired,
   handleFieldChange: PropTypes.func.isRequired,
   handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
+//  handleDelete: PropTypes.func.isRequired,
+//  onRequestClose: PropTypes.func.isRequired,
   openManagePlanModal: PropTypes.func.isRequired,
   openChangePlanModal: PropTypes.func.isRequired,
 };
