@@ -20,7 +20,8 @@ function WorkArea({ activeSection, userId }) {
     /* Emit the appropriate map event based on the selected section */
     if (activeSection === 'myAccount' || activeSection === 'vehicleTypes'
     || activeSection === 'priceList' || activeSection === 'plans'
-    || activeSection === 'frequencies' || activeSection === 'members') {
+    || activeSection === 'frequencies' || activeSection === 'members'
+    || activeSection === 'receipts') {
       emitDisableMapEvent(); 
     } else {
       emitEnableMapEvent(); 
