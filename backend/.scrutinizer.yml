@@ -4,14 +4,15 @@ build:
       override:
         - npm install  # Install project dependencies (if needed)
         - npm test     # Run your test command
+        - ls -R        # Debug command to list contents
           coverage:
-            file: 'backend/coverage/clover.xml'  # Path to your Clover coverage report
+            file: 'SparkGo/backend/coverage/clover.xml'  # Path to your Clover coverage report
             format: clover
   filter:
     exclude:
-      - 'backend/node_modules/'
-      - 'backend/coverage/'
-      - 'backend/.nyc_output/'
+      - 'SparkGo/backend/node_modules/'
+      - 'SparkGo/backend/coverage/'
+      - 'SparkGo/backend/.nyc_output/'
 
 source_on_workers:
   environment:
