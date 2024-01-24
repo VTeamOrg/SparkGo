@@ -41,6 +41,10 @@ in/backend
 
 node app.js
 
-# Current endpoints
+# local test vs generate code coverage
+
+change line in package.json to
+
+"test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
 
 

@@ -14,7 +14,7 @@ const cities = {
             return allCities;
         } catch (error) {
             console.error("Error querying database:", error.message);
-            throw new Error("Internal Server Error");
+            throw new Error("Database query failed"); 
         }
     },
 
@@ -50,7 +50,7 @@ const cities = {
             return newCity;
         } catch (error) {
             console.error("Error creating city:", error.message);
-            throw new Error("Internal Server Error");
+            throw new Error("Database connection failed");
         }
     },
 

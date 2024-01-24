@@ -8,12 +8,12 @@ const pool = mysql.createPool({
     multipleStatements: true,
 });
 
-
 const openDb = () => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
-                reject(err);
+                console.error("Error while opening database connection:", err);
+                reject(new Error("Database connection failed"));
             } else {
                 resolve(connection);
             }
@@ -22,7 +22,7 @@ const openDb = () => {
 };
 
 const closeDb = (connection) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         connection.release();
         resolve();
     });
@@ -32,7 +32,8 @@ const query = (connection, sql, params) => {
     return new Promise((resolve, reject) => {
         connection.query(sql, params, (err, results) => {
             if (err) {
-                reject(err);
+                console.error("Error while executing database query:", err);
+                reject(new Error("Database query failed"));
             } else {
                 resolve(results);
             }
