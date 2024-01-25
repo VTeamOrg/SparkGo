@@ -1,10 +1,13 @@
 import random
 import asyncio
+import signal
+import requests
 import websockets
 import multiprocessing
 import json
 import logging
 from async_manager import AsyncManager  # Import the AsyncManager class
+from shapely.geometry import shape, Point
 
 
 
@@ -52,6 +55,7 @@ class Vehicle:
     async def connect_websocket(self):
         uri = f"ws://localhost:3000?type=vehicle&id={self.vehicle_id}"
         connected = False
+        retry_count = 0  # Initialize retry_count
 
         while not connected:
             try:
@@ -108,10 +112,11 @@ class Vehicle:
         action = response.get("action")
         if action:
             actions_mapping = {
-                "startVehicle": self._handle_start_vehicle,
-                "stopVehicle": self._handle_stop_vehicle,
-                "returnVehicle": self._handle_return_vehicle,
-                "rentVehicle": self._handle_rent_vehicle,
+                "vehicleStarted": self._handle_start_vehicle,
+                "vehicleStopped": self._handle_stop_vehicle,
+                "vehicleReturned": self._handle_return_vehicle,
+                "vehicleRented": self._handle_rent_vehicle,
+                "vehicleDriving": self._handle_driving,
                 "maxSpeed": self._handle_max_speed,
                 "warning": self._handle_warning,
                 "error": self._handle_error
@@ -119,6 +124,7 @@ class Vehicle:
 
             handler = actions_mapping.get(action)
             if handler:
+                print(response)
                 handler(response)
             else:
                 print(f"Action '{action}' not recognized.")
@@ -139,11 +145,11 @@ class Vehicle:
         self.rented_by.value = -1
 
     def _handle_rent_vehicle(self, response):
-        self.rented_by.value = response.get("rentedBy")
+        self.rented_by.value = response["message"]["userId"]
         print(f"Vehicle {self.vehicle_id} rented by user {self.rented_by.value}.\n {response['message']}")
 
     def _handle_max_speed(self, response):
-        self.max_speed.value = response.get("maxSpeed")
+        self.max_speed.value = response["message"]["maxSpeed"]
         print(f"Vehicle {self.vehicle_id} max speed updated.\n {response['message']}")
 
     def _handle_warning(self, response):
@@ -151,6 +157,38 @@ class Vehicle:
 
     def _handle_error(self, response):
         print(f"Vehicle {self.vehicle_id} error.\n {response['message']}")
+
+    def _handle_driving(self, response):
+        async def move_towards_destination(vehicle, end_point):
+            print("Moving towards destination:", end_point, "from:", [vehicle.lat, vehicle.lon])
+
+            start_point = [vehicle.lat, vehicle.lon]
+
+            def generate_path(start_point, end_point, num_steps):
+                path = []
+                for i in range(num_steps + 1):
+                    fraction = i / num_steps
+                    intermediate_point = [
+                        start_point[0] + (end_point[0] - start_point[0]) * fraction,
+                        start_point[1] + (end_point[1] - start_point[1]) * fraction,
+                    ]
+                    path.append(intermediate_point)
+                return path
+
+            path = generate_path(start_point, end_point, 50)  # 50 steps between two points
+
+            print("Generated paths:", path)
+            for point in path:
+                if vehicle.is_started.value and vehicle.rented_by.value != -1:
+                    print("Moving to:", point)
+                    vehicle.lat = point[0]
+                    vehicle.lon = point[1]
+                    await asyncio.sleep(1)
+
+            await vehicle.stop_vehicle()
+
+        end_point = response["message"]["destination"]
+        asyncio.create_task(move_towards_destination(self, end_point))
 
 
     # a method to always listen to the websocket server responses and update the vehicle status
@@ -229,3 +267,69 @@ class Vehicle:
                     self.battery.value -= 1
                     print("Decreasing battery: ", self.battery.value)
             await asyncio.sleep(30)
+
+
+api_url = "http://localhost:3000/v1"
+
+def get_geojson_polygon():
+    url = f"{api_url}/coords/cities"
+    response = requests.get(url)
+    return {
+        "type": "Polygon",
+        "coordinates": response.json()["data"]
+    }
+
+# Convert GeoJSON to a Shapely geometry
+polygon = shape(get_geojson_polygon())
+
+# Generate a random point within the polygon
+min_x, min_y, max_x, max_y = polygon.bounds
+
+def generate_random_point_within_polygon():
+    while True:
+        point = Point(random.uniform(min_x, max_x), random.uniform(min_y, max_y))
+        if polygon.contains(point):
+            return [point.y, point.x]
+
+def make_request(url):
+    success = False
+
+    while not success:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            success = True
+        except requests.RequestException as e:
+            print(f"Error: {e}")
+            print("Retrying in 5 seconds...")
+            asyncio.sleep(5)
+
+    return response.json()
+
+
+    
+
+def get_server_vehicles():
+    url = f"{api_url}/vehicles"
+    return make_request(url)
+
+
+async def create_vehicles():
+    server_vehicles = get_server_vehicles()
+    for data in server_vehicles["data"]:
+        random_start_point = generate_random_point_within_polygon()
+        vehicle = Vehicle(data["id"], multiprocessing.Value('i', 100), [0, 0, 0, 0], random_start_point[0], random_start_point[1])
+        await vehicle.activate()
+
+
+async def main():
+    await create_vehicles()
+
+    while True:
+        await asyncio.sleep(3600) 
+
+
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # Allow Ctrl-C to exit the program
+    asyncio.run(main())

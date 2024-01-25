@@ -15,4 +15,3 @@ router.get('/process', stripeController.process);
 
 
 module.exports = router;
-

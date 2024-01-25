@@ -4,6 +4,7 @@ const SubscriptionModel = require("../../models/subscriptionModel.js");
 const UserModel = require("../../models/userModel.js");
 const vehiclesModel = require("../../models/vehiclesModel.js");
 const calculateDistance = require("../../utils/calculateDistance.js");
+const turf = require('@turf/turf');
 
 // Destructure functions from vehiclesModel
 const { connectedVehicles, connectedUsers, connectedAdmins } = require("./store.js");
@@ -13,46 +14,47 @@ const objectsEqual = require("../../utils/objectsEqual.js");
 const vehicles = {
     // Method to rent a vehicle
     rentVehicle: async (ws, user) => {
-
         try {
             const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
-
+            
             const vehicleData = await vehiclesModel.getVehicleById(connectedVehicle.id);
             const { battery } = vehicleData;
             const priceList = await PriceListModel.getPriceListItemByTypeId(vehicleData.type_id);
-
-
+            
+            
             if (!user) {
-                return sendWarning(user.ws, "User not found");
+                return sendMessage(user.ws, "warning", "User not found");
             }
-
-
+            
+            
             if (connectedVehicle.rentedBy !== -1) {
                 console.log("Vehicle already rented");
-                return sendWarning(user.ws, "Vehicle already rented");
+                return sendMessage(user.ws, "warning", "Vehicle already rented", { vehicleId: connectedVehicle.id, userId: connectedVehicle.rentedBy });
             }
-
+            
             if (battery < 20) {
-                return sendWarning(user.ws, "Battery too low. Please choose another vehicle.");
+                return sendMessage(user.ws, "warning", "Battery too low. Please choose another vehicle.");
             }
-
+            
             const subscription = await SubscriptionModel.getSubscriptionByMemberId(user.id);
-
+            
             if (await checkRentConditions(subscription, user, priceList)) {
                 connectedVehicle.data.rentedBy = user.id;
                 connectedVehicle.rentedBy = user.id;
-
                 // log the rent of vehicle
                 connectedVehicle.userUsageLog.push({ type: "rent", timestamp: Date.now() });
                 user.rentedVehicle = connectedVehicle.id;
-                sendSuccess(user.ws, "rentVehicleAccepted", { vehicleId: connectedVehicle.id });
+                console.log("Renting vehicle", connectedVehicle.id, user.id);
+                sendMessage(user.ws, "success", "rentVehicleAccepted", { vehicleId: connectedVehicle.id });
+                sendMessage(connectedVehicle.ws, "vehicleRented", { userId: user.id });
                 return sendVehicleUpdates(connectedVehicle, "vehicleRented", [user.id]);
             }
+            
+            return sendMessage(user.ws, "error", "Insufficient credit to rent this vehicle.");
 
-            return sendInsufficientCreditError(user.ws);
         } catch (error) {
             console.error("Error renting vehicle:", error);
-            return sendError(user.ws, "Error renting vehicle.");
+            return sendMessage(user.ws, "error", "Error renting vehicle.");
         }
     },
 
@@ -64,7 +66,7 @@ const vehicles = {
 
             // Check if the required parameters are provided
             if (!vehicleId || !lat || !lon) {
-                return sendWarning(ws, "Missing required parameters for moving the vehicle");
+                return sendMessage(ws, "warning", "Missing required parameters for moving the vehicle");
             }
 
             const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
@@ -76,10 +78,11 @@ const vehicles = {
             // Send a success message or any necessary updates to the WebSocket clients
             sendVehicleUpdates(connectedVehicle, "vehicleMoved");
 
-            return sendSuccess(ws, "Vehicle moved successfully");
+            return sendMessage(ws, "success","moveVehicleAccepted");
         } catch (error) {
             console.error("Error moving vehicle:", error);
-            return sendError(ws, "Error moving vehicle.");
+            return sendMessage(user.ws, "error", "Error moving vehicle.");
+
         }
     },
 
@@ -91,24 +94,19 @@ const vehicles = {
 
             // Check if the vehicle is rented by the specified user
             if (connectedVehicle.rentedBy !== user.id) {
-                return sendWarning(user.ws, "Vehicle not rented by this user");
+                return sendMessage(user.ws, "warning", "Vehicle not rented by this user");
             }
 
             const vehicleData = await vehiclesModel.getVehicleById(connectedVehicle.id);
             const priceList = await PriceListModel.getPriceListItemByTypeId(vehicleData.type_id);
             const { price_per_minute } = priceList;
 
-            // Check if the vehicle is rented by the specified user
-            if (connectedVehicle.rentedBy !== user.id) {
-                return sendWarning(user.ws, "Vehicle not rented by this user");
-            }
-
             // Fetch user's subscription
             const subscription = await SubscriptionModel.getSubscriptionByMemberId(user.id);
 
             // Check for available minutes and user's credit for continuing rental
             if (subscription && subscription.available_minutes < 1 && user.wallet < price_per_minute) {
-                return sendInsufficientCreditError(user.ws);
+                return sendMessage(user.ws, "warning", "Insufficient credit to continue renting this vehicle");
             }
 
             // Handle credit update and start credit update interval
@@ -122,12 +120,12 @@ const vehicles = {
             if (y === "Error") return;
 
             sendVehicleUpdates(connectedVehicle, "vehicleStarted", [user.id]);
-
+            sendMessage(connectedVehicle.ws, "vehicleStarted", { userId: user.id });
             // Return success message for starting the vehicle
-            return sendSuccess(user.ws, "startVehicleAccepted", { vehicleId: connectedVehicle.id });
+            return sendMessage(user.ws, "success", "startVehicleAccepted", { vehicleId: connectedVehicle.id });
         } catch (error) {
             console.error("Error starting vehicle:", error);
-            return sendError(user.ws, "Error starting vehicle.");
+            return sendMessage(user.ws, "error", "Error starting vehicle.");
         }
     },
 
@@ -145,15 +143,14 @@ const vehicles = {
         clearInterval(connectedVehicle.updateCreditInterval);
         connectedVehicle.updateCreditInterval = null;
 
+        sendMessage(connectedVehicle.ws, "vehicleStopped", { userId: user.id });
         sendVehicleUpdates(connectedVehicle, "vehicleStopped", [user.id]);
-
-        return sendSuccess(user.ws, "stopVehicleAccepted", { vehicleId: connectedVehicle.id });
+        return sendMessage(user.ws, "success", "stopVehicleAccepted", { vehicleId: connectedVehicle.id });
     },
 
     // Method to return a rented vehicle
     returnVehicle: async (ws, user) => {
         const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
-
 
         // Check if the vehicle is rented by the specified user
         if (connectedVehicle.rentedBy !== user.id) {
@@ -162,16 +159,55 @@ const vehicles = {
 
         // Log the return of vehicle and reset rentedBy property
         connectedVehicle.userUsageLog.push({ type: "return", timestamp: Date.now() });
-        connectedVehicle.data.rentedBy = -1;
         connectedVehicles.update(connectedVehicle.id, { ...connectedVehicle, rentedBy: -1, data: { ...connectedVehicle.data, rentedBy: -1 } });
         connectedUsers.update(user.id, { ...user, rentedVehicle: -1 });
         console.log("Rturning vehicle", connectedVehicle.id, user.id);
 
+        function pointInPolygon(point, polygon) {
+            const pt = turf.point(point);
+            const poly = turf.polygon([polygon]);
+        
+            return turf.booleanPointInPolygon(pt, poly);
+        }
+
+        // get charging stations from coords.json
+        const features = require("../../data/coords.json").features;
+        const chargingStations = features.filter(feature => feature.properties.type === "charging_station");
+
+        // check if vehicle is in a charging station
+        const { lat, lon } = connectedVehicle.data;
+        const isInChargingStation = chargingStations.some(station => pointInPolygon([lon, lat], station.geometry.coordinates[0]));
+
+        // if vehicle is in a charging station, charge it? and give a free unlock to the user
+        if (isInChargingStation) {
+            const vehicleData = await vehiclesModel.getVehicleById(connectedVehicle.id);
+            const priceList = await PriceListModel.getPriceListItemByTypeId(vehicleData.type_id);
+            const { price_per_unlock } = priceList;
+
+            const subscription = await SubscriptionModel.getSubscriptionByMemberId(user.id);
+
+            if (subscription && subscription.is_paused === "N") {
+                await SubscriptionModel.updateAvailableMinutes(user.id, subscription.available_unlocks + 1);
+            } else {
+                await UserModel.updateUser(user.id, { wallet: user.wallet + price_per_unlock });
+            }
+        }
+
+        sendMessage(connectedVehicle.ws, "vehicleReturned", { userId: user.id });
         sendVehicleUpdates(connectedVehicle, "vehicleReturned", [user.id]);
 
         // Return success message for returning the vehicle
-        return sendSuccess(user.ws, "returnVehicleAccepted", { vehicleId: connectedVehicle.id });
+        return sendMessage(user.ws, "success", "returnVehicleAccepted", { vehicleId: connectedVehicle.id });
     },
+
+    // Method to autodrive a vehicle // cheating function for simulating
+    driveVehicle: async (ws, data) => {
+        const { destination } = data;
+        const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
+
+        return sendMessage(connectedVehicle.ws, "vehicleDriving", { destination });
+    },
+
 
     // Method to handle vehicle status updates
     vehicleStatus: async (ws, data) => {
@@ -263,7 +299,7 @@ async function handleCreditUpdate(connectedVehicle) {
         const { price_per_minute } = priceList;
 
         if (!user || !subscription) {
-            sendError(ws, "User or subscription not found");
+            sendMessage(connectedUser.ws, "error", "User or subscription not found");
             clearAndUpdateInterval(connectedVehicle);
             return "Error";
         }
@@ -273,7 +309,7 @@ async function handleCreditUpdate(connectedVehicle) {
         if (!canContinueRenting) {
             console.log("Insufficient credit");
             clearAndUpdateInterval(connectedVehicle);
-            sendInsufficientCreditError(connectedUser.ws);
+            sendMessage(connectedUser.ws, "error", "Insufficient credit to continue renting this vehicle");
             return "Error";
         }
 
@@ -323,19 +359,19 @@ async function startCreditUpdateInterval(vehicleId) {
 async function checkRentConditions(subscription, user, priceList) {
     const { price_per_unlock, price_per_minute } = priceList;
     const totalRentPrice = price_per_unlock + price_per_minute;
+    const dbUser = await UserModel.getUserById(user.id);
 
     if (subscription && subscription.is_paused === "N") {
         const enoughUnlocks = subscription.available_unlocks >= 1;
         const enoughMinutes = subscription.available_minutes >= 1;
-        const enoughCredit = user.wallet >= totalRentPrice;
-
+        const enoughCredit = dbUser.wallet >= totalRentPrice;
 
         if (!enoughCredit && !(enoughMinutes && enoughUnlocks)) {
             return false;
         }
 
         if (!enoughUnlocks) {
-            await UserModel.updateUser(user.id, { wallet: user.wallet - price_per_unlock });
+            await UserModel.updateUser(user.id, { wallet: dbUser.wallet - price_per_unlock });
         } else {
             await SubscriptionModel.updateAvailableUnlocks(user.id, subscription.available_unlocks - 1);
         }
@@ -344,24 +380,14 @@ async function checkRentConditions(subscription, user, priceList) {
         return true;
     }
 
-    return user.wallet >= totalRentPrice;
+    return dbUser.wallet >= totalRentPrice;
 }
 
-function sendWarning(ws, message) {
-    ws.send(JSON.stringify({ action: "warning", message }));
+function sendMessage(ws, action, message, data) {
+    const payload = data ? { action, message, data } : { action, message };
+    ws.send(JSON.stringify(payload));
 }
 
-function sendSuccess(ws, message, data) {
-    ws.send(JSON.stringify({ action: "success", message, data }));
-}
-
-function sendInsufficientCreditError(ws) {
-    ws.send(JSON.stringify({ action: "error", message: "Insufficient credit to rent this vehicle." }));
-}
-
-function sendError(ws, message) {
-    ws.send(JSON.stringify({ action: "error", message }));
-}
 
 // Export the vehicles object
 module.exports = vehicles;

@@ -7,16 +7,21 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
     if (deviceType === 'vehicle') {
         // if deviceType is vehicle, add the client to the list of connected vehicles
         connectedVehicles.add({ id: connectionId, ws, userUsageLog: [], updateCreditInterval: null, rentedBy: -1, data: { latitude: -1, longitude: -1, battery: -1, currentSpeed: -1, maxSpeed: -1, isStarted: false, rentedBy: -1 } });
+
     }
     if (deviceType === 'user') {
         const user = connectedUsers.get()?.find(user => user.id === connectionId);
+
         if (user) {
             // if user is already connected, replace the old websocket with the new one
             user.ws = ws;
             return;
-        } 
-        // if deviceType is user, add the client to the list of connected users
-        connectedUsers.add({ id: connectionId, ws, rentedVehicle: -1, data: { latitude: -1, longitude: -1 } });
+        } else {
+            // if deviceType is user, add the client to the list of connected users
+            connectedUsers.add({ id: connectionId, ws, rentedVehicle: -1, data: { latitude: -1, longitude: -1 } });
+        }
+        console.log("users: ", connectedUsers.get()?.length);
+        console.log("vehicles: ", connectedVehicles.get().length);
     }
     if (deviceType === 'admin') {
         // if deviceType is admin, add the client to the list of connected admins
@@ -48,6 +53,9 @@ const handleMessage = (ws, message) => {
                     break;
                 case "moveVehicle":
                     vehicleFunctions.moveVehicle(ws, msg);
+                    break;
+                case "driveVehicle":
+                    vehicleFunctions.driveVehicle(ws, msg);
                     break;
                 default:
                     break;

@@ -18,18 +18,19 @@ const users = {
         // check if user is already renting a vehicle
         const user = connectedUsers.get().find(user => user.ws === ws);
         if (!user) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "No user found" }));
-
-
-        if (user.rentedVehicle !== -1) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "User is already renting a vehicle" }));
-
+        
+        
+        if (user.rentedVehicle !== -1) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "User is already renting a vehicle", data: {vehicleId: user.rentedVehicle, userId: user.id} }));
+        
         const { vehicleId } = msg.payload;
-
-        console.log("rentVehicle", vehicleId, user.id);
+        
         
         if (!vehicleId) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "No vehicle id provided" }));
-
+        
+        console.log("rentVehicle", vehicleId, user.id);
+        
         const vehicle = connectedVehicles.get().find(vehicle => vehicle.id === vehicleId);
-
+        
         if (!vehicle) return;
 
         const vehicleWs = vehicle.ws;

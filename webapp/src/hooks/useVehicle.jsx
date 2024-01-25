@@ -55,7 +55,7 @@ const useVehicle = (vehicleId) => {
                     };
                 }
 
-            } else if (data.action === "error") {
+            } else if (data.action === "error" || data.status === "error") {
                 msgBoxData.value = {
                     content: data.message,
                     timeout: 3000,
