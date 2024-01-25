@@ -12,7 +12,6 @@ function ShowStationModal({ isOpen, onRequestClose, stationId }) {
 
   // Define a callback function to handle the response data
   const handleResponseData = (data) => {
-    console.log(data);
     setVehicles(data[0]);
   };
 
@@ -68,7 +67,7 @@ function ShowStationModal({ isOpen, onRequestClose, stationId }) {
 ShowStationModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  stationId: PropTypes.number.isRequired,
+  stationId: PropTypes.number,
 };
 
 export default ShowStationModal;
