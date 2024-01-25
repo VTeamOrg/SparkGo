@@ -5,7 +5,7 @@ import Papa from 'papaparse';
 import './MapView.css';
 import { fetchData } from './support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChargingStation, faParking } from '@fortawesome/free-solid-svg-icons';
+import { faChargingStation, faParking, faPlay, faStop } from '@fortawesome/free-solid-svg-icons';
 import ReactDOMServer from 'react-dom/server';
 
 function MapView() {
@@ -16,6 +16,8 @@ function MapView() {
   const [parking, setParking] = useState([]);
   const [stationMarkers, setStationMarkers] = useState([]);
   const [vehicleMarkers, setVehicleMarkers] = useState([]);
+  const [rideStartMarker, setRideStartMarker] = useState(null);
+  const [rideEndMarker, setRideEndMarker] = useState(null);
   
   useEffect(() => {
 
@@ -32,6 +34,8 @@ function MapView() {
       setMarkers([]);
       setStationMarkers([]);
       setVehicleMarkers([]);
+      setRideStartMarker([]);
+      setRideEndMarker([]);
 
     };
 
@@ -41,9 +45,9 @@ function MapView() {
     window.addEventListener('disableMap', handleDisableMap);
     window.addEventListener('enableMap', handleEnableMap);
     window.addEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
+    window.addEventListener('rideDataLoaded', handleRideDataLoaded);
 
     function handleCitiesDataLoaded(data) {
-      console.log("cities loaded");
       if (data && data.detail && Array.isArray(data.detail)) {
         const cityData = data.detail;
         setMarkers([]);
@@ -168,11 +172,10 @@ function MapView() {
     
 
     function handleVehiclesDataLoaded(event) {
-      console.log("vehicles loaded");
+
       const vehicleMarkers = event.detail.map((vehicle, index) => {
 
         const { lat, lng, infoText, id, cityName, status, battery, currentSpeed, maxSpeed, isStarted, rentedBy } = vehicle;
-        console.log("vehicleMarkers", vehicle);
 
         return (
           <Marker key={id || index} position={[lat, lng]}>
@@ -203,6 +206,66 @@ function MapView() {
       }
     }
 
+
+    function handleRideDataLoaded(event) {
+      console.log("ride data loaded, ", event);
+      const { startCoords, endCoords } = event.detail;
+      console.log("startCoords:", startCoords);
+      console.log("endCoords:", endCoords);
+    
+      // Ensure that startCoords and endCoords are valid coordinates
+      if (
+        Array.isArray(startCoords) &&
+        startCoords.length === 2 &&
+        Array.isArray(endCoords) &&
+        endCoords.length === 2
+      ) {
+        const newRideStartMarker = (
+          <Marker
+            key="ride-start"
+            position={startCoords}
+            icon={L.divIcon({
+              className: 'station-marker-icon',
+              html: ReactDOMServer.renderToString(
+                <FontAwesomeIcon icon={faPlay} />
+              ),
+              iconSize: [24, 24],
+            })}
+          >
+            <Popup>Start Point</Popup>
+          </Marker>
+        );
+    
+        const newRideEndMarker = (
+          <Marker
+            key="ride-end"
+            position={endCoords}
+            icon={L.divIcon({
+              className: 'station-marker-icon',
+              html: ReactDOMServer.renderToString(
+                <FontAwesomeIcon icon={faStop} />
+              ),
+              iconSize: [24, 24],
+            })}
+          >
+            <Popup>End Point</Popup>
+          </Marker>
+        );
+    
+        setRideStartMarker(newRideStartMarker);
+        setRideEndMarker(newRideEndMarker);
+    
+        // Set the view to the ride start point (you can adjust the zoom level as needed)
+        if (mapRef && mapRef.current && mapRef.current.leafletElement) {
+          mapRef.current.leafletElement.setView(startCoords, 13);
+        }
+      } else {
+        console.error('Invalid ride data format:', event.detail);
+      }
+    }
+    
+    
+
     return () => {
       window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
       window.removeEventListener('clearMarkers', handleClearMarkers);
@@ -210,7 +273,7 @@ function MapView() {
       window.removeEventListener('enableMap', handleEnableMap);
       window.removeEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
       window.removeEventListener('citiesDataLoaded', handleCitiesDataLoaded);
-  
+      window.removeEventListener('rideDataLoaded', handleRideDataLoaded);
     };
   }, []);
 
@@ -258,6 +321,8 @@ function MapView() {
           {stationMarkers}
           {vehicleMarkers}
           {markers}
+          {rideStartMarker}
+          {rideEndMarker}
         </MapContainer>
       ) : (
         <div className="map-disabled-message">Map is disabled for this view</div>
