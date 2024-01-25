@@ -22,7 +22,7 @@ const loadHttpRoutes = (app) => {
     app.use("/v1/users", users);
     app.use("/v1/stations", stations);
     app.use("/v1/vehicles", vehicles);
-    app.use("/v1/cities", cities);
+    app.use("/v1/cities",generalApiLimiter , cities);
     app.use("/v1/subscription", subscription);
     app.use("/v1/paymentMethods", paymentMethods);
     app.use("/v1/plans", plans);
