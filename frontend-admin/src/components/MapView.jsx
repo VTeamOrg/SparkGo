@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup,Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
 import './MapView.css';
 import { fetchData } from './support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChargingStation } from '@fortawesome/free-solid-svg-icons';
+import { faChargingStation, faParking } from '@fortawesome/free-solid-svg-icons';
 import ReactDOMServer from 'react-dom/server';
 
 function MapView() {
@@ -18,10 +18,7 @@ function MapView() {
   const [vehicleMarkers, setVehicleMarkers] = useState([]);
   
   useEffect(() => {
-    fetchData('parkingZones',(data) => {
-      setParking(data);
-      console.log("parkingZones, ", data);
-    });
+
 
     const handleDisableMap = () => {
       setMapEnabled(false);
@@ -77,39 +74,98 @@ function MapView() {
     }
 
     function handleStationsDataLoaded(event) {
-      console.log("stations loaded");
-      const markersData = event.detail.map((marker, index) => {
-        const { lat, lng, infoText, station_id } = marker;
-
-        console.log("stations", marker);
-
-        const iconHtml = ReactDOMServer.renderToString(
-          <FontAwesomeIcon icon={faChargingStation} />
-        );
-
-      return (
-          <Marker
-            key={station_id || index}
-            position={[lat, lng]}
-            icon={L.divIcon({
-              className: 'station-marker-icon',
-              html: iconHtml,
-              iconSize: [24, 24],
-            })}
-          >
-            <Popup>{infoText}</Popup>
-          </Marker>
-        );
+      fetchData('parkingZones', (parkingData) => {
+        setParking(parkingData);
+        console.log("parkingZones, ", parkingData);
+    
+        console.log("stations loaded");
+    
+        const stationMarkers = event.detail.map((marker, index) => {
+          const { lat, lng, infoText, station_id } = marker;
+    
+          console.log("stations", marker);
+    
+          const iconHtml = ReactDOMServer.renderToString(
+            <FontAwesomeIcon icon={faChargingStation} />
+          );
+    
+          /* Parking area around the station with a 20-meter radius */
+          const circle = (
+            <Circle
+              key={`circle-${station_id || index}`}
+              center={[lat, lng]}
+              radius={15} 
+              color="green" 
+              fillColor="green" 
+              fillOpacity={0.2} 
+            />
+          );
+    
+          /* Station marker */
+          const stationMarker = (
+            <Marker
+              key={station_id || index}
+              position={[lat, lng]}
+              icon={L.divIcon({
+                className: 'station-marker-icon',
+                html: iconHtml,
+                iconSize: [24, 24],
+              })}
+            >
+              <Popup>{infoText}</Popup>
+            </Marker>
+          );
+    
+          return [circle, stationMarker];
+        });
+    
+        const parkingMarkers = parkingData.map((parkingZone, index) => {
+          const { coords_lat, coords_long, name, id } = parkingZone;
+    
+          const parkingIconHtml = ReactDOMServer.renderToString(
+            <FontAwesomeIcon icon={faParking} />
+          );
+    
+          /* Parking area around the parking zone */
+          const circle = (
+            <Circle
+              key={`circle-parking-${id || index}`}
+              center={[coords_lat, coords_long]}
+              radius={15} 
+              color="green" 
+              fillColor="green" 
+              fillOpacity={0.2} 
+            />
+          );
+    
+          /* Marker for the parking zone */
+          const parkingMarker = (
+            <Marker
+              key={`parking-${id || index}`}
+              position={[coords_lat, coords_long]}
+              icon={L.divIcon({
+                className: 'parking-marker-icon',
+                html: parkingIconHtml,
+                iconSize: [24, 24],
+              })}
+            >
+              <Popup>{name}</Popup>
+            </Marker>
+          );
+    
+          return [circle, parkingMarker];
+        });
+    
+        const allMarkers = [...stationMarkers, ...parkingMarkers];
+    
+        setStationMarkers(allMarkers);
+    
+        if (mapRef.current) {
+          mapRef.current.setView([56.1608, 15.5861], 13);
+        }
       });
-
-      setStationMarkers(markersData);
-
-      // Use mapRef to access the map instance and set the zoom level
-      // Center on Karlskoga and set zoom to 6
-      if (mapRef.current) {
-        mapRef.current.setView([56.1608, 15.5861], 13); 
-      }
     }
+    
 
     function handleVehiclesDataLoaded(event) {
       console.log("vehicles loaded");
