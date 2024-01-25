@@ -5,7 +5,7 @@ in docker-compose.yml incomment line 13
 execute the follwing commands:
 
 docker-compose up -d
-sudo docker exec -it my_sql_srv bash
+sudo docker exec -it sparkgo_mysql bash
 
 mysql -uroot -p -e "SET GLOBAL local_infile=ON;
 
