@@ -1,0 +1,164 @@
+{
+  "connectedVehicles": [
+    {
+      "id": 1,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "RedABC123",
+      "position": {
+        "lat": 56.16196446848606,
+        "lon": 15.683498382568361
+      },
+      "battery": 80,
+      "currentSpeed": 45,
+      "maxSpeed": 60,
+      "isStarted": 1,
+      "rentedBy": 2
+    },
+    {
+      "id": 2,
+      "city_id": 7,
+      "type": 1,
+      "vehicle_status": 2,
+      "name": "BlueDEF456",
+      "position": {
+        "lat": 56.1652,
+        "lon": 15.5857
+      },
+      "battery": 65,
+      "currentSpeed": 30,
+      "maxSpeed": 50,
+      "isStarted": 1,
+      "rentedBy": 1
+    },
+    {
+      "id": 3,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "GreenGHI789",
+      "position": {
+        "lat": 56.16397178810961,
+        "lon": 15.68229675292969
+      },
+      "battery": 90,
+      "currentSpeed": 55,
+      "maxSpeed": 70,
+      "isStarted": 0,
+      "rentedBy": -1
+    },
+    {
+      "id": 4,
+      "city_id": 7,
+      "type": 1,
+      "vehicle_status": 1,
+      "name": "YellowJKL012",
+      "position": {
+        "lat": 56.1638,
+        "lon": 15.5896
+      },
+      "battery": 75,
+      "currentSpeed": 40,
+      "maxSpeed": 55,
+      "isStarted": 1,
+      "rentedBy": 0
+    },
+    {
+      "id": 5,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "OrangeMNO345",
+      "position": {
+        "lat": 56.1638,
+        "lon": 15.5896
+      },
+      "battery": 95,
+      "currentSpeed": 50,
+      "maxSpeed": 65,
+      "isStarted": 1,
+      "rentedBy": 2
+    },
+    {
+      "id": 6,
+      "city_id": 7,
+      "type": 1,
+      "vehicle_status": 1,
+      "name": "PurplePQR678",
+      "position": {
+        "lat": 56.1621,
+        "lon": 15.587
+      },
+      "battery": 70,
+      "currentSpeed": 35,
+      "maxSpeed": 60,
+      "isStarted": 1,
+      "rentedBy": 1
+    },
+    {
+      "id": 7,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "BlackSTU901",
+      "position": {
+        "lat": 56.162,
+        "lon": 15.5872
+      },
+      "battery": 85,
+      "currentSpeed": 45,
+      "maxSpeed": 55,
+      "isStarted": 0,
+      "rentedBy": -1
+    },
+    {
+      "id": 8,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "WhiteVWX234",
+      "position": {
+        "lat": 56.1623,
+        "lon": 15.588
+      },
+      "battery": 60,
+      "currentSpeed": 25,
+      "maxSpeed": 45,
+      "isStarted": 1,
+      "rentedBy": 2
+    },
+    {
+      "id": 9,
+      "city_id": 7,
+      "type": 1,
+      "vehicle_status": 1,
+      "name": "GrayYZA567",
+      "position": {
+        "lat": 56.1629,
+        "lon": 15.5874
+      },
+      "battery": 40,
+      "currentSpeed": 20,
+      "maxSpeed": 40,
+      "isStarted": 0,
+      "rentedBy": -1
+    },
+    {
+      "id": 10,
+      "city_id": 7,
+      "type": 2,
+      "vehicle_status": 1,
+      "name": "BrownBCD890",
+      "position": {
+        "lat": 56.16722151175649,
+        "lon": 15.617923736572267
+      },
+      "battery": 50,
+      "currentSpeed": 15,
+      "maxSpeed": 35,
+      "isStarted": 0,
+      "rentedBy": 1
+    }
+  ]
+}

@@ -21,10 +21,9 @@ function Vehicles() {
   }, []);
 
   const fetchDataUpdateState = () => {
+    console.log("fetch update");
     fetchData('vehicles', (data) => {
       setVehicles(data);
-      console.log(data);
-
       
     const formattedVehicleMarkers = data.map((vehicle) => ({
       lat: vehicle.position.lat,
@@ -39,8 +38,6 @@ function Vehicles() {
       isStarted: vehicle.isStarted,
       rentedBy: vehicle.rentedBy,
     }));
-
-    console.log(formattedVehicleMarkers);
 
     const event = new CustomEvent('vehiclesDataLoaded', { detail: formattedVehicleMarkers });
     window.dispatchEvent(event);
@@ -88,8 +85,6 @@ function Vehicles() {
 
   const handleSaveVehicle = async (newVehicle) => {
     try {
-      console.log("trying to create");
-      console.log(newVehicle);
       await createData('vehicles', newVehicle);
       fetchDataUpdateState();
     } catch (error) {

@@ -73,32 +73,44 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
   }, [isOpen, vehicle]);
 
 
-  const moveVehicle = useCallback(() => {
-    const moveData = {
-      action: 'moveVehicle',
-      vehicleId: vehicle.id,
-      lat: editedVehicle.position.lat,
-      lon: editedVehicle.position.lon,
-      rentedBy: -1,
-    };
+//  const moveVehicle = useCallback(() => {
+//    const moveData = {
+//      action: 'moveVehicle',
+//      vehicleId: vehicle.id,
+//      lat: editedVehicle.position.lat,
+//      lon: editedVehicle.position.lon,
+//      rentedBy: -1,
+//    };
 
     // Send the move vehicle request to the server
 //    sendJsonMessage(moveData);
 //  }, [sendJsonMessage, vehicle.id, editedVehicle]);
-}, [sendJsonMessage, vehicle.id, editedVehicle]);
+//}, [vehicle.id, editedVehicle]);
 
 
-  const handleEditVehicle = () => {
-    updateData('vehicles', vehicle.id, editedVehicle)
+const handleEditVehicle = () => {
+  // Create a copy of the editedVehicle state
+  const updatedVehicle = { ...editedVehicle };
+
+  // Check if latitude and longitude are valid numbers
+  if (!isNaN(updatedVehicle.position.lat) && !isNaN(updatedVehicle.position.lon)) {
+    // Send the updated vehicle data to the server
+    console.log("id", vehicle.id);
+    console.log("updatedVehicle", updatedVehicle);
+
+    updateData('vehicles', vehicle.id, updatedVehicle)
       .then(() => {
-        moveVehicle();
-        onSave(editedVehicle);
+        onSave(updatedVehicle);
         onRequestClose();
       })
       .catch((error) => {
         console.error('Error updating vehicle:', error);
       });
-  };
+  } else {
+    // Handle invalid input or display an error message
+    console.error('Invalid latitude or longitude input');
+  }
+};
 
   EditVehicleModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,

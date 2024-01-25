@@ -1,13 +1,12 @@
 const vehiclesModel = require("../models/vehiclesModel.js");
+const fs = require('fs');
+const path = require('path');
 //const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
 const vehiclesController = {
     getAllVehicles: async function (req, res) {
         try {
             const allVehicles = await vehiclesModel.getAllVehicles();
-
-            console.log("controller,all: ", allVehicles);
-
             return res.json({
                 data: allVehicles ?? [],
             });
@@ -83,22 +82,43 @@ const vehiclesController = {
     },
 
     updateVehicle: async function (req, res) {
-        console.log("update vehicle controller");
+        console.log("update vehicle");
         try {
-            const vehicleId = req.params.vehicleId;
-            const { city_id, type_id, vehicle_status, name, station_id } = req.body;
-            console.log(station_id);
-            const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
-
-            return res.json({
-                message: "Vehicle updated successfully",
-                data: updatedVehicle,
-            });
+          const vehicleId = req.params.vehicleId;
+          console.log("vehicleId:", vehicleId);
+          const { city_id, type_id, vehicle_status, name, station_id } = req.body;
+          console.log(station_id);
+      
+          // Update the vehicle in your database
+          const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
+      
+          // Read the connectedVehicles.json file
+          const filePath = path.join(__dirname, '..', 'data', 'connectedVehicles.json'); // Adjust the path
+          const rawData = fs.readFileSync(filePath);
+          const jsonData = JSON.parse(rawData);
+      
+          // Find the vehicle by its ID in the JSON data
+          const vehicleToUpdate = jsonData.connectedVehicles.find((vehicle) => vehicle.id === parseInt(vehicleId));
+      
+          if (vehicleToUpdate) {
+            // Update the coordinates of the found vehicle
+            vehicleToUpdate.position.lat = req.body.position.lat;
+            vehicleToUpdate.position.lon = req.body.position.lon;
+      
+            // Write the updated JSON data back to the file
+            fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+          }
+      
+          return res.json({
+            message: "Vehicle updated successfully",
+            data: updatedVehicle,
+          });
         } catch (error) {
-            console.error("Error updating vehicle:", error.message);
-            return res.status(500).json({ error: "Failed to update the vehicle in the database" });
+          console.error("Error updating vehicle:", error.message);
+          return res.status(500).json({ error: "Failed to update the vehicle in the database" });
         }
-    },
+      },
+      
 
     deleteVehicle: async function (req, res) {
         try {
