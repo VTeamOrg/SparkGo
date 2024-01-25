@@ -80,15 +80,10 @@ function MapView() {
     function handleStationsDataLoaded(event) {
       fetchData('parkingZones', (parkingData) => {
         setParking(parkingData);
-        console.log("parkingZones, ", parkingData);
-    
-        console.log("stations loaded");
     
         const stationMarkers = event.detail.map((marker, index) => {
           const { lat, lng, infoText, station_id } = marker;
-    
-          console.log("stations", marker);
-    
+        
           const iconHtml = ReactDOMServer.renderToString(
             <FontAwesomeIcon icon={faChargingStation} />
           );
@@ -208,12 +203,8 @@ function MapView() {
 
 
     function handleRideDataLoaded(event) {
-      console.log("ride data loaded, ", event);
       const { startCoords, endCoords } = event.detail;
-      console.log("startCoords:", startCoords);
-      console.log("endCoords:", endCoords);
     
-      // Ensure that startCoords and endCoords are valid coordinates
       if (
         Array.isArray(startCoords) &&
         startCoords.length === 2 &&
@@ -225,7 +216,7 @@ function MapView() {
             key="ride-start"
             position={startCoords}
             icon={L.divIcon({
-              className: 'station-marker-icon',
+              className: 'ride-marker-icon',
               html: ReactDOMServer.renderToString(
                 <FontAwesomeIcon icon={faPlay} />
               ),
@@ -241,7 +232,7 @@ function MapView() {
             key="ride-end"
             position={endCoords}
             icon={L.divIcon({
-              className: 'station-marker-icon',
+              className: 'ride-marker-icon',
               html: ReactDOMServer.renderToString(
                 <FontAwesomeIcon icon={faStop} />
               ),
@@ -255,7 +246,6 @@ function MapView() {
         setRideStartMarker(newRideStartMarker);
         setRideEndMarker(newRideEndMarker);
     
-        // Set the view to the ride start point (you can adjust the zoom level as needed)
         if (mapRef && mapRef.current && mapRef.current.leafletElement) {
           mapRef.current.leafletElement.setView(startCoords, 13);
         }
@@ -264,8 +254,6 @@ function MapView() {
       }
     }
     
-    
-
     return () => {
       window.removeEventListener('stationsDataLoaded', handleStationsDataLoaded);
       window.removeEventListener('clearMarkers', handleClearMarkers);

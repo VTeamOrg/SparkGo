@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchData, createData, deleteData, updateData } from '../support/FetchService';
 
 /**
  * RideHistory component for displaying a list of ride history entries.
@@ -12,7 +13,7 @@ function RideHistory() {
     const fetchedRideHistory = [
       {
         id: 1,
-        startingPosition: [56.1580, 15.5829],
+        startingPosition: [56.1610, 15.5848],
         endingPosition: [56.1750, 15.5890],
         type: 'bike',
         timeElapsed: '1 hour 30 minutes',
@@ -34,6 +35,24 @@ function RideHistory() {
 
     fetchedRideHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
     setRideHistory(fetchedRideHistory);
+
+    
+    fetchData('stations',(stationsData) => {
+      /* Update the component's state with station data */
+      /* Format the data into markers */
+      const formattedMarkers = stationsData.map((station) => ({
+        lat: station.coords_lat,
+        lng: station.coords_long,
+        infoText: station.name,
+        id: station.id,
+        cityName: station.city_name,
+      }));
+
+      /* Emit an event with the formatted markers data */
+      const event = new CustomEvent('stationsDataLoaded', { detail: formattedMarkers });
+      window.dispatchEvent(event);
+    });
+    
   }, []);
 
   const handleRideClick = (ride) => {

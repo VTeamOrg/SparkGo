@@ -20,6 +20,7 @@ drop table if exists active_plan;
 drop table if exists member;
 drop table if exists plan;
 drop table if exists frequencies;
+drop table if exists parking_zone;
 
 -- create schema for e-scooter database
 create table city (
