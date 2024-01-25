@@ -68,7 +68,7 @@ function ShowStationModal({ isOpen, onRequestClose, stationId }) {
 ShowStationModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  stationId: PropTypes.number.isRequired, // Assuming stationId is a number
+  stationId: PropTypes.number.isRequired,
 };
 
 export default ShowStationModal;

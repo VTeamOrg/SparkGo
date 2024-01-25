@@ -44,13 +44,13 @@ const priceListModel = {
         }
     },
 
-    createPriceListItem: async function ({ type_id, list_name, price_per_minute, price_per_unlock }) {
+    createPriceListItem: async function ({ type_id, list_name, price_per_minute, price_per_unlock, discount }) {
         try {
             const db = await database.openDb();
             const result = await database.query(
                 db,
-                "INSERT INTO price_list (type_id, list_name, price_per_minute, price_per_unlock) VALUES (?, ?, ?, ?)",
-                [type_id, list_name, price_per_minute, price_per_unlock]
+                "INSERT INTO price_list (type_id, list_name, price_per_minute, price_per_unlock, discount) VALUES (?, ?, ?, ?, ?)",
+                [type_id, list_name, price_per_minute, price_per_unlock, discount]
             );
             await database.closeDb(db);
             return result.insertId;
@@ -59,13 +59,13 @@ const priceListModel = {
         }
     },
 
-    updatePriceListItem: async function (itemId, { type_id, list_name, price_per_minute, price_per_unlock }) {
+    updatePriceListItem: async function (itemId, { type_id, list_name, price_per_minute, price_per_unlock, discount }) {
         try {
             const db = await database.openDb();
             await database.query(
                 db,
-                "UPDATE price_list SET type_id = ?, list_name = ?, price_per_minute = ?, price_per_unlock = ? WHERE id = ?",
-                [type_id, list_name, price_per_minute, price_per_unlock, itemId]
+                "UPDATE price_list SET type_id = ?, list_name = ?, price_per_minute = ?, price_per_unlock = ?, discount = ? WHERE id = ?",
+                [type_id, list_name, price_per_minute, price_per_unlock, discount, itemId]
             );
             await database.closeDb(db);
         } catch (error) {

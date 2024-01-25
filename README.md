@@ -41,6 +41,31 @@ in/backend
 
 node app.js
 
-# Current endpoints
+# local test vs generate code coverage
+
+Coverage generation , change line in package.json to:
+
+"test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
+
+Lokal test and for githubaction , change line in package.json to:
+
+"test": "mocha --recursive --exit test/routes test/apiLimiter/",
+
+
+To add more folders to coverage add in
+
+"nyc": {
+        "reporter": ["clover", "html"],
+        "include": [
+            "models/tokenModel.js",
+            "testmodels/**/*.js",
+            "routes/httpRoutes/index.js",
+            "routes/websocketRoutes/*.js"
+        ],
+        "exclude": [
+            "test/**"
+
+        ]
+    },
 
 

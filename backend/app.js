@@ -31,6 +31,13 @@ app.disable("x-powered-by");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Server Error app.js" });
+});
+
 const port = process.env.NODE_ENV === "test" ? 1337 : 3000;
 
 app.get("/", (req, res) => {

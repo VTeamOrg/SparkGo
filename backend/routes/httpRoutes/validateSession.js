@@ -15,21 +15,14 @@ router.get('/', async (req, res) => {
             return res.status(403).json({ message: 'User not found' });
         }
 
-
         console.log("Validated User Role:", user.role); // Log the validated user's role
 
-        // Check if the user is an admin
-        if (user.role !== 'admin') {
-            return res.status(403).json({ message: 'Access denied. Admins only.' });
-        }
-
-        // If the user is an admin
+        // Send response for both admin and non-admin users
         res.json({ userLoggedIn: true, userId, userRole: user.role });
     } else {
         res.json({ userLoggedIn: false });
     }
 });
-
 
 
 module.exports = router;

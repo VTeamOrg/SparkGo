@@ -9,7 +9,7 @@ const priceListController = {
             });
         } catch (error) {
             console.error("Error getting pricelists:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get all price list items: ${error.message}` });
         }
     },
 
@@ -23,48 +23,50 @@ const priceListController = {
             });
         } catch (error) {
             console.error("Error getting pricelist:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get price list item by ID: ${error.message}` });
         }
     },
 
     createPriceListItem: async function (req, res) {
         try {
-            const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
+            const { type_id, list_name, price_per_minute, price_per_unlock, discount } = req.body;
             const result = await priceListModel.createPriceListItem({
-              type_id,
-              list_name,
-              price_per_minute,
-              price_per_unlock,
+                type_id,
+                list_name,
+                price_per_minute,
+                price_per_unlock,
+                discount
             });
-        
-            return res.json({
+
+            return res.status(201).json({
                 message: "Price list item created successfully",
                 insertedId: result.insertId,
             });
         } catch (error) {
             console.error("Error creating price list item:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to create price list item: ${error.message}` });
         }
     },
 
     updatePriceListItem: async function (req, res) {
         try {
             const itemId = req.params.itemId;
-            const { type_id, list_name, price_per_minute, price_per_unlock } = req.body;
-    
+            const { type_id, list_name, price_per_minute, price_per_unlock, discount } = req.body;
+
             await priceListModel.updatePriceListItem(itemId, {
                 type_id,
                 list_name,
                 price_per_minute,
-                price_per_unlock
+                price_per_unlock,
+                discount
             });
-    
+
             return res.json({
                 message: "Price list item updated successfully",
             });
         } catch (error) {
             console.error("Error updating price list item:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to update price list item: ${error.message}` });
         }
     },
 
@@ -78,7 +80,7 @@ const priceListController = {
             });
         } catch (error) {
             console.error("Error deleting price list item:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to delete price list item: ${error.message}` });
         }
     },
 };

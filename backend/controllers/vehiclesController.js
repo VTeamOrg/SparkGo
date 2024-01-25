@@ -11,7 +11,7 @@ const vehiclesController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to fetch all vehicles from the database" });
         }
     },
 
@@ -20,10 +20,10 @@ const vehiclesController = {
             const vehicleId = req.params.vehicleId;
             const vehicle = await vehiclesModel.getVehicleById(vehicleId);
 
-            return res.json({data: [vehicle] ?? []});
+            return res.json({ data: [vehicle] ?? [] });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to fetch vehicle by ID from the database" });
         }
     },
 
@@ -32,10 +32,10 @@ const vehiclesController = {
             const stationId = req.params.stationId;
             const vehicle = await vehiclesModel.getVehiclesByStationId(stationId);
 
-            return res.json({data: [vehicle] ?? []});
+            return res.json({ data: [vehicle] ?? [] });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to fetch vehicle by station ID from the database" });
         }
     },
 
@@ -46,7 +46,7 @@ const vehiclesController = {
             const activeVehicles = await vehiclesModel.getActiveVehicles();
 
             if (forClient) {
-                // for client will exclude vehicles that is rented and vehicles that have a low battery
+                // for the client will exclude vehicles that are rented and vehicles that have low battery
                 const result = activeVehicles.filter(vehicle => vehicle.rentedBy === -1 && vehicle.battery > 20);
                 return res.json({
                     data: result ?? [],
@@ -57,8 +57,8 @@ const vehiclesController = {
                 data: activeVehicles ?? [],
             });
         } catch (error) {
-            console.error("Error querying database:", error);
-            return res.status(500).json({ error: "Internal Server Error" });
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Failed to fetch active vehicles from the database" });
         }
     },
 
@@ -69,14 +69,14 @@ const vehiclesController = {
             const normalizedStationId = station_id === "" ? null : station_id;
 
             const newVehicle = await vehiclesModel.createVehicle(city_id, type_id, vehicle_status, name, normalizedStationId);
-    
+
             return res.status(201).json({
                 message: "Vehicle created successfully",
                 data: newVehicle,
             });
         } catch (error) {
             console.error("Error creating vehicle:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to create a new vehicle in the database" });
         }
     },
 
@@ -87,14 +87,14 @@ const vehiclesController = {
             const { city_id, type_id, vehicle_status, name, station_id } = req.body;
             console.log(station_id);
             const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
-    
+
             return res.json({
                 message: "Vehicle updated successfully",
                 data: updatedVehicle,
             });
         } catch (error) {
             console.error("Error updating vehicle:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to update the vehicle in the database" });
         }
     },
 
@@ -108,7 +108,7 @@ const vehiclesController = {
             });
         } catch (error) {
             console.error("Error deleting vehicle:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: "Failed to delete the vehicle from the database" });
         }
     },
 };

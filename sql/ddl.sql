@@ -52,6 +52,7 @@ CREATE TABLE price_list (
     list_name VARCHAR(255),
     price_per_minute DECIMAL(10, 2),
     price_per_unlock DECIMAL(10, 2),
+    discount DECIMAL(10, 2),
     FOREIGN KEY (type_id) REFERENCES vehicle_type(id) 
 );
 

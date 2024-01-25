@@ -9,7 +9,7 @@ const receiptController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get all receipts: ${error.message}` });
         }
     },
 
@@ -23,7 +23,7 @@ const receiptController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get receipts by member ID: ${error.message}` });
         }
     },
 
@@ -37,7 +37,7 @@ const receiptController = {
             });
         } catch (error) {
             console.error("Error querying database:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to get receipt by ID: ${error.message}` });
         }
     },
 
@@ -52,7 +52,7 @@ const receiptController = {
             });
         } catch (error) {
             console.error("Error generating receipt:", error.message);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ error: `Failed to generate receipt: ${error.message}` });
         }
     },
 };

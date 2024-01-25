@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 
 function MembersTable({
@@ -37,7 +37,7 @@ function MembersTable({
                     openMemberModal(member);
                   }}
                 >
-                  <FontAwesomeIcon icon={faPencilAlt} />
+                  <FontAwesomeIcon icon={faInfoCircle} />
                 </button>
               </td>
             </tr>

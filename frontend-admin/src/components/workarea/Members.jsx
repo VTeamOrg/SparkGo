@@ -16,8 +16,6 @@ function Members() {
   const [selectedMember, setSelectedMember] = useState(null);
   const [isMemberModalOpen, setMemberModalOpen] = useState(false);
 
-  console.log('All cookies:', document.cookie);
-
   useEffect(() => {
     refreshMembersData();
   }, []);
@@ -28,10 +26,8 @@ function Members() {
         const uniqueMembers = data.filter((member, index, self) =>
           index === self.findIndex((m) => m.id === member.id)
         );
-        console.log(data);    
         setMembers(uniqueMembers);
       });
-
   };
 
   /**

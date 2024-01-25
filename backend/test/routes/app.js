@@ -38,8 +38,7 @@ describe("Server Connection Behavior", () => {
             });
     });
 
-   
-
+ 
     // Test Case 4: Test an endpoint from the "vehicles" route
     it("should return a 200 status code when accessing an endpoint from the 'vehicles' route", (done) => {
         chai.request(app)

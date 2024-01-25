@@ -1,5 +1,5 @@
-id,type_id,list_name,price_per_minute,price_per_unlock
-1,1,Scooter Pricing 1,2.50,1.00
-2,2,Bike Pricing 1,1.50,0.50
-3,1,Scooter Alternate,2.75,1.10
-4,2,Bike Alternate,1.60,0.55
+id,type_id,list_name,price_per_minute,price_per_unlock,discount
+1,1,Scooter Pricing 1,2.50,1.00,0.05
+2,2,Bike Pricing 1,1.50,0.50,0.05
+3,1,Scooter Alternate,2.75,1.10,0.05
+4,2,Bike Alternate,1.60,0.55,0.05

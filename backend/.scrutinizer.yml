@@ -1,0 +1,27 @@
+# .scrutinizer.yml
+
+imports:
+    - javascript
+
+filter:
+    excluded_paths: [backend/node_modules/*, backend/node_modules/*]
+
+build:
+    image: default-bionic
+
+    nodes:
+        my-tests:
+            environment:
+                node:
+                    version: 16  # Specify the Node.js version you want
+        analysis:
+            tests:
+                override:
+                    - js-scrutinizer-run
+    tests:
+        override:
+            - command: "npm test"
+              
+              coverage:
+                  file: "backend/coverage/clover.xml"
+                  format: "clover"

@@ -22,6 +22,7 @@ function AddPriceListModal({ isOpen, onRequestClose, onAddPriceItem }) {
     list_name: '',
     price_per_minute: 0,
     price_per_unlock: 0,
+    discount: 0,
   });
 
   useEffect(() => {
@@ -41,8 +42,9 @@ function AddPriceListModal({ isOpen, onRequestClose, onAddPriceItem }) {
     /* Check if price_per_minute and price_per_unlock are valid numbers */
     const pricePerMinute = parseFloat(newPriceItem.price_per_minute);
     const pricePerUnlock = parseFloat(newPriceItem.price_per_unlock);
+    const discount = parseFloat(newPriceItem.discount);
 
-    if (isNaN(pricePerMinute) || isNaN(pricePerUnlock)) {
+    if (isNaN(pricePerMinute) || isNaN(pricePerUnlock) || isNaN(discount) ) {
       alert('Price fields must be valid numbers.');
       return;
     }

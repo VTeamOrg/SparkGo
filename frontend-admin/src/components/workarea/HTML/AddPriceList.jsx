@@ -9,6 +9,20 @@ function AddPriceList({
   handleSubmit,
   onRequestClose,
 }) {
+
+  // Helper function to convert percentage input to decimal
+    const percentageToDecimal = (percentage) => {
+        const percentValue = parseFloat(percentage);
+        if (isNaN(percentValue)) return null;
+        return percentValue / 100;
+      };
+
+  // Helper function to convert decimal value to percentage input
+  const decimalToPercentage = (decimal) => {
+    return (decimal * 100).toString();
+  };
+
+
   return (
     <div className="add-price-list-modal">
       <h3>Add Price List</h3>
@@ -49,7 +63,7 @@ function AddPriceList({
           />
         </div>
 
-        {/* Numeric fields for price_per_minute and price_per_unlock */}
+        {/* Numeric fields for price_per_minute and price_per_unlockand discount */}
         <div className="form-group">
           <label>Price per Minute</label>
           <input
@@ -75,6 +89,22 @@ function AddPriceList({
                 price_per_unlock: e.target.value,
               })
             }
+          />
+        </div>
+
+        {/* Numeric field for discount (in percentage, positive value) */}
+        <div className="form-group">
+          <label>Discount (in percentage)</label>
+          <input
+            type="text"
+            value={newPriceItem.discount !== null ? decimalToPercentage(newPriceItem.discount) : ''}
+            onChange={(e) => {
+              const discountPercentage = percentageToDecimal(e.target.value);
+              setNewPriceItem({
+                ...newPriceItem,
+                discount: discountPercentage !== null ? discountPercentage : newPriceItem.discount,
+              });
+            }}
           />
         </div>
 
