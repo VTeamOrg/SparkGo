@@ -35,7 +35,7 @@ function WorkArea({ activeSection, userId }) {
         case 'rideHistory':
           return <RideHistory />;
         case 'receipts':
-          return <Receipts />;
+          return <Receipts userId={userId} />;
         case 'cities':
           return <Cities />;  
         case 'stations':
@@ -65,7 +65,7 @@ function WorkArea({ activeSection, userId }) {
   }
 
   WorkArea.propTypes = {
-    activeSection: PropTypes.string.isRequired,
+    activeSection: PropTypes.string,
     userId: PropTypes.string.isRequired,
   };
 

@@ -8,7 +8,7 @@ router.get("/", stationsController.getAllStations);
 router.get("/:stationId", stationsController.getStationById);
 
 router.post("/", adminOnlyAccess, stationsController.createStation);
-router.put("/:stationId", adminOnlyAccess, stationsController.updateStation);
+router.put("/:stationId", stationsController.updateStation);
 router.delete("/:stationId", adminOnlyAccess, stationsController.deleteStation);
 
 module.exports = router;

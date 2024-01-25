@@ -4,6 +4,7 @@ const apiUrl = (endpoint) => `${API_URL}/${endpoint}`;
 
 /* FETCH data for a given endpoint */
 export const fetchData = async (endpoint, callback) => {
+  console.log(endpoint);
   try {
     const response = await fetch(apiUrl(endpoint), {
       credentials: 'include', // Include cookies with the request
@@ -45,7 +46,6 @@ export const fetchById = async (endpoint, id) => {
 
 /* CREATE data for a given endpoint */
 export const createData = async (endpoint, newData) => {
-
   try {
     const response = await fetch(apiUrl(endpoint), {
       method: 'POST',
@@ -68,6 +68,9 @@ export const createData = async (endpoint, newData) => {
 
 /* UPDATE data for a given endpoint */
 export const updateData = async (endpoint, itemId, updatedData) => {
+  console.log("endpoint: ", endpoint);
+  console.log("itemId: ", itemId);
+  console.log("updatedData: ", updatedData);
 
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
@@ -78,6 +81,8 @@ export const updateData = async (endpoint, itemId, updatedData) => {
       body: JSON.stringify(updatedData),
       credentials: 'include', // Include cookies with the request
     });
+
+    console.log(response);
 
     if (response.ok) {
       const responseData = await response.json();
@@ -93,7 +98,6 @@ export const updateData = async (endpoint, itemId, updatedData) => {
 
 /* DELETE data for a given endpoint */
 export const deleteData = async (endpoint, itemId) => {
-  console.log("DFELTE", endpoint);
   try {
     const response = await fetch(`${apiUrl(endpoint)}/${itemId}`, {
       method: 'DELETE',

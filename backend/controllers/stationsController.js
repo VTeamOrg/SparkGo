@@ -43,8 +43,10 @@ const stationsController = {
     },
 
     updateStation: async function (req, res) {
+        console.log("update");
         try {
             const stationId = req.params.stationId;
+            console.log("update ", stationId);
             const { name, coords_lat, coords_long, city_id } = req.body;
             const updatedStation = await stationsModel.updateStation(stationId, { name, coords_lat, coords_long, city_id });
 

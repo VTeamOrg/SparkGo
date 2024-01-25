@@ -3,19 +3,26 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
 import './MapView.css';
+import { fetchData } from './support/FetchService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChargingStation } from '@fortawesome/free-solid-svg-icons';
 import ReactDOMServer from 'react-dom/server';
-
 
 function MapView() {
   const mapRef = useRef(null);
   const citiesCoordinates = useRef(new Map());
   const [markers, setMarkers] = useState([]);
   const [mapEnabled, setMapEnabled] = useState(true);
+  const [parking, setParking] = useState([]);
+  const [stationMarkers, setStationMarkers] = useState([]);
+  const [vehicleMarkers, setVehicleMarkers] = useState([]);
   
-
   useEffect(() => {
+    fetchData('parkingZones',(data) => {
+      setParking(data);
+      console.log("parkingZones, ", data);
+    });
+
     const handleDisableMap = () => {
       setMapEnabled(false);
     };
@@ -26,6 +33,9 @@ function MapView() {
 
     const handleClearMarkers = () => {
       setMarkers([]);
+      setStationMarkers([]);
+      setVehicleMarkers([]);
+
     };
 
     window.addEventListener('stationsDataLoaded', handleStationsDataLoaded);
@@ -36,6 +46,7 @@ function MapView() {
     window.addEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
 
     function handleCitiesDataLoaded(data) {
+      console.log("cities loaded");
       if (data && data.detail && Array.isArray(data.detail)) {
         const cityData = data.detail;
         setMarkers([]);
@@ -66,8 +77,11 @@ function MapView() {
     }
 
     function handleStationsDataLoaded(event) {
+      console.log("stations loaded");
       const markersData = event.detail.map((marker, index) => {
-        const { lat, lng, infoText, id } = marker;
+        const { lat, lng, infoText, station_id } = marker;
+
+        console.log("stations", marker);
 
         const iconHtml = ReactDOMServer.renderToString(
           <FontAwesomeIcon icon={faChargingStation} />
@@ -75,7 +89,7 @@ function MapView() {
 
       return (
           <Marker
-            key={id || index}
+            key={station_id || index}
             position={[lat, lng]}
             icon={L.divIcon({
               className: 'station-marker-icon',
@@ -88,7 +102,7 @@ function MapView() {
         );
       });
 
-      setMarkers(markersData);
+      setStationMarkers(markersData);
 
       // Use mapRef to access the map instance and set the zoom level
       // Center on Karlskoga and set zoom to 6
@@ -98,13 +112,18 @@ function MapView() {
     }
 
     function handleVehiclesDataLoaded(event) {
+      console.log("vehicles loaded");
       const vehicleMarkers = event.detail.map((vehicle, index) => {
+
         const { lat, lng, infoText, id, cityName, status, battery, currentSpeed, maxSpeed, isStarted, rentedBy } = vehicle;
+        console.log("vehicleMarkers", vehicle);
+
         return (
           <Marker key={id || index} position={[lat, lng]}>
             <Popup>
               <div>
                 <h4>{infoText}</h4>
+                <p>ID: {id}</p>
                 <p>City: {cityName}</p>
                 <p>Status: {status}</p>
                 <p>Battery: {battery}</p>
@@ -118,7 +137,7 @@ function MapView() {
         );
       });
     
-      setMarkers(vehicleMarkers);
+      setVehicleMarkers(vehicleMarkers);
     
       // Use mapRef to access the map instance and set the zoom level
       // Center on the first vehicle's position and set zoom to your desired value
@@ -134,7 +153,8 @@ function MapView() {
       window.removeEventListener('disableMap', handleDisableMap);
       window.removeEventListener('enableMap', handleEnableMap);
       window.removeEventListener('vehiclesDataLoaded', handleVehiclesDataLoaded);
-
+      window.removeEventListener('citiesDataLoaded', handleCitiesDataLoaded);
+  
     };
   }, []);
 
@@ -178,6 +198,9 @@ function MapView() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+          {/* Render both stationMarkers and vehicleMarkers */}
+          {stationMarkers}
+          {vehicleMarkers}
           {markers}
         </MapContainer>
       ) : (

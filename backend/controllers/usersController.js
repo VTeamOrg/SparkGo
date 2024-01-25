@@ -4,6 +4,7 @@ const userModel = require("../models/userModel.js");
 
 const usersController = {
     getAllUsers: async function getAllUsers(req, res) {
+        console.log("get all users");
         try {
             const allUsers = await userModel.getAllUsers();
             return res.json({

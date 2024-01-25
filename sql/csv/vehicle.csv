@@ -1,9 +1,9 @@
-id,city_id,type,vehicle_status,name
-1,7,2,1,RedABC123
-2,7,1,2,BlueDEF456
-3,7,2,1,GreenGHI789
-4,7,1,1,YellowJKL012
-5,7,2,1,OrangeMNO345
+id,city_id,type,vehicle_status,name,station_id
+1,7,2,1,RedABC123,1
+2,7,1,2,BlueDEF456,2
+3,7,2,1,GreenGHI789,3
+4,7,1,1,YellowJKL012,1
+5,7,2,1,OrangeMNO345,1
 6,7,1,1,PurplePQR678
 7,7,2,1,BlackSTU901
 8,7,2,1,WhiteVWX234

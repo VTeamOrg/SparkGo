@@ -1,10 +1,12 @@
 const vehiclesModel = require("../models/vehiclesModel.js");
-const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
+//const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
 const vehiclesController = {
     getAllVehicles: async function (req, res) {
         try {
             const allVehicles = await vehiclesModel.getAllVehicles();
+
+            console.log("controller,all: ", allVehicles);
 
             return res.json({
                 data: allVehicles ?? [],

@@ -23,6 +23,7 @@ function Vehicles() {
   const fetchDataUpdateState = () => {
     fetchData('vehicles', (data) => {
       setVehicles(data);
+      console.log(data);
 
       
     const formattedVehicleMarkers = data.map((vehicle) => ({
@@ -38,6 +39,8 @@ function Vehicles() {
       isStarted: vehicle.isStarted,
       rentedBy: vehicle.rentedBy,
     }));
+
+    console.log(formattedVehicleMarkers);
 
     const event = new CustomEvent('vehiclesDataLoaded', { detail: formattedVehicleMarkers });
     window.dispatchEvent(event);

@@ -5,7 +5,7 @@ import { updateData, fetchData } from '../../support/FetchService';
 import PropTypes from 'prop-types';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import React, { useCallback } from "react";
-import useWebSocket from 'react-use-websocket'; 
+//import useWebSocket from 'react-use-websocket'; 
 
 function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
@@ -18,13 +18,13 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
       position: { lat: 0, lon: 0 },
     });
 
-    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+/*    const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
       `ws://localhost:3000?type=vehicle&id=${vehicle.id}`,
       {
         share: false,
         shouldReconnect: () => true,
       }
-    );
+    ); */
 
   const [vehicleTypes, setVehicleTypes] = useState([]);
   const [stations, setStations] = useState([]);
@@ -83,8 +83,9 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
     };
 
     // Send the move vehicle request to the server
-    sendJsonMessage(moveData);
-  }, [sendJsonMessage, vehicle.id, editedVehicle]);
+//    sendJsonMessage(moveData);
+//  }, [sendJsonMessage, vehicle.id, editedVehicle]);
+}, [sendJsonMessage, vehicle.id, editedVehicle]);
 
 
   const handleEditVehicle = () => {

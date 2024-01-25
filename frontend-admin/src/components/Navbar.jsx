@@ -32,9 +32,9 @@ function Navbar({ setActiveSection, userRole }) {
         <button onClick={() => handleLinkClick('myAccount')}>My Account</button>
         <button onClick={() => handleLinkClick('rideHistory')}>Ride History</button>
         <button onClick={() => handleLinkClick('receipts')}>Receipts</button>
-        <button onClick={() => handleLinkClick('plans')}>Plans</button>
         {userRole === 'admin' && (
           <>
+            <button onClick={() => handleLinkClick('plans')}>Plans</button>
             <button onClick={() => handleLinkClick('cities')}>Cities</button>
             <button onClick={() => handleLinkClick('stations')}>Stations</button>
             <button onClick={() => handleLinkClick('vehicleTypes')}>Vehicle types</button>
