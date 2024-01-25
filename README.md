@@ -41,31 +41,9 @@ in/backend
 
 node app.js
 
-# local test vs generate code coverage
 
-Coverage generation , change line in package.json to:
+# Code coverage
 
-"test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
+Run npm run test2 to generate into the coverage folder clover statistics
 
-Lokal test and for githubaction , change line in package.json to:
-
-"test": "mocha --recursive --exit test/routes test/apiLimiter/",
-
-
-To add more folders to coverage add in
-
-"nyc": {
-        "reporter": ["clover", "html"],
-        "include": [
-            "models/tokenModel.js",
-            "testmodels/**/*.js",
-            "routes/httpRoutes/index.js",
-            "routes/websocketRoutes/*.js"
-        ],
-        "exclude": [
-            "test/**"
-
-        ]
-    },
-
-
+open index.html to view results
