@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - dev
+            - sparkgo_A
             - master
 
 jobs:
