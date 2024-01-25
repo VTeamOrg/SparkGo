@@ -46,4 +46,12 @@ node app.js
 
 Run npm run test2 to generate into the coverage folder clover statistics
 
-open index.html to view results
+open covarage/index.html to view results
+
+
+# Scrutiizer badge
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/VTeamOrg/SparkGo/badges/quality-score.png?b=sparkgo_A)](https://scrutinizer-ci.com/g/VTeamOrg/SparkGo/?branch=sparkgo_A)
+
+
+Scrutinizer linked to repo
