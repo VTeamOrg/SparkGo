@@ -35,6 +35,7 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
   const mapRef = useRef(null);
 
   useEffect(() => {
+    console.log("useeffect");
     fetchData('stations',(stationsData) => {
       setStations(stationsData);
     });
@@ -89,10 +90,9 @@ function EditVehicleModal({ isOpen, onRequestClose, onSave, vehicle }) {
 
 
 const handleEditVehicle = () => {
-  // Create a copy of the editedVehicle state
+  console.log("handle edit");
   const updatedVehicle = { ...editedVehicle };
 
-  // Check if latitude and longitude are valid numbers
   if (!isNaN(updatedVehicle.position.lat) && !isNaN(updatedVehicle.position.lon)) {
     // Send the updated vehicle data to the server
     console.log("id", vehicle.id);
@@ -107,7 +107,6 @@ const handleEditVehicle = () => {
         console.error('Error updating vehicle:', error);
       });
   } else {
-    // Handle invalid input or display an error message
     console.error('Invalid latitude or longitude input');
   }
 };
@@ -131,7 +130,7 @@ const handleEditVehicle = () => {
 
 
   const DoubleClickInput = () => {
-    useMapEvents({
+/*    useMapEvents({
       dblclick: (e) => {
         e.originalEvent.preventDefault();
         const { lat, lng } = e.latlng;
@@ -146,7 +145,8 @@ const handleEditVehicle = () => {
           },
         });
       },
-    });
+    }); */
+    console.log("double clicked");
 
     return null;
   };

@@ -1,10 +1,27 @@
 const database = require("../db/database.js");
-//const { connectedVehicles } = require("../routes/websocketRoutes/store.js");
-const { connectedVehicles  } = require("../data/connectedVehicles.json");
+const fs = require('fs');
+const path = require('path');
+
+let cachedData = [];
+
+const filePath = path.join(__dirname, '..', 'data', 'connectedVehicles.json');
+
+const updateCachedData = () => {
+  try {
+    const rawData = fs.readFileSync(filePath);
+    cachedData = JSON.parse(rawData);
+  } catch (error) {
+    console.error('Error updating cached data:', error);
+  }
+};
+
+updateCachedData();
 
 const vehiclesModel = {
-    getAllVehicles: async function () {
-        try {
+  getAllVehicles: async function () {
+    try {
+      const connectedVehicles = cachedData.connectedVehicles || [];
+
             const db = await database.openDb();
             const getAllVehicles = await database.query(
                 db,
@@ -20,7 +37,7 @@ const vehiclesModel = {
 
             const result = vehiclesArray.map(vehicle => {
                 const connectedVehicle = connectedVehicles.find(connectedVehicle => connectedVehicle.id === Number(vehicle.id));
-console.log(connectedVehicle);
+
                 if (connectedVehicle) {
                     return {
                         id: Number(vehicle.id),
@@ -283,6 +300,13 @@ console.log(connectedVehicle);
                 "UPDATE vehicle SET city_id = ?, type_id = ?, vehicle_status = ?, name = ?, station_id = ? WHERE id = ?",
                 [city_id, type_id, vehicle_status, name, station_id, vehicleId]
             );
+
+        const updatedVehicleIndex = cachedData.connectedVehicles.findIndex(vehicle => vehicle.id === vehicleId);
+        if (updatedVehicleIndex !== -1) {
+            cachedData.connectedVehicles[updatedVehicleIndex] = {
+                id: vehicleId,
+            };
+        }
     
             await database.closeDb(db);
             return updatedVehicle;

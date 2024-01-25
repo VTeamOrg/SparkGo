@@ -21,7 +21,7 @@ function Vehicles() {
   }, []);
 
   const fetchDataUpdateState = () => {
-    console.log("fetch update");
+
     fetchData('vehicles', (data) => {
       setVehicles(data);
       
@@ -72,14 +72,8 @@ function Vehicles() {
     setShowAddVehicleModal(true);
   };
 
-  const handleUpdateVehicle = async (editedVehicle) => {
-    try {
-      await updateData('vehicles', editedVehicle.id, editedVehicle);
+  const handleUpdateVehicle = async () => {
       fetchDataUpdateState();
-    } catch (error) {
-      console.error('Error updating vehicle:', error.message);
-    }
-
     setShowEditVehicleModal(false);
   };
 

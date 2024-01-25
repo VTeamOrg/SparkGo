@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 //const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
 
+const filePath = path.join(__dirname, '..', 'data', 'connectedVehicles.json'); 
+
 const vehiclesController = {
     getAllVehicles: async function (req, res) {
         try {
@@ -93,7 +95,6 @@ const vehiclesController = {
           const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);
       
           // Read the connectedVehicles.json file
-          const filePath = path.join(__dirname, '..', 'data', 'connectedVehicles.json'); // Adjust the path
           const rawData = fs.readFileSync(filePath);
           const jsonData = JSON.parse(rawData);
       
