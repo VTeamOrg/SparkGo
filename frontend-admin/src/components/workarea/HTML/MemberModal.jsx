@@ -268,17 +268,25 @@ function PlanFields({
             <label>Creation:</label>
           </td>
           <td>
-            <span>{formatDateTime(editedMember.active_plan_creation)}</span>
+          {editedMember.active_plan_creation ? (
+                <span>{formatDateTime(editedMember.active_plan_creation)}</span>
+              ) : (
+                <span></span>
+              )}
           </td>
           <td>
             <label>Last activation:</label>
           </td>
           <td>
-            {editedMember.active_plan_paused === 'Y' ? (
-              <span>Inactive</span>
-            ) : (
-              <span>{formatDateTime(editedMember.active_plan_activation)}</span>
-            )}
+          {editedMember.active_plan_paused === 'Y' ? (
+                <span>Inactive</span>
+              ) : (
+                editedMember.active_plan_activation ? (
+                  <span>{formatDateTime(editedMember.active_plan_activation)}</span>
+                ) : (
+                  <span></span>
+                )
+              )}
           </td>
         </tr>
           <tr>
