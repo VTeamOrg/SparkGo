@@ -20,3 +20,7 @@ docker run --detach \
 #mysql -uroot -p -e "SET GLOBAL local_infile=ON;
 #mysql -uroot -p -e "show global variables like '%local%';"
 #mysql -uroot -p --local-infile=1 --table < reset.sql
+# mysqldump -u root -p sparkgo > /host_sql_folder/sparkgo.sql
+# mysql -udbadmin -p -h sparkgo_mysql sparkgo
+
+#mysql -udbadm -pP@ssw0rd -h localhost sparkgo
