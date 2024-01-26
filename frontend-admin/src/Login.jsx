@@ -48,8 +48,6 @@ function Login({ setUserLoggedIn, setUserRole, setUserId }) {
       });
       const data = await response.json();
 
-      console.log(data)
-
       if (data.url) {
         window.location.href = data.url;
       } else {
