@@ -64,7 +64,6 @@ const userModel = {
           throw new Error("Missing user ID");
         }
 
-        console.log("updated fields", updatedFields);
         try {
           const db = await database.openDb();
       
@@ -156,7 +155,6 @@ const userModel = {
             );
             await database.closeDb(db);
 
-            console.log("Fetched User:", user); // Log the user data
             return user.length > 0 ? user[0] : null;
         } catch (error) {
             throw error;

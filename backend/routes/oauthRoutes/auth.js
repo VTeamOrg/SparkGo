@@ -11,15 +11,12 @@ const { createUserIfNotExists} = require("../../middleware/createUser.js"); // U
 async function getUserData(access_token) {
   const response = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
   const data = await response.json();
-  console.log('data', data);
   return data; 
 }
 
 router.get('/', async function (req, res) {
   const { code, redirect } = req.query;
-  console.log(code);
-  console.log(redirect);
-  console.log(req.query);
+
   try {
     const redirectURL = `http://localhost:3000/v1/auth?redirect=${redirect}`;
     console.log(">", redirectURL);
@@ -47,10 +44,11 @@ router.get('/', async function (req, res) {
     } 
 
 
-    console.log("User Role:", user.role); // Log the user's role
+//    console.log("User Role:", user.role); // Log the user's role
 
     const tokenExpiration = new Date();
-    tokenExpiration.setHours(tokenExpiration.getHours() + 1); // Set the token to expire in 1 hour, for example
+    //anbl this was an issue with time zones, since token model uses now(), which is +6 for me. 
+    tokenExpiration.setHours(tokenExpiration.getHours() + 7); 
 
     await tokenModel.storeToken(user.id, r.tokens.access_token, tokenExpiration);
 

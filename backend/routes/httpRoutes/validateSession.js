@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const authToken = req.cookies.authToken;
 
     const isValid = await tokenModel.validateAuthTokenAndUserId(authToken, userId);
-    
+
     if (isValid) {
         const user = await userModel.getUserById(userId);
         if (!user) {

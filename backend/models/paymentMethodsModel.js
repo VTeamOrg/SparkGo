@@ -16,7 +16,6 @@ const paymentMethodsModel = {
     },
 
     getPaymentMethodByMemberId: async function (memberId) {
-        console.log("model by member id: ", memberId);
         try {
             const db = await database.openDb();
             const memberPaymentMethod = await database.query(
@@ -33,7 +32,6 @@ const paymentMethodsModel = {
     },
 
     createPaymentMethod: async function (member_id, method_name, reference_info, is_selected) {
-        console.log("create payment");
         try {
           const db = await database.openDb();
     
@@ -54,10 +52,7 @@ const paymentMethodsModel = {
         updatePaymentMethod: async function (paymentMethodId, member_id, method_name, reference_info, is_selected) {
             try {
             const db = await database.openDb();
-        
-            console.log("Payment Method ID:", paymentMethodId);
-            console.log("Input Data:", { member_id, method_name, reference_info, is_selected });
-        
+                
             const updatedPaymentMethod = await database.query(
                 db,
                 "UPDATE payment_method SET member_id = ?, method_name = ?, reference_info = ?, is_selected = ? WHERE id = ?",

@@ -3,6 +3,7 @@ version: '3'
 services:
   mysql:
     image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
     container_name: sparkgo_mysql
     networks:
       - sparkgo

@@ -75,7 +75,6 @@ const priceListModel = {
     
 
     deletePriceListItem: async function (itemId) {
-        console.log("delete");
         try {
             const db = await database.openDb();
             await database.query(db, "DELETE FROM price_list WHERE id = ?", [itemId]);
