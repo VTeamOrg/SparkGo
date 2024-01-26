@@ -10,7 +10,7 @@ services:
     ports:
       - 3307:3306 # <host_port>:<container_port>
     volumes:
-      - ./sparkgo.sql:/docker-entrypoint-initdb.d/sparkgo.sql
+      - ./sparkgo_mysql/sparkgo.sql:/docker-entrypoint-initdb.d/sparkgo.sql
       #- ../sql/:/host_sql_folder # just so we can make an easy new db version
     environment:
       MYSQL_ROOT_PASSWORD: secret
@@ -19,6 +19,13 @@ services:
       MYSQL_PASSWORD: P@ssw0rd
     extra_hosts: # add this section
       - "host.docker.internal:host-gateway"
+  backend:
+    image: sparkgo_backend:latest
+    container_name: sparkgo_backend
+    networks:
+      - sparkgo
+    ports:
+      - 3000:3000 # <host_port>:<container_port>
 
 networks:
   sparkgo:

@@ -15,7 +15,7 @@ docker run --detach \
            mysql/mysql-server:latest
            #--volume=${FOLDER}/conf.d:/etc/my.cnf.d/ \
            
-#sudo docker exec -it my_sql_srv bash
+#sudo docker exec -it sparkgo_mysql bash
 
 #mysql -uroot -p -e "SET GLOBAL local_infile=ON;
 #mysql -uroot -p -e "show global variables like '%local%';"
