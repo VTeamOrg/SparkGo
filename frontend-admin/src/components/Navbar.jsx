@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import './Navbar.css';
 
-function Navbar({ setActiveSection, userRole }) {
+function Navbar({ activeSection, setActiveSection, userRole }) {
   const handleLogout = async () => {
     // Send a request to the backend to clear cookies
     await fetch('http://localhost:3000/v1/logout', {
@@ -14,10 +14,11 @@ function Navbar({ setActiveSection, userRole }) {
   };
 
   const handleLinkClick = (section) => {
-    setActiveSection(section);
-    // Dispatch a custom event to signal the MapView component
-    const event = new CustomEvent('clearMarkers');
-    window.dispatchEvent(event);
+    if (section !== activeSection) {
+      const event = new CustomEvent('clearMarkers');
+      window.dispatchEvent(event);
+      setActiveSection(section);
+    }
   };
 
   return (

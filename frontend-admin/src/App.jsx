@@ -11,8 +11,6 @@ function App() {
   const [activeSection, setActiveSection] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
-
-
   
   useEffect(() => {
     const loggedInStatus = Cookies.get('userLoggedIn');
@@ -30,7 +28,7 @@ function App() {
     <div className="App">
       {userLoggedIn ? (
         <div className="app-container">
-          <Navbar setActiveSection={setActiveSection} userRole={userRole} />
+          <Navbar activeSection={activeSection} setActiveSection={setActiveSection} userRole={userRole} />
           <WorkArea activeSection={activeSection} userId={userId} />
           <MapView />
         </div>
