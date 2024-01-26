@@ -4,7 +4,7 @@ const userModel = require("../models/userModel.js");
 
 const usersController = {
     getAllUsers: async function getAllUsers(req, res) {
-        console.log("get all users");
+
         try {
             const allUsers = await userModel.getAllUsers();
             return res.json({
@@ -50,7 +50,7 @@ const usersController = {
         // will be changed to get user id from token when auth is implemented
         const userId = 1;
         const vehicleType = req.params.vehicleType;
-        console.log("vehicleType ", vehicleType);
+
         // checks if user have a subscription and if have free minutes or free unlocks left return free. if not return price of vehicle type
         try {
             const user = await userModel.getUserById(userId);
@@ -83,10 +83,10 @@ const usersController = {
     },
 
     getUserById: async function getUserById(req, res) {
-        console.log("controller by id");
+
         try {
             const userId = req.params.id;
-            console.log("userId ", userId);
+
             const user = await userModel.getUserById(userId);
 
             return res.json({
@@ -143,11 +143,10 @@ const usersController = {
     },
 
     getUserByEmail: async function getUserByEmail(req, res) {
-        console.log("getbyEmail");
-        console.log('Received parameters:', req.params);
+
         try {
             const userEmail = req.params.email; 
-            console.log('Searching for user by email:', userEmail);
+
             const user = await userModel.getUserByEmail(userEmail);
     
             if (user) {

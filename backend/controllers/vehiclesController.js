@@ -84,12 +84,12 @@ const vehiclesController = {
     },
 
     updateVehicle: async function (req, res) {
-        console.log("update vehicle");
+
         try {
           const vehicleId = req.params.vehicleId;
-          console.log("vehicleId:", vehicleId);
+
           const { city_id, type_id, vehicle_status, name, station_id } = req.body;
-          console.log(station_id);
+
       
           // Update the vehicle in your database
           const updatedVehicle = await vehiclesModel.updateVehicle(vehicleId, city_id, type_id, vehicle_status, name, station_id);

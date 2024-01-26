@@ -61,7 +61,7 @@ const vehicleTypeController = {
     },
 
     deleteVehicleType: async function (req, res) {
-        console.log("in delete");
+
         try {
             const typeId = req.params.id;
             await vehicleTypeModel.deleteVehicleType(typeId);

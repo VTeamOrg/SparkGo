@@ -14,10 +14,8 @@ const paymentMethodsController = {
     },
 
     getPaymentMethodByMemberId: async function (req, res) {
-        console.log("get payment by id");
         try {
             const memberId = req.params.memberId;
-            console.log("memberId ", memberId);
             const memberPaymentMethod = await paymentMethodsModel.getPaymentMethodByMemberId(memberId);
 
             return res.json({
@@ -32,7 +30,6 @@ const paymentMethodsController = {
     createPaymentMethod: async function (req, res) {
         try {
             const { member_id, method_name, reference_info, is_selected } = req.body;
-            console.log("Received data:", req.body);
             const newPaymentMethod = await paymentMethodsModel.createPaymentMethod(member_id, method_name, reference_info, is_selected);
 
             return res.status(201).json({
@@ -46,10 +43,6 @@ const paymentMethodsController = {
     },
 
     updatePaymentMethod: async function (req, res) {
-        console.log("update payment");
-        console.log(res.body);
-        console.log(req.body);
-
         try {
             const paymentMethodId = req.params.paymentMethodId;
             const { member_id, method_name, reference_info, is_selected } = req.body;
