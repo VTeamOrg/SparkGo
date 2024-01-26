@@ -70,17 +70,13 @@ const paymentMethodsController = {
 
     deletePaymentMethod: async function (req, res) {
         try {
-            const paymentMethodId = req.params.paymentMethodId;
-            await paymentMethodsModel.deletePaymentMethod(paymentMethodId);
-
-            return res.json({
-                message: "Payment method deleted successfully",
-            });
+            await paymentMethodsModel.deletePaymentMethod(req, res); 
+    
         } catch (error) {
             console.error("Error deleting payment method:", error.message);
             return res.status(500).json({ error: `Failed to delete payment method: ${error.message}` });
         }
-    },
+    }
 };
 
 module.exports = paymentMethodsController;
