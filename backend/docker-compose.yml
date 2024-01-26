@@ -1,0 +1,13 @@
+# docker-compose.yml
+version: '3'
+services:
+  backend:
+    image: sparkgo_backend:latest
+    container_name: sparkgo_backend
+    networks:
+      - sparkgo
+    ports:
+      - 3000:3000 # <host_port>:<container_port>
+
+networks:
+  sparkgo:
