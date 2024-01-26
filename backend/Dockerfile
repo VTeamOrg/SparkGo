@@ -1,7 +1,7 @@
 # Dockerfile for the backend solution of sparkgo
 FROM ubuntu:22.04
 RUN apt-get update && \
-    apt-get install -y curl sudo && \
+    apt-get install -y curl sudo nmap && \
     curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && \
     sudo apt-get install -y nodejs
 
@@ -20,5 +20,3 @@ COPY .env app.js package.json .scrutinizer.yml ./
 RUN npm install
 
 CMD ["node","app.js"]
-
-EXPOSE 3000

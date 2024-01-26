@@ -82,7 +82,7 @@ function ButtonRow({
     handleEdit: PropTypes.func.isRequired,
     setIsEditing: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired,
-    onRequestClose: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func,
   };
   
 export { ButtonRow, ButtonRowShort, SearchBar } ;
