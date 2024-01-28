@@ -1,71 +1,108 @@
-# SparkGo when starting up
+# SparkGO
+Projektet syftar till att skapa en användarvänlig tjänst där användare kan hyra sparkcyklar genom en mobilapp. Administratörer får en fullständig översikt över alla aktuella städer och sparkcyklar via en webbsida, och leverantörer har en enkel mekanism för att identifiera och hantera cyklar som behöver service. Målet är att erbjuda ett komplett system för sparkcykel uthyrning som möter användarbehov, administrativa krav och leverantörsbehov.
 
-run npm install i /backend
+## Språk
+- nodejs
+- Reactjs - Vite
+- Python
+- Mariadb
 
-# Extra Check for database
-
-sudo apt update
-
-sudo apt install mysql
-
-sudo service mariadb start
-
-sudo systemctl status mariadb
-
-# Setup database
-
-in /sql
-
-run
-
-sudo mariadb --table < reset.sql
+## Teknologival
+- MapBox
+- Stripe Payments
+- Leaflet
+- Websockets
+- Scrutinizer
+- Docker
 
 
-# Run test
+## Starta Systemet
 
-in /backend
+För att starta systemet så ska du ha först:
+- Installerat och configurerat docker
+- skapa / hämta stripe API Nyckel
+- skapa / hämta mapbox API Nyckel
 
-npm test
+### Skapa .env Filerna:
+För att applikationen ska fungera, måste vi ha en .env fil i webapp och backend delarna.
+#### Skapa .env i Backend
+Gå in till backend
+``` bash
+# root folder
 
-Tests against the api endpoints created
+cd backed
+```
+skapa .env filen och lägg till följande variabler:
+``` bash
+# backend/
+touch .env
+```
 
-Tests against get,post,put,del created
+``` env
+# .env
 
-# Testing fixes
+DB_HOST=mariadb
+DB_USER=dbadm
+DB_PASSWORD=P@ssw0rd
+DB_DATABASE=sparkgo
+SESSION_SECRET= mySuperSecretKey12345!
 
-Test againt the backend is using different models (/testmodels) not relying on res messages as the productions does to easier test in gitub action using mockups of the database, not having to reset database data everytime
+STIPE_SECRET_KEY= [STRIPE_SECRET]
+STIPE_PUBLIC_KEY=[STRIPE_PUBLIC]
 
-# Run server
+```
+#### Skapa .env i Webapp
+``` bash
+# root folder
 
-in/backend
+cd webapp
+```
+skapa .env filen och lägg till följande variabler:
+``` bash
+# webapp/
+touch .env
+```
 
-node app.js
+``` env
+# .env
 
-# local test vs generate code coverage
+VITE_MAPBOX_KEY=[MAPBOX_KEY]
+VITE_WS_URL=ws://localhost:3000
+VITE_API_URL=http://localhost:3000/v1
 
-Coverage generation , change line in package.json to:
+```
 
-"test": "nyc mocha --recursive --exit test/routes test/apiLimiter/",
+## Köra med Docker
+### Du kan köra systemet med bara 2 kommando - så enkelt!
 
-Lokal test and for githubaction , change line in package.json to:
+```
+# root foler
+docker-compose build
 
-"test": "mocha --recursive --exit test/routes test/apiLimiter/",
+# vänta tills docker bilden skapas
 
+docker-compose up
 
-To add more folders to coverage add in
+# nu ska det fungera. testa att gå in på
+http://localhost:8080
+```
 
-"nyc": {
-        "reporter": ["clover", "html"],
-        "include": [
-            "models/tokenModel.js",
-            "testmodels/**/*.js",
-            "routes/httpRoutes/index.js",
-            "routes/websocketRoutes/*.js"
-        ],
-        "exclude": [
-            "test/**"
+## Simulationen
+Vi har två olika simulation python filer.
+- vehicle.py: Simulera tusentals Sparkcyklar.
+- user.py: Simulera tusentals användare som interagerar med systemet.
 
-        ]
-    },
+För att starta de: gå in på /vehicles mappen
+``` bash
+cd vehicles
+sudo apt-get update
+pip install -r requirements.txt
 
+# starta vehicle
+python3 vehicle.py
+
+# starta en annan terminal
+
+python3 user.py
+```
 
