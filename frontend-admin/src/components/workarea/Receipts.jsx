@@ -27,6 +27,7 @@ function Receipts({ userId }) {
   const [userRole, setUserRole] = useState('');
   const [selectedMember, setSelectedMember] = useState('');
   const [memberOptions, setMemberOptions] = useState([]);
+  const [userReceipts, setUserReceipts] = useState([]);
 
   useEffect(() => {
     fetchData(`users/${userId}`, (userData) => {
@@ -36,13 +37,6 @@ function Receipts({ userId }) {
     fetchData('receipts', (data) => {
       data.sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date));
 
-      if (userRole === 'admin' && selectedMember === '') {
-        /* Admin should see no receipts until a user is selected */
-        setReceipts([]);
-      } else {
-        setReceipts(data);
-      }
-
       /* Extract unique member IDs and names from receipts */
       const uniqueMembersMap = new Map();
       data.forEach((receipt) => {
@@ -51,6 +45,13 @@ function Receipts({ userId }) {
       const uniqueMembers = Array.from(uniqueMembersMap).map(([id, name]) => ({ id, name }));
 
       setMemberOptions(uniqueMembers);
+
+      if (userRole === 'admin' && selectedMember === '') {
+        /* Admin should see no receipts until a user is selected */
+        setReceipts([]);
+      } else {
+        setReceipts(data);
+      }
     });
   }, [userId, userRole, selectedMember]);
 
@@ -58,6 +59,18 @@ function Receipts({ userId }) {
     const memberId = event.target.value;
     setSelectedMember(memberId);
   };
+
+  useEffect(() => {
+    const filteredReceipts = receipts.filter((receipt) => {
+      if (userRole === 'admin') {
+        return selectedMember === '' || receipt.member_id.toString() === selectedMember;
+      } else {
+        return receipt.member_id.toString() === userId.toString();
+      }
+    });
+
+    setUserReceipts(filteredReceipts);
+  }, [receipts, userRole, selectedMember, userId]);
 
   return (
     <div className="misc-history">
@@ -78,23 +91,18 @@ function Receipts({ userId }) {
       )}
 
       <ul>
-        {receipts
-          .filter((receipt) => {
-            if (userRole === 'admin') {
-              return selectedMember === '' || receipt.member_id.toString() === selectedMember;
-            } else {
-              return receipt.member_id.toString() === userId.toString();
-            }
-          })
-          .map((receipt) => (
-            <li key={receipt.id} className="history-entry">
-              <h3 className="history-heading">{formatDate(new Date(receipt.payment_date))}</h3>
-              <p><strong>Amount:</strong> {receipt.sum} SEK</p>
-              <p><strong>payment_type:</strong> {receipt.payment_type}</p>
-              <p><strong>payment_details:</strong> {receipt.payment_details}</p>
-              <p><strong>receipt_details:</strong> {receipt.receipt_details}</p>
-            </li>
-          ))}
+        {userReceipts.map((receipt) => (
+          <li key={receipt.id} className="history-entry">
+            <h3 className="history-heading">{formatDate(new Date(receipt.payment_date))}</h3>
+            <p><strong>Amount:</strong> {receipt.sum} SEK</p>
+            <p><strong>payment_type:</strong> {receipt.payment_type}</p>
+            <p><strong>payment_details:</strong> {receipt.payment_details}</p>
+            <p><strong>receipt_details:</strong> {receipt.receipt_details}</p>
+          </li>
+        ))}
+        {userRole !== 'admin' && userReceipts.length === 0 && (
+          <li className="no-receipts-message">You have no receipts</li>
+        )}
       </ul>
     </div>
   );
