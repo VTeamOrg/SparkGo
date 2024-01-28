@@ -5,6 +5,7 @@ const activePlanController = require("../../controllers/activePlanController");
 /* GET routes */
 router.get("/", (req, res) => activePlanController.getAllActivePlans(req, res));
 router.get("/:activePlanId", (req, res) => activePlanController.getActivePlanById(req, res));
+router.get("/memberid/:memberId", (req, res) => activePlanController.getActivePlanByMemberId(req, res));
 
 router.post("/", (req, res) => activePlanController.createActivePlan(req, res));
 

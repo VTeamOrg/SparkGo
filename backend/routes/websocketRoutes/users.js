@@ -1,3 +1,4 @@
+const { destination } = require("@turf/turf");
 const subscriptionModel = require("../../models/subscriptionModel");
 const userModel = require("../../models/userModel");
 const calculateDistance = require("../../utils/calculateDistance");
@@ -22,6 +23,8 @@ const users = {
         
         if (user.rentedVehicle !== -1) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "User is already renting a vehicle", data: {vehicleId: user.rentedVehicle, userId: user.id} }));
         
+        if (!msg.payload) return ws.send(JSON.stringify({ action: "rentVehicle", status: "error", message: "Error" }));
+
         const { vehicleId } = msg.payload;
         
         
@@ -83,7 +86,7 @@ const users = {
         
         const vehicle = connectedVehicles.get().find(vehicle => vehicle.id === vehicleId);
         
-        if (!vehicle) return;
+        if (!vehicle) return ws.send(JSON.stringify({ action: "returnVehicle", status: "error", message: "No vehicle found" }));
         console.log("returnVehicle", vehicleId);
         
         const user = connectedUsers.get().find(user => user.ws === ws);
@@ -92,6 +95,20 @@ const users = {
 
         vehicles.returnVehicle(vehicle.ws, user);
     },
+
+    driveVehicle: async (ws, msg) => {
+        const { vehicleId, destination } = msg.payload;
+
+        console.log("driveVehicle", vehicleId, destination);
+
+        if (!vehicleId) return ws.send(JSON.stringify({ action: "driveVehicle", status: "error", message: "No vehicle id provided" }));
+
+        const vehicle = connectedVehicles.get().find(vehicle => vehicle.id === vehicleId);
+
+        if (!vehicle) return ws.send(JSON.stringify({ action: "driveVehicle", status: "error", message: "No vehicle found" }));
+
+        vehicles.driveVehicle(vehicle.ws, destination);
+    }
 
 }
 

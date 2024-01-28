@@ -27,6 +27,20 @@ const activePlanController = {
         }
     },
 
+    getActivePlanByMemberId: async function (req, res) {
+        try {
+            const memberId = req.params.memberId;
+            const activePlan = await activePlanModel.getActivePlanByMemberId(memberId);
+
+            return res.json({
+                data: activePlan,
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+
     createActivePlan: async function (req, res) {
         try {
             const { plan_id, member_id, stripe_subscription_id, activation_id,  } = req.body;

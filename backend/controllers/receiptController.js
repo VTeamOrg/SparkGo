@@ -44,7 +44,7 @@ const receiptController = {
     generateReceipt: async function (req, res) {
         try {
             const { rent_id } = req.body;
-            const receiptResult = await receiptModel.generateReceipt(rent_id);
+            const receiptResult = await receiptModel.getReceiptById(rent_id);
 
             return res.status(201).json({
                 message: "Receipt generated successfully",
@@ -55,6 +55,21 @@ const receiptController = {
             return res.status(500).json({ error: `Failed to generate receipt: ${error.message}` });
         }
     },
+
+    deleteReceipt: async function (req, res) {
+        try {
+            const memberId = req.params.id;
+            const receipt = await receiptModel.deleteReceipt(memberId);
+
+            return res.json({
+                message: "Receipt deleted successfully",
+                data: receipt,
+            });
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: `Failed to delete receipt: ${error.message}` });
+        }
+    }
 };
 
 module.exports = receiptController;

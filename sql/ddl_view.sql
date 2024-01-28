@@ -12,6 +12,7 @@ drop view if exists v_price_list;
 drop view if exists v_plan;
 drop view if exists v_member;
 drop view if exists v_parking_zone;
+drop view if exists v_active_plan;
 
 /* Renting station + city */
 CREATE VIEW v_renting_station AS
@@ -118,14 +119,16 @@ LEFT JOIN
 LEFT JOIN
 frequencies f ON p.price_frequency_id = f.id;
 
--- CREATE VIEW v_vehicle AS
--- SELECT
---     v.*,
---     vt.name AS vehicle_type_name,
---     c.name AS city_name
--- FROM
---     vehicle v
--- LEFT JOIN
---     vehicle_type vt ON v.type_id = vt.id
--- LEFT JOIN
---     city c ON v.city_id = c.id;
+CREATE VIEW v_active_plan AS
+SELECT
+    ap.*,
+    p.title AS plan_name,
+    p.price AS plan_price,
+    p.price_frequency_id AS plan_frequency,
+    f.name AS plan_frequency_name
+FROM
+    active_plan ap
+LEFT JOIN
+    plan p ON ap.plan_id = p.id
+LEFT JOIN
+    frequencies f ON p.price_frequency_id = f.id;

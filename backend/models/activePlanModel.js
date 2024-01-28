@@ -1,10 +1,12 @@
+const database = require("../db/database.js");
+
 const activePlanModel = {
     getAllActivePlans: async function () {
         try {
             const db = await database.openDb();
             const allActivePlans = await database.query(
                 db,
-                "SELECT * FROM v_active_plan"
+                "SELECT * FROM active_plan"
             );
             await database.closeDb(db);
             return allActivePlans;
@@ -18,8 +20,23 @@ const activePlanModel = {
             const db = await database.openDb();
             const activePlan = await database.query(
                 db,
-                "SELECT * FROM v_active_plan WHERE id = ?;",
+                "SELECT * FROM v_active_plan WHERE plan_id = ?;",
                 activePlanId
+            );
+            await database.closeDb(db);
+            return activePlan[0];
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getActivePlanByMemberId: async function (memberId) {
+        try {
+            const db = await database.openDb();
+            const activePlan = await database.query(
+                db,
+                "SELECT * FROM v_active_plan WHERE member_id = ?;",
+                memberId
             );
             await database.closeDb(db);
             return activePlan[0];

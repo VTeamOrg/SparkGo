@@ -67,6 +67,10 @@ const MapBox = () => {
 
       }
 
+      if (msg === "vehicleReturned") {
+        vehicleStore.value = [...vehicleStore.value, updatedVehicleData];
+      }
+
     }
 
     socket.addEventListener("message", onMessage);

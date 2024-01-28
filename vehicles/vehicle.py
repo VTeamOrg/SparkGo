@@ -60,6 +60,7 @@ class Vehicle:
         while not connected:
             try:
                 self.websocket = await websockets.connect(uri)
+                self.websocket.ping_timeout = 60
                 connected = True
                 logging.info("Connected to WebSocket")
             except websockets.WebSocketException as e:
@@ -169,8 +170,8 @@ class Vehicle:
                 for i in range(num_steps + 1):
                     fraction = i / num_steps
                     intermediate_point = [
-                        start_point[0] + (end_point[0] - start_point[0]) * fraction,
-                        start_point[1] + (end_point[1] - start_point[1]) * fraction,
+                        start_point[0] + (end_point["lat"] - start_point[0]) * fraction,
+                        start_point[1] + (end_point["lon"] - start_point[1]) * fraction,
                     ]
                     path.append(intermediate_point)
                 return path
@@ -188,6 +189,9 @@ class Vehicle:
             await vehicle.stop_vehicle()
 
         end_point = response["message"]["destination"]
+        if not end_point:
+            print("No destination specified.")
+            return
         asyncio.create_task(move_towards_destination(self, end_point))
 
 
@@ -202,9 +206,6 @@ class Vehicle:
                     continue
                 
                 self.update_vehicle_data(response)
-
-
-            await asyncio.sleep(5)
 
     # Rent the vehicle
     async def rent_vehicle(self, user_id):

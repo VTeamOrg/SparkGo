@@ -14,4 +14,5 @@ use sparkgo;
 -- uses
 source ddl.sql
 source ddl_view.sql
+source procedure.sql
 source insert.sql

@@ -58,7 +58,7 @@ const stripeController = {
     process: async (req, res) => {
         try {
             let userMsg = "";
-            const userId = 2;
+            const userId = 1;
             const { session_id, redirect } = req.query;
 
             if (!session_id) {
@@ -102,7 +102,6 @@ const stripeController = {
             userMsg = "?success=true";
             console.log("Success");
 
-            console.log(checkout_session);
             const receiptData = {
                 member_id: userId,
                 payment_details: subscriptionId !== null ? checkout_session.invoice : checkout_session.payment_intent,
@@ -133,6 +132,19 @@ const stripeController = {
             // Handle the error appropriately
         }
     },
+
+    cancel: async (req, res) => {
+        try {
+            const userId = req.params.id;
+
+            await subscriptionModel.cancelActivePlan(userId);
+
+            res.json({ message: "Subscription cancelled successfully" });
+        } catch (error) {
+            console.error("Error in cancelSubscription:", error.message);
+            return res.status(500).json({ error: `Failed to cancel subscription: ${error.message}` });
+        }
+    }
 };
 
 module.exports = stripeController;

@@ -106,6 +106,10 @@ const vehicles = {
 
             // Check for available minutes and user's credit for continuing rental
             if (subscription && subscription.available_minutes < 1 && user.wallet < price_per_minute) {
+                // stop vehicle and return error message
+                clearAndUpdateInterval(connectedVehicle);
+                connectedVehicle.userUsageLog.push({ type: "stop", timestamp: Date.now() });
+                sendMessage(connectedVehicle.ws, "vehicleStopped", { userId: user.id });
                 return sendMessage(user.ws, "warning", "Insufficient credit to continue renting this vehicle");
             }
 
@@ -201,11 +205,16 @@ const vehicles = {
     },
 
     // Method to autodrive a vehicle // cheating function for simulating
-    driveVehicle: async (ws, data) => {
-        const { destination } = data;
-        const connectedVehicle = connectedVehicles.get().find(vehicle => vehicle.ws === ws);
+    driveVehicle: async (ws, destination) => {
+        const connectedUser = connectedUsers.get().find(user => user.ws === ws);
 
-        return sendMessage(connectedVehicle.ws, "vehicleDriving", { destination });
+        if (!connectedUser) {
+            return;
+        }
+        
+        sendMessage(ws, "success", "driveVehicleAccepted", { vehicleId: connectedUser.rentedVehicle});
+
+        return sendMessage(ws, "vehicleDriving", { destination });
     },
 
 
@@ -217,15 +226,13 @@ const vehicles = {
             return;
         }
 
-
-
         const { vehicleId, lat, lon, battery, maxSpeed, currentSpeed, isStarted, rentedBy } = data;
 
         const dbVehicle = await vehiclesModel.getVehicleById(vehicleId);
 
         const vehicleData = { vehicleId, typeId: dbVehicle.type_id, lat, lon, battery, maxSpeed, currentSpeed, isStarted, rentedBy };
 
-        if (objectsEqual(connectedVehicle.data, vehicleData)) {
+        if (objectsEqual(connectedVehicle.data, vehicleData) || (connectedVehicle.rentedBy !== -1 && connectedVehicle.rentedBy !== rentedBy)) {
             return;
         }
 
@@ -276,11 +283,11 @@ function sendVehicleUpdates(vehicle, message, except = []) {
     });
 
     // Send vehicle status update to connected admins
-    adminsExcept.forEach(admin => {
-        if (admin.ws.readyState === 1) {
-            admin.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.data, message }));
-        }
-    });
+    // adminsExcept.forEach(admin => {
+    //     if (admin.ws.readyState === 1) {
+    //         admin.ws.send(JSON.stringify({ action: "vehicleUpdate", data: vehicle.data, message }));
+    //     }
+    // });
 }
 
 // Method to handle credit update during vehicle usage
@@ -290,6 +297,10 @@ async function handleCreditUpdate(connectedVehicle) {
 
         const vehicleData = await vehiclesModel.getVehicleById(id);
 
+        if (!vehicleData || !vehicleData.type_id) {
+            return "Error";
+        }
+
         const priceList = await PriceListModel.getPriceListItemByTypeId(vehicleData.type_id);
         const user = await UserModel.getUserById(connectedVehicle.rentedBy);
         const connectedUser = connectedUsers.get().find(user => user.id === connectedVehicle.rentedBy);
@@ -298,8 +309,8 @@ async function handleCreditUpdate(connectedVehicle) {
 
         const { price_per_minute } = priceList;
 
-        if (!user || !subscription) {
-            sendMessage(connectedUser.ws, "error", "User or subscription not found");
+        if (!user) {
+            sendMessage(connectedUser.ws, "error", "User not found");
             clearAndUpdateInterval(connectedVehicle);
             return "Error";
         }
@@ -309,6 +320,9 @@ async function handleCreditUpdate(connectedVehicle) {
         if (!canContinueRenting) {
             console.log("Insufficient credit");
             clearAndUpdateInterval(connectedVehicle);
+            // stop vehicle and return error message
+            connectedVehicle.userUsageLog.push({ type: "stop", timestamp: Date.now() });
+            sendMessage(connectedVehicle.ws, "vehicleStopped", { userId: user.id });
             sendMessage(connectedUser.ws, "error", "Insufficient credit to continue renting this vehicle");
             return "Error";
         }
@@ -325,7 +339,9 @@ async function handleCreditUpdate(connectedVehicle) {
 // Method to update credit on rent
 async function updateCreditOnRent(user, subscription, price_per_minute) {
     if (subscription && subscription.is_paused === "N") {
-        await SubscriptionModel.updateAvailableMinutes(user.id, subscription.available_minutes - 1);
+        if (subscription.available_minutes !== -1) {
+            await SubscriptionModel.updateAvailableMinutes(user.id, subscription.available_minutes - 1);
+        }
     } else {
         await UserModel.updateUser(user.id, { wallet: user.wallet - price_per_minute });
     }
@@ -362,8 +378,8 @@ async function checkRentConditions(subscription, user, priceList) {
     const dbUser = await UserModel.getUserById(user.id);
 
     if (subscription && subscription.is_paused === "N") {
-        const enoughUnlocks = subscription.available_unlocks >= 1;
-        const enoughMinutes = subscription.available_minutes >= 1;
+        const enoughUnlocks = subscription.available_unlocks >= 1 || subscription.available_unlocks === -1;
+        const enoughMinutes = subscription.available_minutes >= 1 || subscription.available_minutes === -1;
         const enoughCredit = dbUser.wallet >= totalRentPrice;
 
         if (!enoughCredit && !(enoughMinutes && enoughUnlocks)) {

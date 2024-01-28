@@ -15,4 +15,5 @@ router.get("/memberid/:member_id", receiptController.getReceiptByMemberId);
 // POST generate receipt
 router.post("/", receiptController.generateReceipt);
 
+
 module.exports = router;

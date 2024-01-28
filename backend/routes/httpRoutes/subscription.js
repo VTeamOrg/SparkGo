@@ -13,5 +13,7 @@ router.post('/session', stripeController.session);
 
 router.get('/process', stripeController.process);
 
+router.delete('/cancel/:id', stripeController.cancel);
+
 
 module.exports = router;

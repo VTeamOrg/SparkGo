@@ -1,177 +1,242 @@
 import asyncio
-from ctypes import pointer
-import json
-import logging
-import multiprocessing
-import random
 import signal
-from numpy import shape
-import requests
 import websockets
+import requests
+import json
+import random
+from shapely.geometry import Polygon, Point
 
-api_url = "http://localhost:3000/v1"
+API_URL = "http://localhost:3000/v1"
+WS_URL = "ws://localhost:3000"
 
-vehicles = []
-users = []
+user_data = {}
 
-def get_server_vehicles():
-    url = f"{api_url}/vehicles/active?forClient"
-    return make_request(url)
+def update_user_data(response, user_id):
+    if response["action"] == "success" and response["message"] == "rentVehicleAccepted":
+        print(response)
+        # user_id = response["data"]["user_id"]
+        vehicle_id = response["data"]["vehicleId"]
 
-def get_rented_vehicle(vehicle_id):
-    url = f"{api_url}/vehicles/{vehicle_id}"
-    return make_request(url)
+        user_data[user_id]["vehicle_id"] = vehicle_id
+        user_data[user_id]["action"] = "rentVehicle"
 
-def get_server_users():
-    url = f"{api_url}/users"
-    return make_request(url)
+        print(f"User {user_id} has rented vehicle {vehicle_id}")
+    
+    elif response["action"] == "success" and response["message"] == "returnVehicleAccepted":
+        # user_id = response["user_id"]
+        vehicle_id = response["data"]["vehicleId"]
 
-def make_request(url):
-    success = False
+        user_data[user_id]["vehicle_id"] = None
+        user_data[user_id]["action"] = None
 
-    while not success:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            success = True
-        except requests.RequestException as e:
-            print(f"Error: {e}")
-            exit (1)
+        print(f"User {user_id} has returned vehicle {vehicle_id}")
+    
+    elif response["action"] == "success" and response["message"] == "stopVehicleAccepted":
+        # user_id = response["user_id"]
+        vehicle_id = response["data"]["vehicleId"]
 
-    return response.json()
+        user_data[user_id]["vehicle_id"] = vehicle_id
+        user_data[user_id]["action"] = "stopVehicle"
 
+        print(f"User {user_id} has stopped vehicle {vehicle_id}")
+    
+    elif response["action"] == "success" and response["message"] == "startVehicleAccepted":
+        # user_id = response["user_id"]
+        vehicle_id = response["data"]["vehicleId"]
 
-def get_random_action_for_user(user, vehicle):
-    print("Vehicle: ", vehicle, "User: ", user.user_id)
-    if user.vehicle_rented.value == 0:
-        return "rent"
-    if vehicle["rentedBy"] == user.user_id:
-        if vehicle["isStarted"]:
-            choices = ["stop", "drive"]
-            probabilities = [0.5, 0.5]
-            return random.choices(choices, probabilities)[0]
+        user_data[user_id]["vehicle_id"] = vehicle_id
+        user_data[user_id]["action"] = "startVehicle"
+
+        print(f"User {user_id} has started vehicle {vehicle_id}")
+    
+    elif response["action"] == "rentVehicle" and response["message"] == "User is already renting a vehicle":
+        # user_id = response["user_id"]
+        vehicle_id = response["data"]["vehicleId"]
+
+        user_data[user_id]["vehicle_id"] = vehicle_id
+        user_data[user_id]["action"] = "rentVehicle"
+
+        print(f"User {user_id} has rented vehicle {vehicle_id}")
+
+    elif response["message"] == "User is not renting a vehicle":
+        user_id = response["data"]["userId"]
+
+        user_data[user_id]["vehicle_id"] = None
+        user_data[user_id]["action"] = None
+
+        print("User {user_id} is not renting a vehicle")
+
+async def connect_to_websocket(user_id):
+    uri = WS_URL + "?type=user&id=" + str(user_id)
+    try:
+        ws = await websockets.connect(uri, ping_timeout=60)
+        print(f"User {user_id} connected")
+
+        if user_id not in user_data.keys():
+            user_data[user_id] = {
+                "websocket": ws,
+                "websocket_lock": asyncio.Lock(),
+                "action": None,
+                "activated": False,
+                "vehicle_id": None
+            }
         else:
-            choices = ["start", "return"]
-            probabilities = [0.5, 0.5]
-            return random.choices(choices, probabilities)[0]
+            user_data[user_id]["websocket"] = ws
+    except Exception as e:
+        print(e)
+
+def get_expected_res(action):
+    if action == "rentVehicle":
+        return ["rentVehicleAccepted", "User is already renting a vehicle"]
+    elif action == "stopVehicle":
+        return ["stopVehicleAccepted"]
+    elif action == "startVehicle":
+        return ["startVehicleAccepted"]
+    elif action == "returnVehicle":
+        return ["returnVehicleAccepted"]
+    elif action == "driveVehicle":
+        return ["driveVehicleAccepted"]
     else:
-        return "rent"
+        return []
 
 
-class User:
-    def __init__(self, user_id, vehicle_to_rent=0):
-        self.user_id = user_id
-        self.websocket = None
-        self.vehicle_to_rent = multiprocessing.Value('i', vehicle_to_rent)
-        self.vehicle_rented = multiprocessing.Value('i', 0)
 
-    async def connect_to_websocket(self):
-        uri = f"ws://localhost:3000?type=user&id={self.user_id}"
-        connected = False
-        retry_count = 0
+async def send_and_receive(user_id, message):
 
-        while not connected and retry_count < 3:
-            try:
-                self.websocket = await websockets.connect(uri)
-                connected = True
-                logging.info("Connected to WebSocket")
-            except websockets.WebSocketException as e:
-                logging.error(f"WebSocket connection failed: {e}. Retrying...")
-                retry_count += 1
-                await asyncio.sleep(5)
-            except Exception as e:
-                logging.error(f"Unexpected error in WebSocket connection: {e}")
+    websocket = user_data[user_id]["websocket"]
+
+    if not websocket.open:
+        await connect_to_websocket(user_id)
+        websocket = user_data[user_id]["websocket"]
+
+
+    while True:
+        await websocket.send(json.dumps(message))
+        result = await websocket.recv()
+        response = json.loads(result)
+
+        if response["message"] not in (get_expected_res(message["action"])):
+            if response["message"] in ["User is not renting a vehicle", "Vehicle not rented by this user"]:
+                user_data[user_id]["vehicle_id"] = None
+                user_data[user_id]["action"] = None
                 break
 
-    async def reconnect_websocket(self):
-        while True:
-            if self.websocket is None or not self.websocket.open:
-                logging.info("WebSocket connection lost. Attempting reconnection...")
-                await self.connect_to_websocket()
-            await asyncio.sleep(5)
-
-    async def send_message(self, action, payload):
-        try:
-            await self.websocket.send(json.dumps({"action": action, "payload": payload}))
-            print(f"User {self.user_id} sent message: {action}")
-        except websockets.WebSocketException as e:
-            logging.error(f"WebSocket error while sending message: {e}")
-        except Exception as e:
-            logging.error(f"Unexpected error in sending message: {e}")
-
-    async def receive_message(self):
-        try:
-            response = json.loads(await self.websocket.recv())
-            print("Result: ", response)
-            return response
-        except websockets.WebSocketException as e:
-            logging.error(f"WebSocket error while receiving message: {e}")
-            self.websocket = None
-        except Exception as e:
-            logging.error(f"Unexpected error in receiving message: {e}")
-            raise  # Rethrow the exception
-    
-    async def user_actions(self):
-        while True:
-            
-            server_vehicles = get_server_vehicles()["data"]
-            random_vehicle = random.choice(server_vehicles)
-            self.vehicle_to_rent.value = random_vehicle["id"]
-
-            waiting_time = 5
-
-            if self.vehicle_rented.value == 0:
-                await self.send_message("rentVehicle", {"vehicleId": self.vehicle_to_rent.value})
-                self.vehicle_rented.value = self.vehicle_to_rent.value
-                print(f"User {self.user_id} rented vehicle {self.vehicle_rented.value}")
             else:
-                rented_vehicle = get_rented_vehicle(self.vehicle_rented.value)["data"][0]
-                action = get_random_action_for_user(self, rented_vehicle)
-                if action == "rent":
-                    await self.send_message("rentVehicle", {"vehicleId": self.vehicle_to_rent.value})
-                    self.vehicle_rented.value = self.vehicle_to_rent.value
-                    print(f"User {self.user_id} rented vehicle {self.vehicle_to_rent.value}")
-                elif action == "start":
-                    await self.send_message("startVehicle", {"vehicleId": self.vehicle_rented.value})
-                    print(f"User {self.user_id} started vehicle {self.vehicle_rented.value}")
-                elif action == "stop":
-                    await self.send_message("stopVehicle", {"vehicleId": self.vehicle_rented.value})
-                    print(f"User {self.user_id} stopped vehicle {self.vehicle_rented.value}")
-                elif action == "drive":
-                    await self.send_message("driveVehicle", {"vehicleId": self.vehicle_rented.value})
-                    waiting_time = 30
-                    print(f"User {self.user_id} drove vehicle {self.vehicle_rented.value}")
-                elif action == "return":
-                    await self.send_message("returnVehicle", {"vehicleId": self.vehicle_rented.value})
-                    self.vehicle_rented.value = 0
-                    print(f"User {self.user_id} returned vehicle {self.vehicle_rented.value}")
-                    
+                continue
+        print(f"User {user_id} received {response}")
+
+        update_user_data(response, user_id)
+        break
 
 
+async def send_message(user_id):
+    if user_data[user_id]["activated"] is False:
+        user_data[user_id]["activated"] = True
+    else:
+        websocket = user_data[user_id]["websocket"]
+        await websocket.close()
+        return
+
+
+    while True:
+        interval = random.randint(100, 200)
+        vehicles = get_server_vehicles()
+        curr_action = user_data[user_id]["action"]
+
+        if curr_action == "rentVehicle":
+            choices = ["startVehicle", "returnVehicle", "doNothing", "doNothing", "doNothing"]
+
+        elif curr_action == "stopVehicle":
+            choices = ["startVehicle", "returnVehicle", "doNothing", "doNothing", "doNothing"]
+
+        elif curr_action == "startVehicle":
+            choices = ["stopVehicle", "returnVehicle", "driveVehicle", "doNothing", "doNothing", "doNothing"]
+
+        else:
+            choices = ["rentVehicle", "doNothing", "doNothing", "doNothing"]
         
-            await asyncio.sleep(waiting_time)
+        action = random.choice(choices)
 
-                
+        payload = {}
 
+        payload["vehicleId"] = action == "rentVehicle" and random.choice(vehicles)["id"] or user_data[user_id]["vehicle_id"]
+
+        if action == "doNothing":
+            await asyncio.sleep(interval)
+            continue
         
+        if action == "driveVehicle":
+            interval = random.randint(200, 500)
+            payload["destination"] = generate_point_inside_coordinates()
 
+        message = {
+            "action": action,
+            "payload": payload
+        }
+
+        print(f"User {user_id} is sending {message}")
+
+        # await send_and_receive(message)
+        await send_and_receive(user_id, message)
+        await asyncio.sleep(interval)
+
+
+def get_server_users():
+    uri = API_URL + "/users"
+    response = requests.get(uri)
+    users = response.json()["data"]
+    # delete the first user
+    users = [user for user in users if user.get('id') != 1]
+
+    return users
+
+def get_server_user(user_id):
+    uri = API_URL + "/users/" + user_id
+    response = requests.get(uri)
+    return response.json()["data"][0]
+
+def get_server_vehicles():
+    # Make an HTTP request to get all vehicles
+    uri = API_URL + "/vehicles/active?forClient"
+    response = requests.get(uri)
+    return response.json()["data"]
+
+def get_server_vehicle(vehicle_id):
+    uri = API_URL + "/vehicles/" + str(vehicle_id)
+    response = requests.get(uri)
+    return response.json()["data"][0]
+
+def get_city_polygon():
+    # Make an HTTP request to get the city polygon
+    response = requests.get("http://localhost:3000/v1/coords/cities")
+    return response.json()["data"][0]
+
+def generate_point_inside_coordinates():
+    polygon = Polygon(coords)
+
+    min_x, min_y, max_x, max_y = polygon.bounds
+    while True:
+        random_point = Point(random.uniform(min_x, max_x), random.uniform(min_y, max_y))
+        if polygon.contains(random_point):
+            return {"lat": random_point.y, "lon": random_point.x}
+
+coords = get_city_polygon()
 
 async def main():
-    users = []
-    server_vehicles = get_server_vehicles()["data"]
-    random_vehicle = random.choice(server_vehicles)
+    users = get_server_users()
+    tasks = []
 
-    server_users = get_server_users()
+    for user in users:
+        user_id = user["id"]
 
-    for data in server_users["data"]:
-        user = User(data["id"], random_vehicle["id"])
-        await user.connect_to_websocket()
-        await user.user_actions()
-        users.append(user)
-    while True:
-        await asyncio.sleep(3600) 
+        await connect_to_websocket(user_id)
 
+        task1 = asyncio.create_task(send_message(user_id))
+        tasks.append(task1)
+
+    await asyncio.gather(*tasks)
+    
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal.SIG_DFL)  # Allow Ctrl-C to exit the program
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     asyncio.run(main())

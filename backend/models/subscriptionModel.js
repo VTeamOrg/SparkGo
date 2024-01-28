@@ -17,6 +17,10 @@ const subscriptionModel = {
 
     getSubscriptionByMemberId: async function (memberId) {
         try {
+            if (memberId == null) {
+                return null;
+            }
+
             const db = await database.openDb();
             const memberSubscription = await database.query(
                 db,
@@ -93,6 +97,21 @@ const subscriptionModel = {
             throw error; // Rethrow the error for handling in the calling function
         }  
     },
+
+    cancelActivePlan: async function (memberId) {
+        try {
+            const db = await database.openDb();
+            const cancelActivePlan = await database.query(
+                db,
+                "DELETE FROM active_plan WHERE member_id = ?",
+                [memberId]
+            );
+            await database.closeDb(db);
+            return cancelActivePlan;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 module.exports = subscriptionModel;

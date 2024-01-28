@@ -26,7 +26,7 @@ const vehiclesModel = {
                         city_id: vehicle.city_id,
                         type_id: vehicle.type_id,
                         status: 'active',
-                        position: {lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon},
+                        position: { lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon },
                         battery: connectedVehicle.data?.battery ?? null,
                         currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
@@ -72,24 +72,24 @@ const vehiclesModel = {
                 "SELECT * FROM v_vehicle WHERE station_id = ? ORDER BY id DESC",
                 [stationId]
             );
-    
+
             await database.closeDb(db);
-    
+
             // Check and ensure the result is an array or convert if needed
             const vehiclesArray = Array.isArray(getAllVehicles)
                 ? getAllVehicles // If it's already an array, use it as is
                 : (getAllVehicles ? [getAllVehicles] : []); // Convert to array or use an empty array if null/undefined
-    
+
             const result = vehiclesArray.map(vehicle => {
                 const connectedVehicle = connectedVehicles.get().find(connectedVehicle => connectedVehicle.id === vehicle.id);
-    
+
                 if (connectedVehicle) {
                     return {
                         id: vehicle.id,
                         city_id: vehicle.city_id,
                         type_id: vehicle.type_id,
                         status: 'active',
-                        position: {lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon},
+                        position: { lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon },
                         battery: connectedVehicle.data?.battery ?? null,
                         currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
@@ -101,7 +101,7 @@ const vehiclesModel = {
                         station_id: vehicle.station_id
                     };
                 }
-    
+
                 return {
                     id: vehicle.id,
                     city_id: vehicle.city_id,
@@ -119,13 +119,13 @@ const vehiclesModel = {
                     station_id: vehicle.station_id
                 };
             });
-    
+
             return result;
         } catch (error) {
             throw error;
         }
     },
-    
+
 
     getActiveVehicles: async function () {
         try {
@@ -141,7 +141,7 @@ const vehiclesModel = {
             const vehiclesArray = Array.isArray(getAllVehicles)
                 ? getAllVehicles // If it's already an array, use it as is
                 : (getAllVehicles ? [getAllVehicles] : []); // Convert to array or use an empty array if null/undefined
-                
+
             const activeVehicles = connectedVehicles.get();
 
             const result = activeVehicles.map(connectedVehicle => {
@@ -153,7 +153,7 @@ const vehiclesModel = {
                         city_id: dbVehicle.city_id,
                         type_id: dbVehicle.type_id,
                         status: 'active',
-                        position: {lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon},
+                        position: { lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon },
                         battery: connectedVehicle.data?.battery ?? null,
                         currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
                         maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
@@ -203,7 +203,7 @@ const vehiclesModel = {
             await database.closeDb(db);
 
             vehicle = JSON.parse(JSON.stringify(vehicle[0]));
-            
+
             const connectedVehicle = connectedVehicles.get().find(connectedVehicle => connectedVehicle.id === vehicle.id);
 
             if (connectedVehicle) {
@@ -212,7 +212,7 @@ const vehiclesModel = {
                     city_id: vehicle.city_id,
                     type_id: vehicle.type_id,
                     status: 'active',
-                    position: {lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon},
+                    position: { lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon },
                     battery: connectedVehicle.data?.battery ?? null,
                     currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
                     maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
@@ -245,7 +245,66 @@ const vehiclesModel = {
             throw error;
         }
     },
-    
+
+    getRentedVehiclesByMemberId: async function (memberId) {
+        try {
+            const db = await database.openDb();
+            const connectedVehicle = connectedVehicles.get().find(connectedVehicle => connectedVehicle.rentedBy === memberId);
+
+            if (connectedVehicle) {
+                let dbVehicle = await database.query(
+                    db,
+                    "SELECT * FROM v_vehicle WHERE id = ?",
+                    connectedVehicle.id
+                );
+
+                await database.closeDb(db);
+
+                dbVehicle = JSON.parse(JSON.stringify(dbVehicle[0]));
+
+                return {
+                    id: dbVehicle.id,
+                    city_id: dbVehicle.city_id,
+                    type_id: dbVehicle.type_id,
+                    status: 'active',
+                    position: { lat: connectedVehicle.data?.lat, lon: connectedVehicle?.data?.lon },
+                    battery: connectedVehicle.data?.battery ?? null,
+                    currentSpeed: connectedVehicle.data?.currentSpeed ?? null,
+                    maxSpeed: connectedVehicle.data?.maxSpeed ?? null,
+                    isStarted: connectedVehicle.data?.isStarted ?? null,
+                    rentedBy: connectedVehicle.rentedBy,
+                    city_name: dbVehicle.city_name,
+                    name: dbVehicle.name,
+                    type_name: dbVehicle.vehicle_type_name,
+                    station_id: dbVehicle.station_id
+                }
+
+            }
+
+            return {
+                id: dbVehicle.id,
+                city_id: dbVehicle.city_id,
+                type_id: dbVehicle.type_id,
+                status: 'inactive',
+                position: [null, null],
+                battery: null,
+                currentSpeed: null,
+                maxSpeed: null,
+                isStarted: null,
+                rentedBy: null,
+                city_name: dbVehicle.city_name,
+                name: dbVehicle.name,
+                type_name: dbVehicle.vehicle_type_name,
+                station_id: dbVehicle.station_id
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+
+
+
+
 
     createVehicle: async function (city_id, type_id, vehicle_status, name, station_id) {
         try {
@@ -273,13 +332,13 @@ const vehiclesModel = {
                 "UPDATE vehicle SET city_id = ?, type_id = ?, vehicle_status = ?, name = ?, station_id = ? WHERE id = ?",
                 [city_id, type_id, vehicle_status, name, station_id, vehicleId]
             );
-    
+
             await database.closeDb(db);
             return updatedVehicle;
         } catch (error) {
             throw error;
         }
-    },  
+    },
 
     rentVehicle: async function (vehicleId, rentedBy) {
         try {

@@ -3,8 +3,9 @@ import PageNotFound from "./pages/PageNotFound";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import websocketService from "./services/websocketService";
-import { appSettingsStore, vehicleStore } from "./GStore";
+import { appSettingsStore, userDataStore, vehicleStore } from "./GStore";
 import { useEffect } from "react";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
     const theme = localStorage.getItem("theme") ?? "light";
@@ -30,11 +31,12 @@ const App = () => {
 
             // create a new array with the data we need
             const sanitizedData = data.map(item => {
-                const { id, type_id, currentSpeed, maxSpeed, battery, position } = item;
+                const { id, type_id, currentSpeed, maxSpeed, battery, position, isStarted } = item;
 
                 const updatedVehicleData = {
                     id,
                     typeId: type_id,
+                    isStarted,
                     battery,
                     currentSpeed,
                     maxSpeed,
@@ -51,9 +53,37 @@ const App = () => {
         }
     };
 
+    const getUserRentedVehicle = async () => {
+        try {
+            const response = await fetch(import.meta.env.VITE_API_URL + "/vehicles/rented/1", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const res = await response.json();
+
+            const data = res;
+
+            if (!data) {
+                console.error("Error fetching user rented vehicle:");
+                return;
+            }
+
+            const { vehicleId } = data;
+
+            if (vehicleId === -1) return
+            userDataStore.value = { ...userDataStore.value, rentedVehicle: vehicleId };
+
+        } catch (error) {
+            console.error("Error fetching user rented vehicle:", error);
+        }
+    }
+
     useEffect(() => {
         getOnlineVehicles();
         websocketService.connect();
+        getUserRentedVehicle();
 
         // return () => {
         //     websocketService.disconnect();
@@ -67,6 +97,7 @@ const App = () => {
                 <Route path="/wallet" element={<Home view="wallet" />} />
                 <Route path="/scanner" element={<Home view="scanner" />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
 

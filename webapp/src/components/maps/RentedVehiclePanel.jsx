@@ -28,9 +28,10 @@ const SpeedWidget = ({ currentSpeed, maxSpeed }) => {
 const RentedVehiclePanel = () => {
     const rentedVehicleId = userDataStore.value.rentedVehicle;
     const vehicleFuncs = useVehicle(rentedVehicleId);
-    const vehicle = computed(() => vehicleStore.value.find(vehicle => vehicle.id === rentedVehicleId));
+    const vehicle = computed(() => vehicleStore.value.find(vehicle => vehicle.id == rentedVehicleId));
     const [vehiclePrices, setVehiclePrices] = useState(null);
     const rideStated = computed(() => vehicle.value.isStarted);
+    console.log(vehicle.value);
     const getVehiclePrices = async () => {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/users/vehiclePrice/${vehicle.value.typeId}`);
         const data = await res.json();

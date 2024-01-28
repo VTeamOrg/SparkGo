@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: secretPassword
+      MYSQL_DATABASE: sparkgo
+      MYSQL_USER: dbadm
+      MYSQL_PASSWORD: P@ssw0rd
+    ports:
+      - "3306:3306"
+    networks:
+      - sparknet
+    volumes:
+      - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+  server:
+    image: "asili2001/sparkgo-server:latest"
+    container_name: "sparkgo-server"
+    ports:
+      - "3000:3000"
+    networks:
+      sparknet:
+        ipv4_address: 172.22.0.3
+    depends_on:
+      - mariadb
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    restart: "always"
+  client:
+    image: "asili2001/sparkgo-webapp:latest"
+    container_name: "sparkgo-client"
+    ports:
+      - "8080:80"
+    networks:
+      - sparknet
+    depends_on:
+      - server
+    build:
+      context: webapp
+      dockerfile: Dockerfile
+
+
+networks:
+  sparknet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16

@@ -15,11 +15,13 @@ const logout = require("./logout.js");
 const parkingZones = require("./parking.js");
 const validateSession = require("./validateSession.js");
 const validateSessionUser = require("./validateSessionUser.js");
+const wallet = require("./wallet.js");
 const { generalApiLimiter } = require("../../middleware/apiLimter.js");
 
 
 const loadHttpRoutes = (app) => {
     app.use("/v1/users", users);
+    app.use("/v1/wallet", wallet);
     app.use("/v1/stations", stations);
     app.use("/v1/vehicles", vehicles);
     app.use("/v1/cities", cities);

@@ -2,7 +2,7 @@ import { IoReturnUpBack } from "react-icons/io5";
 import undraw_scooter from "../../assets/undraw_scooter.svg";
 import Credit from "./Credit";
 import SubscriptionDeck from "./SubscriptionDeck";
-import Receipts from "./Recipts";
+import Receipts from "./Receipts";
 
 
 const Wallet = () => {

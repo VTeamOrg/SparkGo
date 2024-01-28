@@ -16,7 +16,7 @@ const coordController = {
         try {
             // Extract cities data from your GeoJSON based on the structure
             const citiesData = geoJsonData.features.filter(
-                feature => feature.properties.name !== 'restrictid'
+                feature => feature.properties.type === 'restrictid'
             )[0].geometry.coordinates.filter((polygon, index) => index !== 0) // Remove the first polygon (the one that covers the whole map);
             return res.json({
                 data: citiesData,

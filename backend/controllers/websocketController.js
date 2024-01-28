@@ -14,8 +14,7 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
 
         if (user) {
             // if user is already connected, replace the old websocket with the new one
-            user.ws = ws;
-            return;
+            connectedUsers.update(connectionId, {...user, ws});
         } else {
             // if deviceType is user, add the client to the list of connected users
             connectedUsers.add({ id: connectionId, ws, rentedVehicle: -1, data: { latitude: -1, longitude: -1 } });
@@ -28,8 +27,8 @@ const handleConnection = (ws, req, connectionId, deviceType) => {
         connectedAdmins.add({ id: connectionId, ws, data: { latitude: -1, longitude: -1 } });
     }
 
-//    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
-//    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
+    //    console.info('WebSocket connection established. \n Connection ID: ', connectionId, '\n Device type: ', deviceType);
+    //    console.info(`vehicles: ${connectedVehicles.get()?.length} users: ${connectedUsers.get()?.length} admins: ${connectedAdmins.get()?.length}`)
 };
 
 // create seperate files for each topic ex (vehicles, cities ...)
@@ -54,16 +53,13 @@ const handleMessage = (ws, message) => {
                 case "moveVehicle":
                     vehicleFunctions.moveVehicle(ws, msg);
                     break;
-                case "driveVehicle":
-                    vehicleFunctions.driveVehicle(ws, msg);
-                    break;
                 default:
                     break;
             }
         }
 
         if (isUser) {
-            // console.log(msg);
+            console.log("User: ------------------->",msg);
             switch (msg.action) {
                 case 'updateLocation':
                     userFunctions.updateLocation(ws, msg);
@@ -79,6 +75,10 @@ const handleMessage = (ws, message) => {
                     break;
                 case 'returnVehicle':
                     userFunctions.returnVehicle(ws, msg);
+                    break;
+
+                case "driveVehicle":
+                    userFunctions.driveVehicle(ws, msg);
                     break;
                 default:
                     break;

@@ -1,5 +1,5 @@
 const vehiclesModel = require("../models/vehiclesModel.js");
-const { connectedVehicles } = require("../routes/websocketRoutes/store.js")
+const { connectedVehicles, connectedUsers } = require("../routes/websocketRoutes/store.js")
 
 const vehiclesController = {
     getAllVehicles: async function (req, res) {
@@ -42,12 +42,15 @@ const vehiclesController = {
     getActiveVehicles: async function (req, res) {
         const { forClient } = req.query;
 
+        // when auth is implemented, change this to the user's ID
+        const userId = 1;
+
         try {
             const activeVehicles = await vehiclesModel.getActiveVehicles();
 
             if (forClient) {
                 // for the client will exclude vehicles that are rented and vehicles that have low battery
-                const result = activeVehicles.filter(vehicle => vehicle.rentedBy === -1 && vehicle.battery > 20);
+                const result = activeVehicles.filter(vehicle => (vehicle.rentedBy === -1 || vehicle.rentedBy === userId) && vehicle.battery > 20);
                 return res.json({
                     data: result ?? [],
                 });
@@ -61,6 +64,27 @@ const vehiclesController = {
             return res.status(500).json({ error: "Failed to fetch active vehicles from the database" });
         }
     },
+
+    getRentedVehiclesByMemberId: async function (req, res) {
+        try {
+            const memberId = req.params.id;
+            const connectedUser = connectedUsers.get().find(user => user.id == memberId);
+
+            if (!connectedUser) return res.json({ vehicleId: -1, memberId: -1 });
+
+
+            return res.json({
+                vehicleId: connectedUser.rentedVehicle,
+                memberId: connectedUser.id,
+                isStarted: connectedUser.isStarted,
+            });
+
+        } catch (error) {
+            console.error("Error querying database:", error.message);
+            return res.status(500).json({ error: "Failed to fetch rented vehicles by member ID from the database" });
+        }
+    },
+
 
     createVehicle: async function (req, res) {
         try {

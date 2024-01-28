@@ -3,10 +3,13 @@ import useSupercluster from "use-supercluster";
 import { PiScooterFill } from "react-icons/pi";
 import VehicleMsgContainer from "./VehicleMsgContainer";
 import { msgBoxData, vehicleStore } from "../../GStore";
-import { useState } from "react";
-import { computed } from "@preact/signals-react";
+import { useEffect, useMemo, useState } from "react";
+import { computed, useSignal } from "@preact/signals-react";
+import _debounce from "lodash/debounce";
+
 
 const VehicleMarkers = ({ mapRef, viewport }) => {
+    const points = useSignal([]);
     const createPoints = (vehicles) => {
         return vehicles.map(createPoint);
     };
@@ -24,7 +27,11 @@ const VehicleMarkers = ({ mapRef, viewport }) => {
         }
     }
 
-    const points = computed(() => createPoints(vehicleStore.value));
+    const debouncedUpdate = _debounce(() => {
+        // Recalculate clusters and supercluster logic
+        points.value = createPoints(vehicleStore.value);
+
+    }, 1000);
 
     const { clusters, supercluster } = useSupercluster({
         points: points.value,
@@ -43,6 +50,10 @@ const VehicleMarkers = ({ mapRef, viewport }) => {
         setSelectedVehicle(vehicle.item.id);
         msgBoxData.value = { timeout: null, content: <VehicleMsgContainer vehicleId={vehicle.item.id} batteryLevel={vehicle.item.battery} cost={3.00} unlockFee={2.00} currency="sek" />, onClose: () => setSelectedVehicle(null) };
     }
+
+    useEffect(() => {
+        debouncedUpdate();
+    }, [vehicleStore.value]);
 
     return (
         <>
