@@ -1,13 +1,13 @@
-# SparkGO
+# SparkGO 🛴
 Projektet syftar till att skapa en användarvänlig tjänst där användare kan hyra sparkcyklar genom en mobilapp. Administratörer får en fullständig översikt över alla aktuella städer och sparkcyklar via en webbsida, och leverantörer har en enkel mekanism för att identifiera och hantera cyklar som behöver service. Målet är att erbjuda ett komplett system för sparkcykel uthyrning som möter användarbehov, administrativa krav och leverantörsbehov.
 
-## Språk
+## Språk #️⃣
 - nodejs
 - Reactjs - Vite
 - Python
 - Mariadb
 
-## Teknologival
+## Teknologival ✔️
 - MapBox
 - Stripe Payments
 - Leaflet
@@ -16,7 +16,7 @@ Projektet syftar till att skapa en användarvänlig tjänst där användare kan 
 - Docker
 
 
-## Starta Systemet
+## Starta Systemet 🚀
 
 För att starta systemet så ska du ha först:
 - Installerat och configurerat docker
@@ -24,13 +24,13 @@ För att starta systemet så ska du ha först:
 - skapa / hämta mapbox API Nyckel
 
 ### Skapa .env Filerna:
-För att applikationen ska fungera, måste vi ha en .env fil i webapp och backend delarna.
+För att applikationen ska fungera, måste vi ha en .env fil i webapp och backend.
 #### Skapa .env i Backend
 Gå in till backend
 ``` bash
 # root folder
 
-cd backed
+cd backend
 ```
 skapa .env filen och lägg till följande variabler:
 ``` bash
@@ -72,14 +72,14 @@ VITE_API_URL=http://localhost:3000/v1
 
 ```
 
-## Köra med Docker
+## Köra med Docker 🐳
 ### Du kan köra systemet med bara 2 kommando - så enkelt!
 
 ```
-# root foler
+# root folder
 docker-compose build
 
-# vänta tills docker bilden skapas
+# vänta tills docker image skapas
 
 docker-compose up
 
@@ -87,7 +87,7 @@ docker-compose up
 http://localhost:8080
 ```
 
-## Simulationen
+## Simulationen 🕹️
 Vi har två olika simulation python filer.
 - vehicle.py: Simulera tusentals Sparkcyklar.
 - user.py: Simulera tusentals användare som interagerar med systemet.
@@ -101,8 +101,9 @@ pip install -r requirements.txt
 # starta vehicle
 python3 vehicle.py
 
-# starta en annan terminal
+# starta en annan terminal </>
 
+# starta vehicle
 python3 user.py
 ```
 
